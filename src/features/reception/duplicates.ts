@@ -75,14 +75,15 @@ export function sanitizeFilterValue(value: string): string {
 }
 
 /**
- * PostgREST `or` filter that fetches loose duplicate candidates: same phone suffix, same email,
+ * PostgREST `or` filter that fetches loose duplicate candidates: a phone containing the same last 4 digits, same email,
  * or same date of birth (the name comparison is done locally by matchDuplicates).
  * Returns null when there is nothing to look up.
  */
 export function buildDuplicateOrFilter(input: DuplicateInput): string | null {
   const parts: string[] = [];
   const phone = normalizePhone(input.phone);
-  if (phone) parts.push(`phone.ilike.%${phone}`);
+  // Phones are stored as typed ("+91 98000 00001"), so look for the last 4 digits and compare exactly locally.
+  if (phone) parts.push(`phone.ilike.%${phone.slice(-4)}%`);
   const email = sanitizeFilterValue(normalizeEmail(input.email));
   if (email) parts.push(`email.ilike.${email}`);
   if (input.dob && /^\d{4}-\d{2}-\d{2}$/.test(input.dob)) parts.push(`dob.eq.${input.dob}`);

@@ -79,7 +79,7 @@ describe('filters', () => {
         email: 'A@B.test',
         dob: '1996-04-12',
       }),
-    ).toBe('phone.ilike.%9800000001,email.ilike.a@b.test,dob.eq.1996-04-12');
+    ).toBe('phone.ilike.%0001%,email.ilike.a@b.test,dob.eq.1996-04-12');
     expect(buildDuplicateOrFilter({ full_name: 'x', dob: 'not-a-date' })).toBeNull();
   });
 
