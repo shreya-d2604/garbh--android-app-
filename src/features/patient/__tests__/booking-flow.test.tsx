@@ -166,7 +166,6 @@ describe('BookingFlow', () => {
         doctor({ id: 'doc-meera', full_name: 'Dr. Meera Nair', accepts_new_patients: false }),
       ]),
     );
-    h.useVisits.mockReturnValue(queryOf([]));
     const onSkip = jest.fn();
     await renderWithProviders(
       <BookingFlow ctx={ctxFor(false)} mode="first" onDone={jest.fn()} onSkip={onSkip} />,
@@ -176,6 +175,22 @@ describe('BookingFlow', () => {
     expect(screen.queryByText('Dr. Meera Nair')).toBeNull();
     await fireEvent.press(screen.getByText('Skip for now'));
     expect(onSkip).toHaveBeenCalled();
+  });
+
+  it('first booking: books with the doctor and time only, not tied to a plan visit', async () => {
+    mockData({ team: [] });
+    book.mockResolvedValue('appt-first');
+    const onDone = jest.fn();
+    await renderWithProviders(<BookingFlow ctx={ctxFor(false)} mode="first" onDone={onDone} />);
+    await fireEvent.press(screen.getByLabelText('10:30 AM'));
+    await fireEvent.press(screen.getByText('Confirm booking'));
+    await waitFor(() => expect(onDone).toHaveBeenCalledWith('appt-first'));
+    expect(book).toHaveBeenCalledWith({
+      doctorId: 'doc-asha',
+      startsAt: slot(at(1, 10, 30)).starts_at,
+      visitId: null,
+      reason: null,
+    });
   });
 
   it('reschedule: moves the appointment instead of booking a new one', async () => {

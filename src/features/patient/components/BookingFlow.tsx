@@ -99,12 +99,15 @@ export function BookingFlow(props: FlowProps) {
   if (props.mode === 'reschedule' && !target) {
     return <EmptyState icon="calendar-remove" title={t('appointments.notFound')} />;
   }
+  // A first booking is the "booking visit" the desk links itself, so it is not tied to a plan visit.
   const visit =
-    props.mode === 'reschedule'
-      ? (visits.data.find((v) => v.id === target?.visit_id) ?? null)
-      : props.visitId
-        ? (visits.data.find((v) => v.id === props.visitId) ?? null)
-        : nextPlannedVisit(visits.data, todayISO());
+    props.mode === 'first'
+      ? null
+      : props.mode === 'reschedule'
+        ? (visits.data.find((v) => v.id === target?.visit_id) ?? null)
+        : props.visitId
+          ? (visits.data.find((v) => v.id === props.visitId) ?? null)
+          : nextPlannedVisit(visits.data, todayISO());
 
   const doctors = bookableDoctors(careTeam.data, directory.data);
   const upcomingCount = splitAppointments(appointments.data, new Date()).upcoming.length;

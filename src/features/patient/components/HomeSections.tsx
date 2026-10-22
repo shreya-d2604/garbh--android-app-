@@ -27,6 +27,7 @@ import {
   useVisits,
 } from '../hooks';
 import { keyPoints, parseSummary } from '../summary';
+import type { Appointment, PrescriptionItem } from '../types';
 import { AppointmentCard } from './AppointmentCard';
 import { InlineError, InlineLoading } from './Inline';
 
@@ -62,12 +63,39 @@ export function AlertsSection() {
   );
 }
 
+function NextAppointmentCard({ appointments }: { appointments: Appointment[] }) {
+  const { t } = useTranslation('patient');
+  const router = useRouter();
+  const doctors = useDoctorMap();
+  const next = splitAppointments(appointments, new Date()).upcoming[0];
+  if (!next) {
+    return (
+      <Card>
+        <Text variant="bodyMedium" style={styles.muted}>
+          {t('home.noAppointment')}
+        </Text>
+        <Button
+          label={t('home.bookVisit')}
+          onPress={() => router.push('/patient/appointments/book')}
+        />
+      </Card>
+    );
+  }
+  return (
+    <AppointmentCard
+      appointment={next}
+      doctorName={doctors.get(next.doctor_id)?.full_name ?? null}
+      variant="soft"
+      onPress={() => router.push(`/patient/appointments/${next.id}`)}
+    />
+  );
+}
+
 /** Next appointment, live (the appointments query is invalidated by Realtime). */
 export function NextAppointmentSection() {
   const { t } = useTranslation('patient');
   const router = useRouter();
   const appointments = useAppointments();
-  const doctors = useDoctorMap();
   return (
     <View style={styles.stack}>
       <SectionHeader
@@ -80,27 +108,7 @@ export function NextAppointmentSection() {
       ) : !appointments.data ? (
         <InlineLoading />
       ) : (
-        (() => {
-          const next = splitAppointments(appointments.data, new Date()).upcoming[0];
-          return next ? (
-            <AppointmentCard
-              appointment={next}
-              doctorName={doctors.get(next.doctor_id)?.full_name ?? null}
-              variant="soft"
-              onPress={() => router.push(`/patient/appointments/${next.id}`)}
-            />
-          ) : (
-            <Card>
-              <Text variant="bodyMedium" style={styles.muted}>
-                {t('home.noAppointment')}
-              </Text>
-              <Button
-                label={t('home.bookVisit')}
-                onPress={() => router.push('/patient/appointments/book')}
-              />
-            </Card>
-          );
-        })()
+        <NextAppointmentCard appointments={appointments.data} />
       )}
     </View>
   );
@@ -163,6 +171,42 @@ export function LatestSummarySection() {
   );
 }
 
+function TodaysMedicinesList({ items }: { items: PrescriptionItem[] }) {
+  const { t } = useTranslation('patient');
+  const today = todaysMedicines(items, todayISO());
+  if (today.length === 0) {
+    return (
+      <Card>
+        <Text variant="bodyMedium" style={styles.muted}>
+          {t('home.noMedicines')}
+        </Text>
+      </Card>
+    );
+  }
+  return (
+    <Card>
+      {today.map((m) => {
+        const hint = frequencyHint(m.frequency);
+        return (
+          <ListItem
+            key={m.id}
+            icon="pill"
+            title={[m.drug_name, m.strength].filter(Boolean).join(' ')}
+            description={[
+              m.dose,
+              m.frequency,
+              hint ? hint.map((h) => t(`medicines.slot.${h}`)).join(', ') : null,
+              m.timing,
+            ]
+              .filter(Boolean)
+              .join(' · ')}
+          />
+        );
+      })}
+    </Card>
+  );
+}
+
 /** Medicines to take today (active prescription items whose dates cover today). */
 export function TodaysMedicinesSection() {
   const { t } = useTranslation('patient');
@@ -180,37 +224,7 @@ export function TodaysMedicinesSection() {
       ) : !items.data ? (
         <InlineLoading />
       ) : (
-        (() => {
-          const today = todaysMedicines(items.data, todayISO());
-          return today.length === 0 ? (
-            <Card>
-              <Text variant="bodyMedium" style={styles.muted}>
-                {t('home.noMedicines')}
-              </Text>
-            </Card>
-          ) : (
-            <Card>
-              {today.map((m) => {
-                const hint = frequencyHint(m.frequency);
-                return (
-                  <ListItem
-                    key={m.id}
-                    icon="pill"
-                    title={[m.drug_name, m.strength].filter(Boolean).join(' ')}
-                    description={[
-                      m.dose,
-                      m.frequency,
-                      hint ? hint.map((h) => t(`medicines.slot.${h}`)).join(', ') : null,
-                      m.timing,
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  />
-                );
-              })}
-            </Card>
-          );
-        })()
+        <TodaysMedicinesList items={items.data} />
       )}
     </View>
   );
