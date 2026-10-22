@@ -17,6 +17,10 @@ create function public.verify_patient(p_patient uuid, p_mrn text, p_merge_into u
 language plpgsql security definer set search_path = '' as $$
 begin perform private.not_implemented('verify_patient'); end $$;
 
+create function public.merge_patients(p_source uuid, p_target uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+begin perform private.not_implemented('merge_patients'); end $$;
+
 create function public.available_slots(p_doctor uuid, p_from date, p_to date)
 returns table (starts_at timestamptz, ends_at timestamptz)
 language plpgsql stable security definer set search_path = '' as $$

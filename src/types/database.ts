@@ -1982,6 +1982,7 @@ export type Database = {
         Args: { p_patient: string; p_record?: string; p_table: string };
         Returns: undefined;
       };
+      merge_patients: { Args: { p_source: string; p_target: string }; Returns: undefined };
       my_patient_id: { Args: Record<PropertyKey, never>; Returns: string };
       on_care_team: { Args: { p_pregnancy: string }; Returns: boolean };
       on_patient_care_team: { Args: { p_patient: string }; Returns: boolean };

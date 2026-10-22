@@ -14,7 +14,9 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local --schema public > src/types/database.ts && prettier --write src/types/database.ts",
-    "test:functions": "docker run --rm -v \"$PWD/supabase/functions:/functions\" -w /functions denoland/deno:2.9.8 test --allow-env --allow-read --allow-net=127.0.0.1"
+    "test:functions": "docker run --rm -v \"$PWD/supabase/functions:/functions\" -w /functions denoland/deno:2.9.8 test --allow-env --allow-read --allow-net=127.0.0.1",
+    "db:check": "bash scripts/db-check.sh",
+    "bundle:check": "EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 EXPO_PUBLIC_SUPABASE_ANON_KEY=bundle-check expo export --platform android --output-dir \"$(mktemp -d)\""
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
