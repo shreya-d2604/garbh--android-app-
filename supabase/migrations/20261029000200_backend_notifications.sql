@@ -314,6 +314,37 @@ create trigger consultation_published_notify
   for each row execute function private.trg_consultation_published_notify();
 
 ----------------------------------------------------------------------------
+-- Report added (first file attached to a report): patient + companions with `reports`
+----------------------------------------------------------------------------
+create function private.trg_report_file_notify() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare v_patient uuid; v_pregnancy uuid;
+begin
+  begin
+    if not exists (select 1 from public.report_files f where f.report_id = new.report_id and f.id <> new.id) then
+      select r.pregnancy_id into v_pregnancy
+        from public.reports r where r.id = new.report_id and r.deleted_at is null;
+      select pr.patient_id into v_patient from public.pregnancies pr where pr.id = v_pregnancy;
+      if v_patient is not null then
+        perform private.notify_patient_side(
+          v_patient, 'report_added', 'New report added',
+          'A new report was added to your records.',
+          'A new report was added for %s.',
+          '/patient/reports/' || new.report_id, '/companion/' || v_patient || '/reports', 'reports',
+          jsonb_build_object('report_id', new.report_id));
+      end if;
+    end if;
+  exception when others then
+    raise warning 'report notification failed (%)', sqlstate;
+  end;
+  return null;
+end $$;
+
+create trigger report_file_notify
+  after insert on public.report_files
+  for each row execute function private.trg_report_file_notify();
+
+----------------------------------------------------------------------------
 -- Companion links: request -> patient; decision -> companion
 ----------------------------------------------------------------------------
 create function private.trg_companion_link_notify() returns trigger

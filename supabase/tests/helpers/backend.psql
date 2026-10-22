@@ -1,0 +1,170 @@
+-- Backend agent helpers. Include AFTER helpers/setup.psql:
+--   \ir helpers/setup.psql
+--   \ir helpers/backend.psql
+--   select tests.build_world();
+-- Everything lives inside the test transaction and is rolled back with it.
+
+-- Rows of `p_sql` (a complete SELECT) that user p_uid can see (RLS applies).
+create function tests.visible(p_uid uuid, p_sql text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform tests.login_as(p_uid);
+  execute 'select count(*) from (' || p_sql || ') q' into n;
+  perform tests.logout();
+  return n;
+exception when others then
+  perform tests.logout();
+  raise;
+end $$;
+
+-- Runs a write as the CURRENT role and undoes it. Returns the number of rows it would have
+-- affected, or -1 when it was refused (42501 RLS / privilege, or a NOT_ALLOWED guard).
+-- Anything else (a typo, a constraint) re-raises so a test can never pass for the wrong reason.
+create function tests.write_effect(p_sql text) returns int language plpgsql as $$
+declare n int;
+begin
+  begin
+    execute p_sql;
+    get diagnostics n = row_count;
+    raise exception 'tests_rollback';
+  exception
+    when insufficient_privilege then return -1;
+    when others then
+      if sqlerrm = 'tests_rollback' then return n; end if;
+      if sqlerrm = 'NOT_ALLOWED' then return -1; end if;
+      raise;
+  end;
+end $$;
+
+-- Same, acting as p_uid.
+create function tests.write_as(p_uid uuid, p_sql text) returns int language plpgsql as $$
+declare n int;
+begin
+  perform tests.login_as(p_uid);
+  n := tests.write_effect(p_sql);
+  perform tests.logout();
+  return n;
+exception when others then
+  perform tests.logout();
+  raise;
+end $$;
+
+-- The standard world (all ids in temp table `w`; one row):
+--   P1 = patient pat1, pregnancy p1. Care team: doc_a primary, doc_c backup, doc_x REMOVED backup.
+--   P2 = patient pat2, pregnancy p2. Care team: doc_b primary.
+--   Companions of P1: c_full (all perms), c_none (approved, no perms), one per permission
+--   (c_appt, c_jour, c_summ, c_rep, c_rx), c_rev (revoked), c_pend (pending).
+--   c_p2 follows P2 with all permissions. `nobody` has no role yet (not onboarded).
+create function tests.build_world() returns void language plpgsql as $$
+declare
+  u record;
+  v_p1 uuid; v_p2 uuid; v_pat1 uuid; v_pat2 uuid;
+  v_c1pub uuid; v_c1draft uuid; v_c2pub uuid;
+  v_r1 uuid; v_r1del uuid; v_r2 uuid;
+begin
+  create temp table w as select
+    tests.create_user('admin@w.test', 'admin')        as admin,
+    tests.create_user('doca@w.test', 'doctor')        as doc_a,
+    tests.create_user('docb@w.test', 'doctor')        as doc_b,
+    tests.create_user('docc@w.test', 'doctor')        as doc_c,
+    tests.create_user('docx@w.test', 'doctor')        as doc_x,
+    tests.create_user('desk@w.test', 'receptionist')  as desk,
+    tests.create_user('pat1@w.test', 'patient')       as pat1,
+    tests.create_user('pat2@w.test', 'patient')       as pat2,
+    tests.create_user('cfull@w.test', 'companion')    as c_full,
+    tests.create_user('cnone@w.test', 'companion')    as c_none,
+    tests.create_user('cappt@w.test', 'companion')    as c_appt,
+    tests.create_user('cjour@w.test', 'companion')    as c_jour,
+    tests.create_user('csumm@w.test', 'companion')    as c_summ,
+    tests.create_user('crep@w.test', 'companion')     as c_rep,
+    tests.create_user('crx@w.test', 'companion')      as c_rx,
+    tests.create_user('crev@w.test', 'companion')     as c_rev,
+    tests.create_user('cpend@w.test', 'companion')    as c_pend,
+    tests.create_user('cp2@w.test', 'companion')      as c_p2,
+    tests.create_user('nobody@w.test')                as nobody;
+  select * into u from w;
+
+  v_p1 := tests.create_pregnancy(u.pat1, u.doc_a, 20);
+  v_p2 := tests.create_pregnancy(u.pat2, u.doc_b, 12);
+  select patient_id into v_pat1 from public.pregnancies where id = v_p1;
+  select patient_id into v_pat2 from public.pregnancies where id = v_p2;
+  alter table w add column p1 uuid, add column p2 uuid, add column patient1 uuid, add column patient2 uuid;
+  update w set p1 = v_p1, p2 = v_p2, patient1 = v_pat1, patient2 = v_pat2;
+
+  -- care team: backup doc_c, removed backup doc_x
+  insert into public.care_team (pregnancy_id, doctor_id, care_role) values (v_p1, u.doc_c, 'backup');
+  insert into public.care_team (pregnancy_id, doctor_id, care_role, removed_at) values (v_p1, u.doc_x, 'backup', now());
+
+  -- visits: replace the generated plan with a known one
+  delete from public.visits where pregnancy_id in (v_p1, v_p2);
+  insert into public.visits (pregnancy_id, seq, target_week, title) values
+    (v_p1, 1, 8, 'v1'), (v_p1, 2, 12, 'v2'), (v_p2, 1, 8, 'v1');
+
+  insert into public.appointments (patient_id, pregnancy_id, doctor_id, starts_at, ends_at, booking_channel) values
+    (v_pat1, v_p1, u.doc_a, '2031-01-07 05:00+00', '2031-01-07 05:15+00', 'reception'),
+    (v_pat1, v_p1, u.doc_a, '2031-01-07 06:00+00', '2031-01-07 06:15+00', 'reception'),
+    (v_pat2, v_p2, u.doc_b, '2031-01-07 05:00+00', '2031-01-07 05:15+00', 'reception');
+
+  insert into public.consultations (pregnancy_id, doctor_id, advice, published_at) values
+    (v_p1, u.doc_a, 'p1 published', now()) returning id into v_c1pub;
+  insert into public.consultations (pregnancy_id, doctor_id, advice) values
+    (v_p1, u.doc_a, 'p1 draft') returning id into v_c1draft;
+  insert into public.consultations (pregnancy_id, doctor_id, advice, published_at) values
+    (v_p2, u.doc_b, 'p2 published', now()) returning id into v_c2pub;
+  insert into public.consultation_private_notes (consultation_id, pregnancy_id, note) values
+    (v_c1pub, v_p1, 'secret'), (v_c1draft, v_p1, 'secret'), (v_c2pub, v_p2, 'secret');
+  insert into public.prescription_items (consultation_id, pregnancy_id, drug_name) values
+    (v_c1pub, v_p1, 'Folic acid'), (v_c1draft, v_p1, 'Calcium'), (v_c2pub, v_p2, 'Folic acid');
+
+  insert into public.reports (pregnancy_id, type, title, uploaded_by) values (v_p1, 'blood', 'live', u.doc_a) returning id into v_r1;
+  insert into public.reports (pregnancy_id, type, title, uploaded_by, deleted_at) values (v_p1, 'blood', 'deleted', u.doc_a, now()) returning id into v_r1del;
+  insert into public.reports (pregnancy_id, type, title, uploaded_by) values (v_p2, 'blood', 'p2', u.doc_b) returning id into v_r2;
+  insert into public.report_files (report_id, storage_path, mime_type) values
+    (v_r1, v_pat1 || '/' || v_p1 || '/' || v_r1 || '/a.pdf', 'application/pdf'),
+    (v_r1del, v_pat1 || '/' || v_p1 || '/' || v_r1del || '/a.pdf', 'application/pdf'),
+    (v_r2, v_pat2 || '/' || v_p2 || '/' || v_r2 || '/a.pdf', 'application/pdf');
+  insert into public.lab_results (report_id, pregnancy_id, test_code, value_num, source, verified, verified_by) values
+    (v_r1, v_p1, 'HB', 10.2, 'ai_extracted', true, u.doc_a),
+    (v_r1, v_p1, 'TSH', 2.1, 'ai_extracted', false, null),
+    (v_r2, v_p2, 'HB', 12.0, 'ai_extracted', true, u.doc_b);
+  alter table w add column r1 uuid, add column r1del uuid, add column r2 uuid, add column c1pub uuid, add column c1draft uuid;
+  update w set r1 = v_r1, r1del = v_r1del, r2 = v_r2, c1pub = v_c1pub, c1draft = v_c1draft;
+
+  insert into public.ai_summaries (pregnancy_id, source_type, status, draft) values
+    (v_p1, 'cumulative', 'draft', '{"summary":{"headline":"draft"}}');
+  insert into public.ai_summaries (pregnancy_id, source_type, status, final, reviewed_by, published_at) values
+    (v_p1, 'cumulative', 'published', '{"summary":{"headline":"ok","doctor_attention_flags":["x"]}}', u.doc_a, now()),
+    (v_p2, 'cumulative', 'published', '{"summary":{"headline":"ok2"}}', u.doc_b, now());
+
+  -- companions of P1 (c_full, c_none, one per permission, revoked, pending) and of P2
+  insert into public.companion_links (patient_id, companion_user_id, relation, status,
+      can_view_appointments, can_view_journey, can_view_summaries, can_view_reports, can_view_prescriptions, receive_notifications) values
+    (v_pat1, u.c_full, 'husband', 'approved', true,  true,  true,  true,  true,  true),
+    (v_pat1, u.c_none, 'mother',  'approved', false, false, false, false, false, false),
+    (v_pat1, u.c_appt, 'sibling', 'approved', true,  false, false, false, false, false),
+    (v_pat1, u.c_jour, 'sibling', 'approved', false, true,  false, false, false, false),
+    (v_pat1, u.c_summ, 'sibling', 'approved', false, false, true,  false, false, false),
+    (v_pat1, u.c_rep,  'sibling', 'approved', false, false, false, true,  false, false),
+    (v_pat1, u.c_rx,   'sibling', 'approved', false, false, false, false, true,  false),
+    (v_pat1, u.c_rev,  'friend',  'revoked',  true,  true,  true,  true,  true,  true),
+    (v_pat1, u.c_pend, 'friend',  'pending',  true,  true,  true,  true,  true,  true),
+    (v_pat2, u.c_p2,   'husband', 'approved', true,  true,  true,  true,  true,  true);
+  insert into public.companion_invites (patient_id, code_hash) values (v_pat1, 'hash-w-1'), (v_pat2, 'hash-w-2');
+  insert into public.code_redeem_attempts (user_id, success) values (u.c_full, false);
+
+  -- rows used by identity/self-service tables
+  insert into public.notifications (user_id, type, title) values
+    (u.pat1, 'matrix_test', 'n'), (u.pat2, 'matrix_test', 'n'), (u.doc_a, 'matrix_test', 'n'), (u.c_full, 'matrix_test', 'n');
+  insert into public.push_tokens (user_id, expo_push_token) values
+    (u.pat1, 'ExponentPushToken[w-pat1]'), (u.pat2, 'ExponentPushToken[w-pat2]');
+  insert into public.data_requests (user_id, kind) values (u.pat1, 'export'), (u.pat2, 'export');
+  insert into public.audit_log (action, table_name) values ('view_sensitive', 'matrix_test');
+  insert into public.staff_details (profile_id) values (u.admin), (u.doc_a), (u.doc_b), (u.doc_c), (u.doc_x), (u.desk);
+  insert into public.doctor_availability (doctor_id, weekday, start_time, end_time) values
+    (u.doc_a, 1, '10:00', '13:00'), (u.doc_a, 2, '10:00', '13:00'), (u.doc_b, 1, '10:00', '13:00');
+  insert into public.doctor_time_off (doctor_id, starts_at, ends_at) values (u.doc_a, '2031-02-01 00:00+00', '2031-02-02 00:00+00');
+
+  grant select on w to authenticated;
+end $$;
+
+grant execute on all functions in schema tests to authenticated, anon;
