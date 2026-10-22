@@ -1,0 +1,5 @@
+{
+  "lock": false,
+  "compilerOptions": { "strict": true },
+  "test": { "include": ["**/*.test.ts"] }
+}
