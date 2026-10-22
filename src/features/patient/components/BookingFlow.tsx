@@ -333,9 +333,6 @@ function BookingForm({
         <View style={styles.stack}>
           <InfoBanner tone="danger" message={tc(slotsError)} />
           <Button label={tc('actions.retry')} variant="secondary" onPress={() => void refetch()} />
-          {slotsError === 'errors.NOT_IMPLEMENTED' ? (
-            <CallButton phone={phone} label={t('common.callReception')} />
-          ) : null}
         </View>
       ) : days.length === 0 ? (
         <View style={styles.stack}>

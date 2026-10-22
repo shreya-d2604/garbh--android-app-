@@ -160,3 +160,53 @@ export const lab = (over: Partial<LabResult> = {}): LabResult => ({
   created_at: '2026-09-23T05:30:00.000Z',
   ...over,
 });
+
+// ------------------------------------------------------------------ hook results for screen tests
+
+const base = { isRefetching: false, error: null };
+
+/** A loaded query result (cast: screens only read data / isLoading / isError / refetch). */
+export const queryOf = <T>(data: T, refetch: () => unknown = jest.fn()) =>
+  ({ ...base, data, isLoading: false, isError: false, refetch }) as never;
+
+export const queryLoading = () =>
+  ({ ...base, data: undefined, isLoading: true, isError: false, refetch: jest.fn() }) as never;
+
+export const queryFailed = (refetch: () => unknown = jest.fn(), error: unknown = null) =>
+  ({ ...base, error, data: undefined, isLoading: false, isError: true, refetch }) as never;
+
+export const settings = {
+  name: 'GARBH Demo Hospital',
+  address: '12 MG Road, Pune',
+  phone: '+91 20 4000 1234',
+  timezone: 'Asia/Kolkata',
+  min_lead_hours: 2,
+  max_advance_days: 60,
+  patient_cancel_cutoff_hours: 4,
+  unverified_max_upcoming: 1,
+  verified_max_upcoming: 3,
+};
+
+export const patientContext = (
+  edd: string | null,
+  over: { verified?: boolean; conditions?: string[]; risks?: string[] } = {},
+) => ({
+  patient: {
+    id: 'pat-1',
+    full_name: 'Kavya Iyer',
+    is_verified: over.verified ?? true,
+    allergies: [],
+    chronic_conditions: over.conditions ?? [],
+    rh_negative: false,
+  },
+  pregnancy: edd
+    ? {
+        id: 'preg-1',
+        edd_final: edd,
+        lmp_date: null,
+        risk_level: 'low' as const,
+        risk_factors: over.risks ?? [],
+      }
+    : null,
+  settings,
+});
