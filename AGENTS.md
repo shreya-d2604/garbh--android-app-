@@ -14,7 +14,14 @@ user-facing string goes through i18n. Package id `com.garbh.app`. npm only (not 
 
 There is no Android SDK or emulator. Verification = typecheck, lint, Jest, Metro bundle, pgTAP.
 
-## 2. Commands
+## 2. Worktree setup and commands
+
+```bash
+# from /home/shrey/Desktop/garbh (worktrees must be siblings under /home/shrey/Desktop:
+# Docker cannot mount test folders from /tmp sandboxes)
+git worktree add ../garbh-<agent> -b agent/<agent> main
+cd ../garbh-<agent> && npm ci && cp .env.example .env
+```
 
 | Command | What |
 |---|---|

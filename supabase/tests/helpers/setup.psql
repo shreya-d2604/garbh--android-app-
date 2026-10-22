@@ -1,6 +1,7 @@
 -- Shared pgTAP helpers. Include at the top of every test file, AFTER `begin;`:
 --   \ir helpers/setup.psql
 -- Everything here is created inside the test transaction and rolled back with it.
+set client_min_messages = warning;
 create extension if not exists pgtap with schema extensions;
 
 create schema tests;
