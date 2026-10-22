@@ -26,6 +26,15 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-status-bar',
     'expo-secure-store',
+    'expo-notifications',
+    'expo-document-picker',
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'GARBH needs access to your photos to attach medical reports.',
+        cameraPermission: 'GARBH needs the camera to photograph medical reports.',
+      },
+    ],
     [
       'expo-splash-screen',
       { image: './assets/splash-icon.png', imageWidth: 200, backgroundColor: '#FFF8F2' },

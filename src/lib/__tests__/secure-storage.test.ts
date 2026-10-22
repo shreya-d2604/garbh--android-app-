@@ -1,5 +1,3 @@
-import { randomFillSync as mockRandomFill } from 'crypto';
-
 import { secureStorage } from '../secure-storage';
 
 // jest.mock calls are hoisted above the imports by babel-jest.
@@ -17,7 +15,8 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(async (k: string) => void mockSecure.delete(k)),
 }));
 jest.mock('expo-crypto', () => ({
-  getRandomValues: <T extends Uint8Array>(a: T) => mockRandomFill(a),
+  getRandomValues: <T extends Uint8Array>(a: T) =>
+    a.map(() => Math.floor(Math.random() * 256)) as T,
 }));
 
 describe('secureStorage', () => {
