@@ -3,6 +3,7 @@ import {
   handOverCandidates,
   sortTeam,
   teamPermissions,
+  toTeamMembers,
   type CareTeamMember,
   type DoctorOption,
 } from '../care-team';
@@ -55,5 +56,21 @@ describe('care team panel rules', () => {
 
   it('offers backups first for a hand-over, never the caller', () => {
     expect(handOverCandidates(directory, team, 'a').map((d) => d.id)).toEqual(['c', 'b', 'e', 'd']);
+  });
+});
+
+describe('toTeamMembers', () => {
+  it('joins rows with doctor names, sorted primary first, with a fallback name', () => {
+    const rows = [
+      { id: '1', doctor_id: 'b', care_role: 'backup' as const, note: 'Covers leave' },
+      { id: '2', doctor_id: 'a', care_role: 'primary' as const, note: null },
+      { id: '3', doctor_id: 'zz', care_role: 'backup' as const, note: null },
+    ];
+    const members = toTeamMembers(rows, directory, 'Doctor');
+    expect(members.map((x) => [x.name, x.role, x.note])).toEqual([
+      ['Dr. Asha', 'primary', null],
+      ['Doctor', 'backup', null],
+      ['Dr. Zed', 'backup', 'Covers leave'],
+    ]);
   });
 });
