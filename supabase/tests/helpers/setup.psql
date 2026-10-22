@@ -1,0 +1,54 @@
+-- Shared pgTAP helpers. Include at the top of every test file, AFTER `begin;`:
+--   \ir helpers/setup.psql
+-- Everything here is created inside the test transaction and rolled back with it.
+create extension if not exists pgtap with schema extensions;
+
+create schema tests;
+grant usage on schema tests to authenticated, anon;
+
+-- Create an auth user (the auth trigger creates the profile). p_role sets app_metadata.role
+-- exactly like the admin-users Edge Function does; null = self-signup.
+create function tests.create_user(p_email text, p_role text default null, p_name text default null)
+returns uuid language plpgsql as $$
+declare v_id uuid := gen_random_uuid();
+begin
+  insert into auth.users (instance_id, id, aud, role, email, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+  values ('00000000-0000-0000-0000-000000000000', v_id, 'authenticated', 'authenticated', p_email,
+          case when p_role is null then '{}'::jsonb else jsonb_build_object('role', p_role) end,
+          jsonb_build_object('full_name', coalesce(p_name, p_email)), now(), now());
+  update public.profiles set consent_at = now() where id = v_id and p_role is not null;
+  return v_id;
+end $$;
+
+-- Act as a user (RLS applies) / go back to the superuser.
+create function tests.login_as(p_uid uuid) returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  perform set_config('role', 'authenticated', true);
+end $$;
+
+create function tests.logout() returns void language plpgsql as $$
+begin
+  perform set_config('role', 'postgres', true);
+  perform set_config('request.jwt.claims', '', true);
+end $$;
+
+-- A verified desk patient (optionally linked to p_user) with an active pregnancy at p_weeks,
+-- and p_primary as primary doctor. Returns the pregnancy id.
+create function tests.create_pregnancy(p_user uuid, p_primary uuid, p_weeks int default 20)
+returns uuid language plpgsql as $$
+declare v_patient uuid; v_preg uuid;
+begin
+  insert into public.patients (user_id, full_name, registration_source, verified_at, mrn)
+  values (p_user, 'Test Patient', 'desk', now(), 'T-' || substr(gen_random_uuid()::text, 1, 8))
+  returning id into v_patient;
+  insert into public.pregnancies (patient_id, lmp_date, lmp_source)
+  values (v_patient, public.hospital_today() - p_weeks * 7, 'clinician')
+  returning id into v_preg;
+  if p_primary is not null then
+    insert into public.care_team (pregnancy_id, doctor_id, care_role) values (v_preg, p_primary, 'primary');
+  end if;
+  return v_preg;
+end $$;
+
+grant execute on all functions in schema tests to authenticated, anon;
