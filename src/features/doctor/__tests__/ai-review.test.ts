@@ -4,6 +4,10 @@ import {
   countLowConfidence,
   documentFromRow,
   documentIssues,
+  filterInbox,
+  inboxCounts,
+  inboxTabFor,
+  parseFunctionError,
   functionErrorKey,
   isLowConfidence,
   labDisplayValue,
@@ -108,5 +112,38 @@ describe('AI review helpers', () => {
     expect(labDisplayValue({ value_num: 10.2, value_text: null })).toBe('10.2');
     expect(labDisplayValue({ value_num: null, value_text: 'Negative' })).toBe('Negative');
     expect(labDisplayValue({ value_num: null, value_text: null })).toBe('');
+  });
+});
+
+describe('inbox sections', () => {
+  const rows = [
+    { status: 'draft' as const, created_at: '2026-09-01T00:00:00Z' },
+    { status: 'draft' as const, created_at: '2026-09-02T00:00:00Z' },
+    { status: 'published' as const, created_at: '2026-08-01T00:00:00Z' },
+    { status: 'rejected' as const, created_at: '2026-08-02T00:00:00Z' },
+    { status: 'failed' as const, created_at: '2026-09-03T00:00:00Z' },
+    { status: 'generating' as const, created_at: '2026-09-04T00:00:00Z' },
+  ];
+
+  it('puts drafts under "to review", newest first', () => {
+    expect(filterInbox(rows, 'review').map((r) => r.created_at)).toEqual(['2026-09-02T00:00:00Z', '2026-09-01T00:00:00Z']);
+  });
+
+  it('groups finished and problem summaries', () => {
+    expect(filterInbox(rows, 'done')).toHaveLength(2);
+    expect(filterInbox(rows, 'issues').map((r) => r.status)).toEqual(['generating', 'failed']);
+    expect(inboxCounts(rows)).toEqual({ review: 2, done: 2, issues: 2 });
+    expect(inboxTabFor('approved')).toBe('done');
+  });
+});
+
+describe('function errors', () => {
+  it('uses the function error code, or NOT_IMPLEMENTED for a missing function', () => {
+    expect(parseFunctionError(403, { error: 'NOT_ON_CARE_TEAM' })).toBe('NOT_ON_CARE_TEAM');
+    expect(parseFunctionError(404, { code: 'NOT_FOUND', message: 'Requested function was not found' })).toBe('NOT_IMPLEMENTED');
+    expect(parseFunctionError(404, null)).toBe('NOT_IMPLEMENTED');
+    expect(parseFunctionError(502, { error: 'AI_FAILED' })).toBe('AI_FAILED');
+    expect(parseFunctionError(500, 'oops')).toBe('GENERIC');
+    expect(parseFunctionError(null, undefined)).toBe('GENERIC');
   });
 });

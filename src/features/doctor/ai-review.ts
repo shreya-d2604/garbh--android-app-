@@ -115,3 +115,32 @@ export function parseFunctionError(status: number | null, body: unknown): string
   }
   return status === 404 ? 'NOT_IMPLEMENTED' : 'GENERIC';
 }
+
+export type InboxTab = 'review' | 'done' | 'issues';
+
+/** Inbox sections: drafts waiting for the doctor, finished ones, and summaries that failed or are still generating. */
+export function inboxTabFor(status: AiSummaryRow['status']): InboxTab {
+  switch (status) {
+    case 'draft':
+      return 'review';
+    case 'published':
+    case 'approved':
+    case 'rejected':
+      return 'done';
+    case 'failed':
+    case 'generating':
+      return 'issues';
+  }
+}
+
+export function filterInbox<T extends Pick<AiSummaryRow, 'status' | 'created_at'>>(rows: readonly T[], tab: InboxTab): T[] {
+  return rows
+    .filter((r) => inboxTabFor(r.status) === tab)
+    .sort((a, b) => b.created_at.localeCompare(a.created_at));
+}
+
+export function inboxCounts(rows: readonly Pick<AiSummaryRow, 'status'>[]): Record<InboxTab, number> {
+  const counts: Record<InboxTab, number> = { review: 0, done: 0, issues: 0 };
+  for (const r of rows) counts[inboxTabFor(r.status)] += 1;
+  return counts;
+}
