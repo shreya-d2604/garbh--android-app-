@@ -3,7 +3,7 @@
 -- file proves the RPC state changes feed it). Also: a doctor not on the care team sees nothing.
 begin;
 \ir helpers/setup.psql
-select plan(26);
+select plan(21);
 
 create temp table u as select
   tests.create_user('doc@x.test',     'doctor')    as doc,

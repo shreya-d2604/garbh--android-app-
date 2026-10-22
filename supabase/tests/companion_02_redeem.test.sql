@@ -33,21 +33,21 @@ insert into codes select 'a', public.create_companion_invite();
 
 -- ---- role checks and input checks
 select tests.login_as((select pat from u));
-select throws_ok($$ select public.redeem_companion_code('AAA-AAA', 'husband') $$, 'NOT_ALLOWED', null, 'a patient cannot redeem');
+select throws_ok($$ select public.redeem_companion_code('AAA-AAA', 'husband') $$, 'P0001', 'NOT_ALLOWED', 'a patient cannot redeem');
 select tests.login_as((select doc from u));
-select throws_ok($$ select public.redeem_companion_code('AAA-AAA', 'husband') $$, 'NOT_ALLOWED', null, 'a doctor cannot redeem');
+select throws_ok($$ select public.redeem_companion_code('AAA-AAA', 'husband') $$, 'P0001', 'NOT_ALLOWED', 'a doctor cannot redeem');
 select set_config('role', 'authenticated', true);
 select set_config('request.jwt.claims', '', true);
-select throws_ok($$ select public.redeem_companion_code('AAA-AAA', 'husband') $$, 'NOT_AUTHENTICATED', null, 'signed-out caller is rejected');
+select throws_ok($$ select public.redeem_companion_code('AAA-AAA', 'husband') $$, 'P0001', 'NOT_AUTHENTICATED', 'signed-out caller is rejected');
 
 select tests.login_as((select c1 from u));
 select throws_ok($$ select public.redeem_companion_code((select code from codes where label = 'a'), 'cousin') $$,
-  'INVALID_INPUT', null, 'an unknown relation is rejected');
+  'P0001', 'INVALID_INPUT', 'an unknown relation is rejected');
 select throws_ok($$ select public.redeem_companion_code((select code from codes where label = 'a'), null) $$,
-  'INVALID_INPUT', null, 'a missing relation is rejected');
+  'P0001', 'INVALID_INPUT', 'a missing relation is rejected');
 select tests.logout();
 select is(tests.fails((select c1 from u)), 0, 'a wrong relation is not counted as a guess');
-select is((select used_at is null from public.companion_invites), true, 'a wrong relation does not consume the invite');
+select is((select used_at is null from public.companion_invites where patient_id = (select p1 from pt)), true, 'a wrong relation does not consume the invite');
 
 -- ---- happy path: normalising (case, spaces, dash)
 select tests.login_as((select c1 from u));
@@ -62,7 +62,7 @@ select is((select count(*)::int from public.companion_links
           'a pending link grants nothing');
 select is((select count(*)::int from public.patients), 0, 'a pending companion cannot read the patient yet');
 select tests.logout();
-select is((select count(*)::int from public.companion_invites where used_at is not null), 1, 'the invite is marked used');
+select is((select count(*)::int from public.companion_invites where used_at is not null and patient_id = (select p1 from pt)), 1, 'the invite is marked used');
 select is((select count(*)::int from public.code_redeem_attempts where user_id = (select c1 from u) and success), 1, 'the success is logged');
 
 -- ---- single use: the same code again, by the same user and by another companion
@@ -87,7 +87,7 @@ select tests.login_as((select pat2 from u));
 insert into codes select 'b', public.create_companion_invite();
 select tests.login_as((select c2 from u));
 select throws_ok($$ select public.redeem_companion_code((select code from codes where label = 'b'), 'friend') $$,
-  'RATE_LIMITED', null, 'after 5 failures even a valid code is refused');
+  'P0001', 'RATE_LIMITED', 'after 5 failures even a valid code is refused');
 select tests.logout();
 select is((select used_at is null from public.companion_invites where patient_id = (select p2 from pt)), true, 'the locked-out redeem did not use the invite');
 select is(tests.fails((select c2 from u)), 5, 'a locked-out call adds no further failure');
@@ -119,14 +119,15 @@ select is(public.redeem_companion_code((select code from codes where label = 'd'
 -- ---- duplicate link: pending or approved -> ALREADY_LINKED, and the invite stays usable
 select tests.login_as((select c1 from u));
 select throws_ok($$ select public.redeem_companion_code((select code from codes where label = 'e'), 'husband') $$,
-  'ALREADY_LINKED', null, 'a companion with a pending link cannot redeem again');
+  'P0001', 'ALREADY_LINKED', 'a companion with a pending link cannot redeem again');
 select tests.login_as((select pat from u));
 select public.decide_companion_link((select link from res where label = 'first'), true, '{"journey": true}');
 select tests.login_as((select c1 from u));
 select throws_ok($$ select public.redeem_companion_code((select code from codes where label = 'e'), 'husband') $$,
-  'ALREADY_LINKED', null, 'a companion with an approved link cannot redeem again');
+  'P0001', 'ALREADY_LINKED', 'a companion with an approved link cannot redeem again');
 select tests.logout();
-select is((select used_at is null from public.companion_invites where patient_id = (select p1 from pt) and revoked_at is null), true,
+select is((select used_at is null from public.companion_invites
+           where code_hash = private.companion_code_hash(replace((select code from codes where label = 'e'), '-', ''))), true,
           'ALREADY_LINKED leaves the invite unused');
 
 -- ---- after a rejection or leaving, the same companion can link again

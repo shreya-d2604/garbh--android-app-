@@ -13,6 +13,9 @@ create temp table u as select
 create temp table preg as select
   tests.create_pregnancy((select pat from u), (select doc from u), 20)  as p1,
   tests.create_pregnancy((select pat2 from u), (select doc from u), 12) as p2;
+create temp table pt as select
+  (select patient_id from public.pregnancies where id = (select p1 from preg)) as p1;
+grant select on pt to authenticated;
 -- An unverified patient: app-registered, no MRN.
 insert into public.patients (user_id, full_name, registration_source) values ((select unverified from u), 'Unverified', 'app');
 create temp table codes (label text, code text);
@@ -22,17 +25,17 @@ grant all on codes to authenticated;
 -- ---- denied
 select set_config('role', 'authenticated', true);
 select set_config('request.jwt.claims', '', true);
-select throws_ok($$ select public.create_companion_invite() $$, 'NOT_AUTHENTICATED', null, 'signed-out caller is rejected');
+select throws_ok($$ select public.create_companion_invite() $$, 'P0001', 'NOT_AUTHENTICATED', 'signed-out caller is rejected');
 
 select tests.login_as((select unverified from u));
-select throws_ok($$ select public.create_companion_invite() $$, 'NOT_VERIFIED', null, 'unverified patient cannot invite');
+select throws_ok($$ select public.create_companion_invite() $$, 'P0001', 'NOT_VERIFIED', 'unverified patient cannot invite');
 
 select tests.login_as((select comp from u));
-select throws_ok($$ select public.create_companion_invite() $$, 'NOT_ALLOWED', null, 'companion cannot create invites');
+select throws_ok($$ select public.create_companion_invite() $$, 'P0001', 'NOT_ALLOWED', 'companion cannot create invites');
 select tests.login_as((select doc from u));
-select throws_ok($$ select public.create_companion_invite() $$, 'NOT_ALLOWED', null, 'doctor cannot create invites');
+select throws_ok($$ select public.create_companion_invite() $$, 'P0001', 'NOT_ALLOWED', 'doctor cannot create invites');
 select tests.login_as((select desk from u));
-select throws_ok($$ select public.create_companion_invite() $$, 'NOT_ALLOWED', null, 'receptionist cannot create invites');
+select throws_ok($$ select public.create_companion_invite() $$, 'P0001', 'NOT_ALLOWED', 'receptionist cannot create invites');
 
 -- ---- allowed: verified patient
 select tests.login_as((select pat from u));
@@ -50,10 +53,10 @@ select is((select count(*)::int from public.companion_invites
               or code_hash = (select code from codes where label = 'first')), 0, 'plaintext code is not stored');
 select is((select length(code_hash) from public.companion_invites), 64, 'stored value is a sha256 hex digest');
 select tests.logout();
-select is((select code_hash from public.companion_invites),
+select is((select code_hash from public.companion_invites where patient_id = (select p1 from pt) and revoked_at is null),
           private.companion_code_hash(replace((select code from codes where label = 'first'), '-', '')),
           'stored hash = sha256(code || pepper)');
-select isnt((select code_hash from public.companion_invites),
+select isnt((select code_hash from public.companion_invites where patient_id = (select p1 from pt)),
             encode(extensions.digest(replace((select code from codes where label = 'first'), '-', ''), 'sha256'), 'hex'),
             'hash depends on the server pepper (unsalted sha256 does not match)');
 

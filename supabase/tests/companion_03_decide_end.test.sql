@@ -30,30 +30,30 @@ grant select on u, preg, pt, lk to authenticated;
 -- ---- decide: who may call it
 select tests.login_as((select c1 from u));
 select throws_ok($$ select public.decide_companion_link((select a from lk), true, '{"journey":true}') $$,
-  'NOT_ALLOWED', null, 'a companion cannot approve her own request');
+  'P0001', 'NOT_ALLOWED', 'a companion cannot approve her own request');
 select tests.login_as((select doc from u));
 select throws_ok($$ select public.decide_companion_link((select a from lk), true) $$,
-  'NOT_ALLOWED', null, 'a doctor cannot approve');
+  'P0001', 'NOT_ALLOWED', 'a doctor cannot approve');
 select tests.login_as((select pat2 from u));
 select throws_ok($$ select public.decide_companion_link((select a from lk), true) $$,
-  'NOT_ALLOWED', null, 'a different patient cannot approve');
+  'P0001', 'NOT_ALLOWED', 'a different patient cannot approve');
 select throws_ok($$ select public.decide_companion_link((select a from lk), false) $$,
-  'NOT_ALLOWED', null, 'a different patient cannot reject');
+  'P0001', 'NOT_ALLOWED', 'a different patient cannot reject');
 select set_config('role', 'authenticated', true);
 select set_config('request.jwt.claims', '', true);
 select throws_ok($$ select public.decide_companion_link((select a from lk), true) $$,
-  'NOT_AUTHENTICATED', null, 'signed-out caller is rejected');
+  'P0001', 'NOT_AUTHENTICATED', 'signed-out caller is rejected');
 
 select tests.login_as((select pat from u));
-select throws_ok($$ select public.decide_companion_link(gen_random_uuid(), true) $$, 'NOT_FOUND', null, 'unknown link');
+select throws_ok($$ select public.decide_companion_link(gen_random_uuid(), true) $$, 'P0001', 'NOT_FOUND', 'unknown link');
 select throws_ok($$ select public.decide_companion_link((select a from lk), true, '{"journey":"yes"}') $$,
-  'INVALID_INPUT', null, 'a non-boolean permission is rejected');
+  'P0001', 'INVALID_INPUT', 'a non-boolean permission is rejected');
 select throws_ok($$ select public.decide_companion_link((select a from lk), true, '{"labs":true}') $$,
-  'INVALID_INPUT', null, 'an unknown permission key is rejected');
+  'P0001', 'INVALID_INPUT', 'an unknown permission key is rejected');
 select throws_ok($$ select public.decide_companion_link((select a from lk), true, '[true]') $$,
-  'INVALID_INPUT', null, 'permissions must be an object');
+  'P0001', 'INVALID_INPUT', 'permissions must be an object');
 select throws_ok($$ select public.decide_companion_link((select a from lk), null) $$,
-  'INVALID_INPUT', null, 'p_approve is required');
+  'P0001', 'INVALID_INPUT', 'p_approve is required');
 
 -- ---- approve with permissions (missing = false)
 select public.decide_companion_link((select a from lk), true,
@@ -77,39 +77,39 @@ select is((select row(status::text, can_view_appointments, can_view_journey, can
            from public.companion_links where id = (select a from lk)),
           '(approved,f,f,t,t,f)', 'approve on an approved link replaces the permission flags');
 select throws_ok($$ select public.decide_companion_link((select a from lk), false) $$,
-  'INVALID_STATUS_CHANGE', null, 'an approved link cannot be "rejected" (revoke it instead)');
+  'P0001', 'INVALID_STATUS_CHANGE', 'an approved link cannot be "rejected" (revoke it instead)');
 
 -- ---- reject
 select public.decide_companion_link((select c from lk), false, '{"journey":true}');
 select is((select row(status::text, can_view_journey)::text from public.companion_links where id = (select c from lk)),
           '(rejected,f)', 'pending -> rejected, no permissions kept');
 select throws_ok($$ select public.decide_companion_link((select c from lk), true) $$,
-  'INVALID_STATUS_CHANGE', null, 'a rejected link cannot be approved later');
+  'P0001', 'INVALID_STATUS_CHANGE', 'a rejected link cannot be approved later');
 select throws_ok($$ select public.decide_companion_link((select c from lk), false) $$,
-  'INVALID_STATUS_CHANGE', null, 'a rejected link cannot be rejected again');
+  'P0001', 'INVALID_STATUS_CHANGE', 'a rejected link cannot be rejected again');
 
 -- ---- end: who may call it
 select tests.login_as((select c3 from u));
 select throws_ok($$ select public.end_companion_link((select a from lk)) $$,
-  'NOT_ALLOWED', null, 'another companion cannot end the link');
+  'P0001', 'NOT_ALLOWED', 'another companion cannot end the link');
 select tests.login_as((select pat2 from u));
 select throws_ok($$ select public.end_companion_link((select a from lk)) $$,
-  'NOT_ALLOWED', null, 'another patient cannot revoke the link');
+  'P0001', 'NOT_ALLOWED', 'another patient cannot revoke the link');
 select tests.login_as((select doc from u));
 select throws_ok($$ select public.end_companion_link((select a from lk)) $$,
-  'NOT_ALLOWED', null, 'a doctor cannot end the link');
+  'P0001', 'NOT_ALLOWED', 'a doctor cannot end the link');
 select tests.login_as((select pat from u));
-select throws_ok($$ select public.end_companion_link(gen_random_uuid()) $$, 'NOT_FOUND', null, 'unknown link');
+select throws_ok($$ select public.end_companion_link(gen_random_uuid()) $$, 'P0001', 'NOT_FOUND', 'unknown link');
 select throws_ok($$ select public.end_companion_link((select c from lk)) $$,
-  'INVALID_STATUS_CHANGE', null, 'a rejected link cannot be ended');
+  'P0001', 'INVALID_STATUS_CHANGE', 'a rejected link cannot be ended');
 
 -- ---- patient revokes, companion leaves
 select public.end_companion_link((select a from lk));
 select is((select status::text from public.companion_links where id = (select a from lk)), 'revoked', 'patient: approved -> revoked');
 select throws_ok($$ select public.end_companion_link((select a from lk)) $$,
-  'INVALID_STATUS_CHANGE', null, 'a revoked link cannot be ended again');
+  'P0001', 'INVALID_STATUS_CHANGE', 'a revoked link cannot be ended again');
 select throws_ok($$ select public.decide_companion_link((select a from lk), true) $$,
-  'INVALID_STATUS_CHANGE', null, 'a revoked link cannot be re-approved');
+  'P0001', 'INVALID_STATUS_CHANGE', 'a revoked link cannot be re-approved');
 
 select tests.login_as((select c2 from u));
 select public.end_companion_link((select b from lk));
