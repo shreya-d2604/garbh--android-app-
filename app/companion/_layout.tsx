@@ -1,36 +1,28 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { HeaderActions, palette } from '@/components';
+import { useCompanionLinksRealtime } from '@/features/companion/hooks';
 
-// Placeholder tab layout. Owner after the foundation: the companion agent (see AGENTS.md).
+/** Companion area: code entry -> waiting -> read-only views of each followed patient. */
 export default function CompanionLayout() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('companion');
+  // One live subscription for the whole area: approval, rejection and revocation update every screen.
+  useCompanionLinksRealtime();
   return (
-    <Tabs
+    <Stack
       screenOptions={{
         headerStyle: { backgroundColor: palette.cream },
         headerTitleStyle: { color: palette.maroon },
+        headerTintColor: palette.maroon,
         headerShadowVisible: false,
         headerRight: () => <HeaderActions />,
-        tabBarActiveTintColor: palette.rose,
-        tabBarStyle: { backgroundColor: palette.white },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('shell.home'),
-          tabBarIcon: ({ focused, size }) => (
-            <MaterialCommunityIcons
-              name="account-heart-outline"
-              color={focused ? palette.rose : palette.inkMuted}
-              size={size}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+      <Stack.Screen name="index" options={{ title: t('title') }} />
+      <Stack.Screen name="join" options={{ title: t('join.addAnotherTitle') }} />
+      <Stack.Screen name="people" options={{ title: t('people.title') }} />
+      <Stack.Screen name="[patientId]" options={{ headerShown: false }} />
+    </Stack>
   );
 }

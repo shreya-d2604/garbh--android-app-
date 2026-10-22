@@ -1,1 +1,238 @@
-{}
+{
+  "title": "Family",
+  "relations": {
+    "husband": "Husband",
+    "mother": "Mother",
+    "father": "Father",
+    "mother_in_law": "Mother-in-law",
+    "father_in_law": "Father-in-law",
+    "sibling": "Sibling",
+    "friend": "Friend",
+    "other": "Other"
+  },
+  "perms": {
+    "appointments": {
+      "label": "Appointments",
+      "hint": "Upcoming and past visits, and which doctors"
+    },
+    "journey": {
+      "label": "Pregnancy journey",
+      "hint": "Week, due date, baby's growth and the visit plan"
+    },
+    "summaries": {
+      "label": "Summaries and advice",
+      "hint": "Doctor-approved summaries and published advice"
+    },
+    "reports": {
+      "label": "Reports",
+      "hint": "Test reports and their checked values"
+    },
+    "prescriptions": {
+      "label": "Prescriptions",
+      "hint": "Medicines the doctor has prescribed"
+    },
+    "notifications": {
+      "label": "Send updates",
+      "hint": "Reminders and new summaries, for the things above"
+    }
+  },
+  "sections": {
+    "journey": "Journey",
+    "appointments": "Appointments",
+    "summaries": "Summaries",
+    "reports": "Reports",
+    "prescriptions": "Prescriptions"
+  },
+  "join": {
+    "title": "Follow a family member",
+    "subtitle": "Enter the code she shared with you, and tell us who you are to her.",
+    "addAnotherTitle": "Follow someone else",
+    "codeLabel": "Code",
+    "codeHint": "Six letters and numbers, like K7M-Q2P",
+    "codeInvalid": "Enter all 6 characters of the code",
+    "relationTitle": "You are her...",
+    "relationRequired": "Please choose how you are related",
+    "submit": "Send request",
+    "codeRejected": "That code is not valid, or it has expired. Please check it or ask for a new one.",
+    "notice": {
+      "rejected": "Your last request was declined. You can try again with a new code.",
+      "revoked": "Your access was ended. To follow again, ask for a new code."
+    }
+  },
+  "waiting": {
+    "title": "Waiting for approval",
+    "message": "Your request has been sent. This screen updates by itself as soon as it is approved.",
+    "sent": "Sent {{when}}",
+    "cancel": "Cancel request",
+    "cancelTitle": "Cancel this request?",
+    "cancelMessage": "You will need a new code to ask again.",
+    "cancelConfirm": "Cancel request"
+  },
+  "people": {
+    "title": "People you follow",
+    "following": "Following",
+    "pending": "Waiting for approval",
+    "waiting": "Waiting",
+    "viewing": "Viewing",
+    "unnamed": "Family member",
+    "open": "Open {{name}}",
+    "add": "Follow someone else",
+    "leave": "Stop following",
+    "leaveTitle": "Stop following?",
+    "leaveMessage": "You will no longer see updates for {{name}}. You will need a new code to follow again.",
+    "leaveConfirm": "Stop following",
+    "emptyTitle": "You are not following anyone yet",
+    "emptyMessage": "Ask your family member for her GARBH code to get started."
+  },
+  "home": {
+    "title": "Home",
+    "sections": "More details",
+    "switch": "Switch person or manage who you follow",
+    "manage": "Manage who you follow",
+    "nothingShared": "She has not shared any details with you yet. You can ask her to turn some on."
+  },
+  "journey": {
+    "cardLabel": "Pregnancy journey",
+    "weekDay": "Week {{weeks}} + {{days}} days",
+    "trimester": {
+      "1": "1st trimester",
+      "2": "2nd trimester",
+      "3": "3rd trimester"
+    },
+    "daysToGo_one": "{{count}} day to go, due {{date}}",
+    "daysToGo_other": "{{count}} days to go, due {{date}}",
+    "pastDue": "Past the due date of {{date}}",
+    "babySize": "The baby is about the size of a {{size}}.",
+    "noPregnancy": "No active pregnancy",
+    "thisWeek": "Week {{week}}",
+    "length": "about {{value}} cm long",
+    "weight": "about {{value}} g",
+    "motherChanges": "Changes for mum",
+    "tips": "Tips",
+    "visitPlan": "Visit plan",
+    "noVisits": "No visits planned yet",
+    "targetWeek": "Week {{week}}"
+  },
+  "visitStatus": {
+    "planned": "Planned",
+    "scheduled": "Booked",
+    "completed": "Done",
+    "missed": "Missed",
+    "skipped": "Skipped",
+    "cancelled": "Cancelled"
+  },
+  "appointments": {
+    "next": "Next appointment",
+    "upcoming": "Upcoming",
+    "earlier": "Earlier",
+    "noneUpcoming": "No upcoming appointments",
+    "emptyTitle": "No appointments yet",
+    "emptyMessage": "Appointments will show up here once they are booked."
+  },
+  "summaries": {
+    "latest": "Latest summary",
+    "noneYet": "No summary yet",
+    "reviewed": "Doctor reviewed",
+    "reportSummaries": "Report summaries",
+    "doctorAdvice": "Doctor's advice",
+    "diet": "Food advice",
+    "tips": "Tips",
+    "nextVisit_one": "Next visit in about {{count}} week",
+    "nextVisit_other": "Next visit in about {{count}} weeks",
+    "emptyTitle": "No summaries yet",
+    "emptyMessage": "Summaries appear here after the doctor has checked them."
+  },
+  "reports": {
+    "emptyTitle": "No reports yet",
+    "emptyMessage": "Reports appear here once they are added.",
+    "reviewed": "Doctor reviewed",
+    "noValues": "No checked values yet",
+    "flag": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "abnormal": "Check"
+    }
+  },
+  "reportTypes": {
+    "blood": "Blood test",
+    "urine": "Urine test",
+    "ultrasound": "Ultrasound",
+    "nt_scan": "NT scan",
+    "anomaly_scan": "Anomaly scan",
+    "growth_scan": "Growth scan",
+    "doppler": "Doppler",
+    "gtt": "Glucose test",
+    "thyroid": "Thyroid test",
+    "ecg": "ECG",
+    "other": "Report"
+  },
+  "prescriptions": {
+    "current": "Taking now",
+    "earlier": "Earlier",
+    "noneCurrent": "No current medicines",
+    "noDose": "See the doctor's instructions",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "until": "until {{date}}",
+    "emptyTitle": "No prescriptions yet",
+    "emptyMessage": "Medicines prescribed by the doctor appear here."
+  },
+  "my": {
+    "title": "My companions",
+    "intro": "Family members you invite can follow your pregnancy. You choose what each person can see, and you can stop sharing at any time.",
+    "invite": "Invite someone",
+    "requests": "New requests",
+    "companions": "People who can follow you",
+    "newChip": "New",
+    "unnamed": "Family member",
+    "canSee": "Can see: {{list}}",
+    "canSeeNothing": "Can only see your name",
+    "emptyTitle": "No companions yet",
+    "emptyMessage": "Invite a family member with a code. They ask to join, and you decide what they see.",
+    "unverifiedTitle": "Companions unlock after verification",
+    "unverifiedMessage": "Please visit the hospital desk with a photo ID to verify your account. After that you can invite family members here."
+  },
+  "invite": {
+    "title": "Invite someone",
+    "intro": "Make a code and send it to your family member. It works once and expires in 24 hours.",
+    "create": "Make a code",
+    "yourCode": "Your code",
+    "onceNote": "For your safety the code is shown only here, once. Leaving this screen keeps it, but closing the app does not.",
+    "expiresIn": "Expires in {{time}}",
+    "hoursMinutes": "{{hours}}h {{minutes}}m",
+    "minutes": "{{minutes}} min",
+    "copy": "Copy code",
+    "copied": "Copied",
+    "share": "Share code",
+    "shareMessage": "Join me on GARBH to follow my pregnancy. Install the app, choose \"I'm a family member\" and enter this code: {{code}} (valid for 24 hours).",
+    "newCode": "Make a new code",
+    "newCodeHint": "A new code stops the old one from working.",
+    "lostCode": "You made a code earlier. For safety it can only be seen once. Make a new code to see it again.",
+    "expired": "That code has expired. Make a new one.",
+    "used": "Someone used your code and is waiting for your approval.",
+    "review": "Review requests"
+  },
+  "request": {
+    "title": "Review request",
+    "intro": "{{name}} ({{relation}}) wants to follow your pregnancy. Choose what they can see. You can change this any time.",
+    "approve": "Approve",
+    "decline": "Decline",
+    "declineTitle": "Decline this request?",
+    "declineMessage": "They will not get access. They would need a new code to ask again.",
+    "declineConfirm": "Decline",
+    "closed": "This request is no longer open.",
+    "back": "Back to my companions"
+  },
+  "detail": {
+    "title": "Companion",
+    "since": "Following since {{date}}",
+    "save": "Save changes",
+    "saved": "Saved",
+    "stop": "Stop sharing",
+    "stopTitle": "Stop sharing?",
+    "stopMessage": "{{name}} will lose access straight away. You can invite them again later with a new code.",
+    "stopConfirm": "Stop sharing",
+    "closed": "This person no longer has access."
+  }
+}
