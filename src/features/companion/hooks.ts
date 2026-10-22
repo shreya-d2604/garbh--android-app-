@@ -46,7 +46,9 @@ export function useRedeemCode() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (v: { code: string; relation: string }) => redeemCode(v.code, v.relation),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: COMPANION_KEY }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: COMPANION_KEY });
+    },
   });
 }
 
@@ -86,7 +88,9 @@ export function useCreateInvite() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createInvite,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: PATIENT_KEY }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: PATIENT_KEY });
+    },
   });
 }
 
@@ -95,7 +99,9 @@ export function useDecideLink() {
   return useMutation({
     mutationFn: (v: { linkId: string; approve: boolean; permissions: PermissionState }) =>
       decideLink(v.linkId, v.approve, v.permissions),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: COMPANION_KEY }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: COMPANION_KEY });
+    },
   });
 }
 
@@ -104,6 +110,8 @@ export function useEndLink() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (linkId: string) => endLink(linkId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: COMPANION_KEY }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: COMPANION_KEY });
+    },
   });
 }

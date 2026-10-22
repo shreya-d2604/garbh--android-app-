@@ -76,10 +76,12 @@ export function CodeEntryForm({ onRedeemed }: Props) {
             <Chip
               key={r}
               selected={relation === r}
-              showSelectedOverlay
+              showSelectedCheck={false}
+              mode="outlined"
+              selectedColor={palette.maroon}
               onPress={() => setRelation(r)}
               accessibilityLabel={t(`relations.${r}`)}
-              style={styles.chip}
+              style={[styles.chip, relation === r && styles.chipSelected]}
             >
               {t(`relations.${r}`)}
             </Chip>
@@ -114,5 +116,6 @@ const styles = StyleSheet.create({
   relations: { gap: spacing.sm },
   relationTitle: { color: palette.maroon },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip: { minHeight: 40, justifyContent: 'center' },
+  chip: { minHeight: 40, justifyContent: 'center', backgroundColor: palette.white },
+  chipSelected: { backgroundColor: palette.roseSoft, borderColor: palette.rose },
 });
