@@ -2,7 +2,7 @@
 begin;
 \ir helpers/setup.psql
 \ir helpers/doctor.psql
-select plan(60);
+select plan(57);
 
 create temp table u as select
   tests.create_user('prim@x.test',   'doctor')       as prim,
