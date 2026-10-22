@@ -1,8 +1,28 @@
 // Reports, lab values and trends (PLAN.md §7.2 #5). Only verified values are ever charted.
+import type { ComponentProps } from 'react';
+
+import type { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { gestationalAge, type ISODate } from '@/domain/pregnancy-math';
 
 import { localDayKey } from './dates';
-import type { Consultation, LabResult, PublishedSummary, Report } from './types';
+import type { Consultation, LabResult, PublishedSummary, Report, ReportType } from './types';
+
+type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+export const REPORT_ICON: Record<ReportType, IconName> = {
+  blood: 'water',
+  urine: 'flask-outline',
+  ultrasound: 'baby-face-outline',
+  nt_scan: 'baby-face-outline',
+  anomaly_scan: 'baby-face-outline',
+  growth_scan: 'baby-face-outline',
+  doppler: 'baby-face-outline',
+  gtt: 'water-percent',
+  thyroid: 'flask-outline',
+  ecg: 'heart-pulse',
+  other: 'file-document-outline',
+};
 
 export type TrimesterGroup = 1 | 2 | 3 | 0; // 0 = date unknown
 

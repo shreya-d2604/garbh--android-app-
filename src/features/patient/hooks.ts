@@ -1,15 +1,20 @@
 // TanStack Query hooks for the patient area. Keys start with ['patient', ...] (AGENTS.md §4).
 // Appointments refresh live through Realtime; everything else refetches on mutation or pull.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { todayISO } from '@/domain/pregnancy-math';
+import { todayISO, type ISODate } from '@/domain/pregnancy-math';
 import { useRealtimeInvalidate } from '@/lib/realtime';
 import { useSession } from '@/lib/session';
 
 import * as api from './api';
 import type { BookArgs, RescheduleArgs } from './api';
 import { slotRange } from './booking';
+import { mergeCareGuide, patientConditionTags, type CareGuide } from './care-guide';
+import { buildMilestonePath, journeySnapshot, type PathNode } from './journey';
+import { groupPrescriptions, type PrescriptionGroup } from './medicines';
+import { buildTrends, type Trends } from './reports';
+import { parseSummary } from './summary';
 import type { CareTeamMember, DoctorEntry } from './types';
 
 /** What the screens need from a query (a subset of UseQueryResult, also built from two queries). */
@@ -25,6 +30,19 @@ const STATIC_STALE = 10 * 60_000; // catalogs change rarely
 
 function useUserId(): string | undefined {
   return useSession((s) => s.profile?.id);
+}
+
+/** Pull-to-refresh for a screen: refetches every active patient query. */
+export function usePullToRefresh() {
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    void queryClient
+      .invalidateQueries({ queryKey: ['patient'] })
+      .finally(() => setRefreshing(false));
+  }, [queryClient]);
+  return { refreshing, onRefresh };
 }
 
 // ------------------------------------------------------------------ context
@@ -188,6 +206,34 @@ export function useMilestones() {
   });
 }
 
+/** Milestone path for the journey screen: visits joined with milestones around today's GA. */
+export function useMilestonePath(edd: ISODate, rhNegative: boolean | null): QueryState<PathNode[]> {
+  const visits = useVisits();
+  const milestones = useMilestones();
+  const today = todayISO();
+  const data = useMemo(() => {
+    if (!visits.data || !milestones.data) return undefined;
+    const { ga } = journeySnapshot(edd, today);
+    return buildMilestonePath({
+      visits: visits.data,
+      milestones: milestones.data,
+      ga,
+      today,
+      rhNegative,
+    });
+  }, [visits.data, milestones.data, edd, today, rhNegative]);
+  return {
+    data,
+    isLoading: visits.isLoading || milestones.isLoading,
+    isError: visits.isError || milestones.isError,
+    isRefetching: visits.isRefetching || milestones.isRefetching,
+    refetch: () => {
+      void visits.refetch();
+      void milestones.refetch();
+    },
+  };
+}
+
 export function useWeekContent() {
   return useQuery({
     queryKey: ['patient', 'week-content'],
@@ -303,4 +349,98 @@ export function useReportFileUrl(storagePath: string | undefined) {
     gcTime: 0,
     retry: false,
   });
+}
+
+// ------------------------------------------------------------------ combined views
+
+/** Chart series: verified lab values plus vitals from published consultations. */
+export function useTrends(edd: ISODate): QueryState<Trends> {
+  const labs = usePregnancyLabResults();
+  const consultations = useConsultations();
+  const data = useMemo(
+    () =>
+      labs.data && consultations.data ? buildTrends(labs.data, consultations.data, edd) : undefined,
+    [labs.data, consultations.data, edd],
+  );
+  return {
+    data,
+    isLoading: labs.isLoading || consultations.isLoading,
+    isError: labs.isError || consultations.isError,
+    isRefetching: labs.isRefetching || consultations.isRefetching,
+    refetch: () => {
+      void labs.refetch();
+      void consultations.refetch();
+    },
+  };
+}
+
+export interface CareGuideData {
+  guide: CareGuide;
+  /** Name of the doctor who approved the latest summary, if known. */
+  doctorName: string | null;
+}
+
+/** Curated guidance merged with the latest published summary (PLAN.md §7.2 #6). */
+export function useCareGuide(
+  trimester: number,
+  chronicConditions: string[],
+  riskFactors: string[],
+): QueryState<CareGuideData> {
+  const curated = useGuidance();
+  const summaries = usePublishedSummaries();
+  const doctors = useDoctorMap();
+  const data = useMemo(() => {
+    if (!curated.data || !summaries.data) return undefined;
+    const latest = summaries.data[0];
+    const summary = latest ? parseSummary(latest.final) : null;
+    const guide = mergeCareGuide({
+      curated: curated.data,
+      summary,
+      trimester,
+      tags: patientConditionTags(chronicConditions, riskFactors),
+    });
+    const doctorName = latest?.reviewed_by
+      ? (doctors.get(latest.reviewed_by)?.full_name ?? null)
+      : null;
+    return { guide, doctorName };
+  }, [curated.data, summaries.data, doctors, trimester, chronicConditions, riskFactors]);
+  return {
+    data,
+    isLoading: curated.isLoading || summaries.isLoading,
+    isError: curated.isError || summaries.isError,
+    isRefetching: curated.isRefetching || summaries.isRefetching,
+    refetch: () => {
+      void curated.refetch();
+      void summaries.refetch();
+    },
+  };
+}
+
+export interface PrescriptionData {
+  /** All items (for "today's medicines"). */
+  items: PrescriptionGroup['items'];
+  groups: PrescriptionGroup[];
+}
+
+/** Medicines and per-visit history (PLAN.md §7.2 #7). */
+export function usePrescriptions(): QueryState<PrescriptionData> {
+  const consultations = useConsultations();
+  const items = usePrescriptionItems();
+  const data = useMemo(
+    () =>
+      consultations.data && items.data
+        ? { items: items.data, groups: groupPrescriptions(consultations.data, items.data) }
+        : undefined,
+    [consultations.data, items.data],
+  );
+  return {
+    data,
+    isLoading: consultations.isLoading || items.isLoading,
+    isError: consultations.isError || items.isError,
+    isRefetching: consultations.isRefetching || items.isRefetching,
+    refetch: () => {
+      void consultations.refetch();
+      void items.refetch();
+    },
+  };
 }

@@ -32,6 +32,11 @@ export class ApiError extends Error {
   }
 }
 
+/** i18n key (namespace `common`) for any error thrown by this module. */
+export function apiErrorKey(error: unknown): string {
+  return error instanceof ApiError && error.code ? `errors.${error.code}` : 'errors.GENERIC';
+}
+
 function unwrap<T>(res: {
   data: T;
   error: { message?: string; code?: string } | null;
@@ -64,7 +69,7 @@ export async function fetchPatientContext(userId: string): Promise<PatientContex
     supabase
       .from('hospital_settings')
       .select(
-        'name, phone, timezone, min_lead_hours, max_advance_days, patient_cancel_cutoff_hours, unverified_max_upcoming, verified_max_upcoming',
+        'name, address, phone, timezone, min_lead_hours, max_advance_days, patient_cancel_cutoff_hours, unverified_max_upcoming, verified_max_upcoming',
       )
       .eq('id', 1)
       .single(),

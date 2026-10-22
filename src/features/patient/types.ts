@@ -24,6 +24,7 @@ export type PregnancyBasics = Pick<
 export type HospitalSettings = Pick<
   Row<'hospital_settings'>,
   | 'name'
+  | 'address'
   | 'phone'
   | 'timezone'
   | 'min_lead_hours'
