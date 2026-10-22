@@ -24,6 +24,13 @@ describe('adminErrorKey', () => {
     ).toBe('common:errors.MRN_TAKEN');
   });
 
+  it('knows the second active pregnancy and a failed invite email', () => {
+    expect(adminErrorKey({ code: '23505', message: 'duplicate key value violates unique constraint "pregnancies_one_active_per_patient"' })).toBe(
+      'admin:errors.ACTIVE_PREGNANCY',
+    );
+    expect(adminErrorKey({ message: 'INVITE_FAILED' })).toBe('admin:users.inviteFailed');
+  });
+
   it('maps rows still in use and Edge Function codes', () => {
     expect(adminErrorKey({ code: '23503' })).toBe('admin:errors.IN_USE');
     expect(adminErrorKey({ message: 'EMAIL_TAKEN' })).toBe('admin:errors.EMAIL_TAKEN');
