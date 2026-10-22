@@ -58,3 +58,20 @@ export function handOverCandidates(
       return ba - bb || a.name.localeCompare(b.name);
     });
 }
+
+/** Joins active care_team rows with the doctor directory (names). Unknown doctors show as "Doctor". */
+export function toTeamMembers(
+  rows: readonly { id: string; doctor_id: string; care_role: CareRole; note: string | null }[],
+  directory: readonly DoctorOption[],
+  fallbackName: string,
+): CareTeamMember[] {
+  return sortTeam(
+    rows.map((r) => ({
+      id: r.id,
+      doctorId: r.doctor_id,
+      role: r.care_role,
+      name: directory.find((d) => d.id === r.doctor_id)?.name ?? fallbackName,
+      note: r.note,
+    })),
+  );
+}

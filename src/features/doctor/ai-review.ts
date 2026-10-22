@@ -104,3 +104,14 @@ export function labDisplayValue(r: Pick<LabResultRow, 'value_num' | 'value_text'
   return r.value_text ?? '';
 }
 
+
+/**
+ * Error code of a failed Edge Function call. The function's own `{ error: CODE }` wins; a 404
+ * without it means the function is not deployed yet (backend not merged) -> NOT_IMPLEMENTED.
+ */
+export function parseFunctionError(status: number | null, body: unknown): string {
+  if (body && typeof body === 'object' && 'error' in body && typeof (body as { error: unknown }).error === 'string') {
+    return (body as { error: string }).error;
+  }
+  return status === 404 ? 'NOT_IMPLEMENTED' : 'GENERIC';
+}
