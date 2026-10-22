@@ -1,0 +1,75 @@
+-- Reception pgTAP helpers. Include AFTER helpers/setup.psql:
+--   \ir helpers/setup.psql
+--   \ir helpers/reception.psql
+-- Everything here lives inside the test transaction and is rolled back with it.
+
+-- Pin the booking rules to the documented defaults so a test never depends on another agent's edits.
+update public.hospital_settings
+   set min_lead_hours = 2, max_advance_days = 60, patient_cancel_cutoff_hours = 4,
+       unverified_max_upcoming = 1, verified_max_upcoming = 3, timezone = 'Asia/Kolkata'
+ where id = 1;
+
+-- A timestamptz on the 15-minute slot grid, at least p_hours from now() (now() is fixed per transaction).
+create function tests.rc_in(p_hours numeric) returns timestamptz language sql stable as $$
+  select to_timestamp(ceil(extract(epoch from now() + p_hours * interval '1 hour') / 900) * 900)
+$$;
+
+-- Wall-clock time in the hospital timezone.
+create function tests.rc_at(p_date date, p_time time) returns timestamptz language sql immutable as $$
+  select (p_date + p_time) at time zone 'Asia/Kolkata'
+$$;
+
+-- First Monday at least 8 days from today (inside the 60-day advance window, outside the lead time).
+create function tests.rc_monday() returns date language sql stable as $$
+  select b.base + ((1 - extract(dow from b.base)::int + 7) % 7)
+  from (select public.hospital_today() + 8 as base) b
+$$;
+
+-- A doctor who works every day 00:00-24:00 in 15-minute slots (a free slot exists around the clock).
+create function tests.rc_open_doctor(p_email text, p_accepts boolean default true) returns uuid
+language plpgsql as $$
+declare v uuid := tests.create_user(p_email, 'doctor');
+begin
+  insert into public.staff_details (profile_id, accepts_new_patients) values (v, p_accepts);
+  insert into public.doctor_availability (doctor_id, weekday, start_time, end_time, slot_minutes)
+  select v, d, time '00:00', time '24:00', 15 from generate_series(0, 6) d;
+  return v;
+end $$;
+
+-- A self-registered (app) patient: unverified, no MRN, no care team. Returns the pregnancy id.
+create function tests.rc_app_patient(p_user uuid, p_name text default 'App Patient', p_weeks int default 8)
+returns uuid language plpgsql as $$
+declare v_patient uuid; v_preg uuid;
+begin
+  insert into public.patients (user_id, full_name, registration_source, email, created_by)
+  values (p_user, p_name, 'app', 'app-' || substr(gen_random_uuid()::text, 1, 8) || '@x.test', p_user)
+  returning id into v_patient;
+  insert into public.pregnancies (patient_id, lmp_date, lmp_source)
+  values (v_patient, public.hospital_today() - p_weeks * 7, 'patient_reported')
+  returning id into v_preg;
+  return v_preg;
+end $$;
+
+create function tests.rc_patient_of(p_pregnancy uuid) returns uuid language sql stable as $$
+  select patient_id from public.pregnancies where id = p_pregnancy
+$$;
+
+-- Insert an appointment directly (as the superuser) to set up exact timings.
+create function tests.rc_appt(p_pregnancy uuid, p_doctor uuid, p_starts timestamptz,
+                              p_status public.appt_status default 'booked', p_minutes int default 15)
+returns uuid language plpgsql as $$
+declare v uuid;
+begin
+  insert into public.appointments (patient_id, pregnancy_id, doctor_id, starts_at, ends_at, status, booking_channel)
+  values (tests.rc_patient_of(p_pregnancy), p_pregnancy, p_doctor, p_starts, p_starts + p_minutes * interval '1 minute', p_status, 'reception')
+  returning id into v;
+  return v;
+end $$;
+
+-- Set the JWT claims (auth.uid()) but stay the superuser, to call private.* helpers as that user.
+create function tests.claims_as(p_uid uuid) returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+end $$;
+
+grant execute on all functions in schema tests to authenticated, anon;

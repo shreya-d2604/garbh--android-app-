@@ -87,7 +87,7 @@ end $$;
 
 -- The one place where an appointment row is created. Caller (public RPC) has already resolved
 -- the role, patient and pregnancy. Order of checks: doctor -> care team -> slot -> time off ->
--- lead/advance (patient) -> max upcoming (patient) -> visit -> free slot -> insert.
+-- lead/advance (patient) -> max upcoming (patient, new bookings only) -> visit -> free slot -> insert.
 create function private.book_core(
   p_role public.user_role, p_patient uuid, p_pregnancy uuid, p_doctor uuid,
   p_starts_at timestamptz, p_visit uuid, p_reason text, p_rescheduled_from uuid
@@ -163,12 +163,15 @@ begin
     if p_starts_at > now() + make_interval(days => v_set.max_advance_days) then
       raise exception 'TOO_FAR_AHEAD';
     end if;
-    select pt.verified_at is not null into v_verified from public.patients pt where pt.id = p_patient;
-    select count(*) into v_upcoming from public.appointments a
-    where a.patient_id = p_patient and a.status in ('booked', 'confirmed') and a.ends_at > now();
-    v_limit := case when v_verified then v_set.verified_max_upcoming else v_set.unverified_max_upcoming end;
-    if v_upcoming >= v_limit then
-      raise exception 'MAX_UPCOMING';
+    -- A reschedule replaces an appointment, so it never adds to the count.
+    if p_rescheduled_from is null then
+      select pt.verified_at is not null into v_verified from public.patients pt where pt.id = p_patient;
+      select count(*) into v_upcoming from public.appointments a
+      where a.patient_id = p_patient and a.status in ('booked', 'confirmed') and a.ends_at > now();
+      v_limit := case when v_verified then v_set.verified_max_upcoming else v_set.unverified_max_upcoming end;
+      if v_upcoming >= v_limit then
+        raise exception 'MAX_UPCOMING';
+      end if;
     end if;
   elsif v_ends <= now() then
     -- Staff bypass lead time and advance window, but cannot book a slot that is already over.
