@@ -47,17 +47,25 @@ describe('pregnancy management form', () => {
 
   it('needs at least one date and rejects impossible ones', () => {
     expect(issues({ ...defaults, lmp_date: '' })).toEqual(['lmp_date:doctor:validation.needDates']);
-    expect(issues({ ...defaults, lmp_date: '2026-09-21' })).toEqual(['lmp_date:doctor:validation.lmpFuture']);
-    expect(issues({ ...defaults, lmp_date: '2025-01-01' })).toEqual(['lmp_date:doctor:validation.lmpOld']);
+    expect(issues({ ...defaults, lmp_date: '2026-09-21' })).toEqual([
+      'lmp_date:doctor:validation.lmpFuture',
+    ]);
+    expect(issues({ ...defaults, lmp_date: '2025-01-01' })).toEqual([
+      'lmp_date:doctor:validation.lmpOld',
+    ]);
     expect(issues({ ...defaults, lmp_date: '', edd_usg: '2027-01-10' })).toEqual([]);
-    expect(issues({ ...defaults, edd_usg: '2028-01-10' })).toEqual(['edd_usg:doctor:validation.eddRange']);
+    expect(issues({ ...defaults, edd_usg: '2028-01-10' })).toEqual([
+      'edd_usg:doctor:validation.eddRange',
+    ]);
   });
 
   it('validates the obstetric counts and the number of babies', () => {
     expect(issues({ ...defaults, gravida: '25' })).toEqual(['gravida:doctor:validation.count']);
     expect(issues({ ...defaults, para: 'x' })).toEqual(['para:doctor:validation.count']);
     expect(issues({ ...defaults, gravida: '' })).toEqual([]);
-    expect(issues({ ...defaults, multiple_gestation: '0' })).toEqual(['multiple_gestation:doctor:validation.multiple']);
+    expect(issues({ ...defaults, multiple_gestation: '0' })).toEqual([
+      'multiple_gestation:doctor:validation.multiple',
+    ]);
     expect(issues({ ...defaults, multiple_gestation: '2' })).toEqual([]);
   });
 
@@ -68,7 +76,9 @@ describe('pregnancy management form', () => {
 
   it('marks dates as clinician-confirmed when changed or confirmed, otherwise leaves the source alone', () => {
     expect(toPregnancyPatch(defaults, defaults)).not.toHaveProperty('lmp_source');
-    expect(toPregnancyPatch({ ...defaults, confirmed: true }, defaults).lmp_source).toBe('clinician');
+    expect(toPregnancyPatch({ ...defaults, confirmed: true }, defaults).lmp_source).toBe(
+      'clinician',
+    );
     expect(toPregnancyPatch({ ...defaults, edd_usg: '2027-01-08' }, defaults)).toMatchObject({
       edd_usg: '2027-01-08',
       lmp_source: 'clinician',
@@ -77,9 +87,20 @@ describe('pregnancy management form', () => {
 
   it('builds the patch with numbers, lists and nulls', () => {
     expect(
-      toPregnancyPatch({ ...defaults, gravida: '', risk_level: 'high', risk_factors: 'GDM, Age > 35, gdm' }, defaults),
-    ).toMatchObject({ gravida: null, para: 1, risk_level: 'high', risk_factors: ['GDM', 'Age > 35'], multiple_gestation: 1 });
-    expect(toMedicalPatch({ ...defaults, blood_group: '', allergies: 'a, b', rh_negative: true })).toEqual({
+      toPregnancyPatch(
+        { ...defaults, gravida: '', risk_level: 'high', risk_factors: 'GDM, Age > 35, gdm' },
+        defaults,
+      ),
+    ).toMatchObject({
+      gravida: null,
+      para: 1,
+      risk_level: 'high',
+      risk_factors: ['GDM', 'Age > 35'],
+      multiple_gestation: 1,
+    });
+    expect(
+      toMedicalPatch({ ...defaults, blood_group: '', allergies: 'a, b', rh_negative: true }),
+    ).toEqual({
       blood_group: null,
       rh_negative: true,
       allergies: ['a', 'b'],
@@ -94,9 +115,25 @@ describe('pregnancy management form', () => {
   });
 
   it('closing a pregnancy needs an outcome and a date that is not in the future', () => {
-    const ok = outcomeSchema(TODAY).safeParse({ status: 'delivered', outcome_date: '2026-09-20', outcome_notes: '' });
+    const ok = outcomeSchema(TODAY).safeParse({
+      status: 'delivered',
+      outcome_date: '2026-09-20',
+      outcome_notes: '',
+    });
     expect(ok.success).toBe(true);
-    expect(outcomeSchema(TODAY).safeParse({ status: 'delivered', outcome_date: '2026-09-21', outcome_notes: '' }).success).toBe(false);
-    expect(outcomeSchema(TODAY).safeParse({ status: 'active', outcome_date: '2026-09-20', outcome_notes: '' }).success).toBe(false);
+    expect(
+      outcomeSchema(TODAY).safeParse({
+        status: 'delivered',
+        outcome_date: '2026-09-21',
+        outcome_notes: '',
+      }).success,
+    ).toBe(false);
+    expect(
+      outcomeSchema(TODAY).safeParse({
+        status: 'active',
+        outcome_date: '2026-09-20',
+        outcome_notes: '',
+      }).success,
+    ).toBe(false);
   });
 });

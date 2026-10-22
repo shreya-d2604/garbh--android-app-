@@ -50,7 +50,9 @@ describe('AI review helpers', () => {
     const draft = doc();
     const final = doc({ headline: 'Edited' });
     expect(documentFromRow({ draft, final })?.summary.headline).toBe('Edited');
-    expect(documentFromRow({ draft, final: null })?.summary.headline).toBe('Your haemoglobin is slightly low.');
+    expect(documentFromRow({ draft, final: null })?.summary.headline).toBe(
+      'Your haemoglobin is slightly low.',
+    );
     expect(documentFromRow({ draft: { nope: true }, final: null })).toBeNull();
     expect(documentFromRow({ draft: null, final: null })).toBeNull();
   });
@@ -58,7 +60,10 @@ describe('AI review helpers', () => {
   it('requires a headline and a summary before publishing', () => {
     expect(documentIssues(doc())).toEqual([]);
     expect(documentIssues(doc({ headline: ' ' }))).toEqual(['ai.issues.headline']);
-    expect(documentIssues(doc({ headline: '', plain_language_summary: '' }))).toEqual(['ai.issues.headline', 'ai.issues.summary']);
+    expect(documentIssues(doc({ headline: '', plain_language_summary: '' }))).toEqual([
+      'ai.issues.headline',
+      'ai.issues.summary',
+    ]);
   });
 
   it('trims text and drops empty list entries, keeping the doctor-only flags', () => {
@@ -66,7 +71,10 @@ describe('AI review helpers', () => {
       doc({
         headline: '  Hi ',
         lifestyle_tips: [' Rest ', ' ', ''],
-        foods_to_eat: [{ item: ' ', why: 'x' }, { item: ' Dates ', why: ' Iron ' }],
+        foods_to_eat: [
+          { item: ' ', why: 'x' },
+          { item: ' Dates ', why: ' Iron ' },
+        ],
         key_findings: [{ finding: ' ', status: 'normal', explanation: '' }],
       }),
     );
@@ -85,19 +93,27 @@ describe('AI review helpers', () => {
   });
 
   it('picks the Edge Function that regenerates each kind of summary', () => {
-    expect(regenerateRequest({ source_type: 'report', source_id: 'r1', pregnancy_id: 'p1' })).toEqual({
+    expect(
+      regenerateRequest({ source_type: 'report', source_id: 'r1', pregnancy_id: 'p1' }),
+    ).toEqual({
       name: 'process-report',
       body: { report_id: 'r1' },
     });
-    expect(regenerateRequest({ source_type: 'consultation', source_id: 'c1', pregnancy_id: 'p1' })).toEqual({
+    expect(
+      regenerateRequest({ source_type: 'consultation', source_id: 'c1', pregnancy_id: 'p1' }),
+    ).toEqual({
       name: 'summarize-consultation',
       body: { consultation_id: 'c1' },
     });
-    expect(regenerateRequest({ source_type: 'cumulative', source_id: null, pregnancy_id: 'p1' })).toEqual({
+    expect(
+      regenerateRequest({ source_type: 'cumulative', source_id: null, pregnancy_id: 'p1' }),
+    ).toEqual({
       name: 'summarize-pregnancy',
       body: { pregnancy_id: 'p1' },
     });
-    expect(regenerateRequest({ source_type: 'report', source_id: null, pregnancy_id: 'p1' })).toBeNull();
+    expect(
+      regenerateRequest({ source_type: 'report', source_id: null, pregnancy_id: 'p1' }),
+    ).toBeNull();
   });
 
   it('maps Edge Function errors to messages', () => {
@@ -126,7 +142,10 @@ describe('inbox sections', () => {
   ];
 
   it('puts drafts under "to review", newest first', () => {
-    expect(filterInbox(rows, 'review').map((r) => r.created_at)).toEqual(['2026-09-02T00:00:00Z', '2026-09-01T00:00:00Z']);
+    expect(filterInbox(rows, 'review').map((r) => r.created_at)).toEqual([
+      '2026-09-02T00:00:00Z',
+      '2026-09-01T00:00:00Z',
+    ]);
   });
 
   it('groups finished and problem summaries', () => {
@@ -140,7 +159,9 @@ describe('inbox sections', () => {
 describe('function errors', () => {
   it('uses the function error code, or NOT_IMPLEMENTED for a missing function', () => {
     expect(parseFunctionError(403, { error: 'NOT_ON_CARE_TEAM' })).toBe('NOT_ON_CARE_TEAM');
-    expect(parseFunctionError(404, { code: 'NOT_FOUND', message: 'Requested function was not found' })).toBe('NOT_IMPLEMENTED');
+    expect(
+      parseFunctionError(404, { code: 'NOT_FOUND', message: 'Requested function was not found' }),
+    ).toBe('NOT_IMPLEMENTED');
     expect(parseFunctionError(404, null)).toBe('NOT_IMPLEMENTED');
     expect(parseFunctionError(502, { error: 'AI_FAILED' })).toBe('AI_FAILED');
     expect(parseFunctionError(500, 'oops')).toBe('GENERIC');

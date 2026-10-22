@@ -53,7 +53,8 @@ export function countOverdueVisits(
   visits: readonly Pick<VisitRow, 'status' | 'due_to'>[],
   today: ISODate,
 ): number {
-  return visits.filter((v) => v.status === 'planned' && v.due_to != null && v.due_to < today).length;
+  return visits.filter((v) => v.status === 'planned' && v.due_to != null && v.due_to < today)
+    .length;
 }
 
 export function applyPatientFilters(
@@ -69,7 +70,8 @@ export function applyPatientFilters(
     .filter((i) => !f.overdueOnly || i.overdueVisits > 0)
     .filter((i) => f.trimester === null || gaFromEdd(i.eddFinal, today)?.trimester === f.trimester)
     .filter(
-      (i) => q === '' || i.name.toLowerCase().includes(q) || (i.mrn ?? '').toLowerCase().includes(q),
+      (i) =>
+        q === '' || i.name.toLowerCase().includes(q) || (i.mrn ?? '').toLowerCase().includes(q),
     )
     .sort((a, b) => a.name.localeCompare(b.name));
 }

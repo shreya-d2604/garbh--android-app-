@@ -34,12 +34,21 @@ export default function AiInbox() {
         allowClear={false}
         value={tab}
         onChange={(v) => v !== '' && setTab(v)}
-        options={(['review', 'done', 'issues'] as const).map((k) => ({ value: k, label: `${t(`inbox.tab.${k}`)} (${counts[k]})` }))}
+        options={(['review', 'done', 'issues'] as const).map((k) => ({
+          value: k,
+          label: `${t(`inbox.tab.${k}`)} (${counts[k]})`,
+        }))}
       />
       <QueryBoundary
         query={{ ...inbox, data: rows }}
         isEmpty={(r) => r.length === 0}
-        empty={<EmptyState icon="creation-outline" title={t(`inbox.empty.${tab}.title`)} message={t(`inbox.empty.${tab}.message`)} />}
+        empty={
+          <EmptyState
+            icon="creation-outline"
+            title={t(`inbox.empty.${tab}.title`)}
+            message={t(`inbox.empty.${tab}.message`)}
+          />
+        }
       >
         {(data) => (
           <Card>
@@ -48,8 +57,16 @@ export default function AiInbox() {
                 key={r.id}
                 icon="creation-outline"
                 title={r.pregnancies?.patients?.full_name ?? t('inbox.unknownPatient')}
-                description={[t(`inbox.source.${r.source_type}`), format(new Date(r.generated_at ?? r.created_at), 'd MMM, h:mm a')].join(' · ')}
-                right={<StatusChip label={t(`inbox.status.${r.status}`)} tone={TONE[r.status] ?? 'neutral'} />}
+                description={[
+                  t(`inbox.source.${r.source_type}`),
+                  format(new Date(r.generated_at ?? r.created_at), 'd MMM, h:mm a'),
+                ].join(' · ')}
+                right={
+                  <StatusChip
+                    label={t(`inbox.status.${r.status}`)}
+                    tone={TONE[r.status] ?? 'neutral'}
+                  />
+                }
                 onPress={() => router.push(`/doctor/ai-inbox/${r.id}`)}
               />
             ))}

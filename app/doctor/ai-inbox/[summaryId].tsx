@@ -4,7 +4,18 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Dialog, Portal, Text, TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, ErrorState, InfoBanner, LoadingState, Screen, StatusChip, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  EmptyState,
+  ErrorState,
+  InfoBanner,
+  LoadingState,
+  Screen,
+  StatusChip,
+  palette,
+  spacing,
+} from '@/components';
 import { aiSummaryDocumentSchema, type AiSummaryDocument } from '@/domain/schemas/ai-summary';
 import type { SummaryDetail } from '@/features/doctor/api';
 import {
@@ -34,12 +45,26 @@ export default function SummaryReview() {
   useSecureScreen('doctor-summary');
   const detail = useSummaryDetail(summaryId);
 
-  if (detail.isPending) return <Screen edges={['bottom']}><LoadingState /></Screen>;
-  if (detail.isError) return <Screen edges={['bottom']}><ErrorState onRetry={() => void detail.refetch()} /></Screen>;
+  if (detail.isPending)
+    return (
+      <Screen edges={['bottom']}>
+        <LoadingState />
+      </Screen>
+    );
+  if (detail.isError)
+    return (
+      <Screen edges={['bottom']}>
+        <ErrorState onRetry={() => void detail.refetch()} />
+      </Screen>
+    );
   if (!detail.data) {
     return (
       <Screen edges={['bottom']}>
-        <EmptyState icon="file-question-outline" title={t('ai.notFoundTitle')} message={t('ai.notFoundMessage')} />
+        <EmptyState
+          icon="file-question-outline"
+          title={t('ai.notFoundTitle')}
+          message={t('ai.notFoundMessage')}
+        />
       </Screen>
     );
   }
@@ -85,7 +110,8 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
     review.mutate([action, clean, null], { onSuccess: done });
   };
 
-  const saveDraft = () => run('save_draft', () => setMessage({ tone: 'success', key: 'ai.draftSaved' }));
+  const saveDraft = () =>
+    run('save_draft', () => setMessage({ tone: 'success', key: 'ai.draftSaved' }));
   const approve = () => {
     setConfirm(null);
     run('approve_publish', () => router.back());
@@ -103,7 +129,12 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
       return;
     }
     regenerate.mutate(req, {
-      onSuccess: (res) => setMessage(res.ok ? { tone: 'success', key: 'ai.regenerated' } : { tone: 'danger', key: functionErrorKey(res.code) }),
+      onSuccess: (res) =>
+        setMessage(
+          res.ok
+            ? { tone: 'success', key: 'ai.regenerated' }
+            : { tone: 'danger', key: functionErrorKey(res.code) },
+        ),
     });
   };
 
@@ -132,7 +163,11 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
     />
   ) : null;
   const editor = doc ? (
-    <SummaryEditor value={doc.summary} onChange={(s) => setDoc({ ...doc, summary: s })} readOnly={!editable} />
+    <SummaryEditor
+      value={doc.summary}
+      onChange={(s) => setDoc({ ...doc, summary: s })}
+      readOnly={!editable}
+    />
   ) : (
     <InfoBanner tone="danger" message={t('ai.unreadable')} />
   );
@@ -151,23 +186,60 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
       footer={
         editable ? (
           <View style={styles.footer}>
-            <Button label={t('ai.approve')} loading={review.isPending} onPress={() => (validated() ? setConfirm('approve') : undefined)} />
+            <Button
+              label={t('ai.approve')}
+              loading={review.isPending}
+              onPress={() => (validated() ? setConfirm('approve') : undefined)}
+            />
             <View style={styles.footerRow}>
-              <Button label={t('ai.saveDraft')} variant="secondary" fullWidth={false} disabled={review.isPending} onPress={saveDraft} />
-              <Button label={t('ai.regenerate')} variant="text" disabled={review.isPending || regenerate.isPending} onPress={() => setConfirm('regenerate')} />
-              <Button label={t('ai.reject')} variant="text" disabled={review.isPending} onPress={() => setRejecting(true)} />
+              <Button
+                label={t('ai.saveDraft')}
+                variant="secondary"
+                fullWidth={false}
+                disabled={review.isPending}
+                onPress={saveDraft}
+              />
+              <Button
+                label={t('ai.regenerate')}
+                variant="text"
+                disabled={review.isPending || regenerate.isPending}
+                onPress={() => setConfirm('regenerate')}
+              />
+              <Button
+                label={t('ai.reject')}
+                variant="text"
+                disabled={review.isPending}
+                onPress={() => setRejecting(true)}
+              />
             </View>
           </View>
         ) : undefined
       }
     >
       <View style={styles.statusRow}>
-        <StatusChip label={t(`inbox.status.${summary.status}`)} tone={summary.status === 'published' ? 'success' : summary.status === 'draft' ? 'warning' : 'neutral'} />
-        {unchecked > 0 && editable ? <StatusChip label={t('ai.uncheckedValues', { count: unchecked })} tone="warning" /> : null}
+        <StatusChip
+          label={t(`inbox.status.${summary.status}`)}
+          tone={
+            summary.status === 'published'
+              ? 'success'
+              : summary.status === 'draft'
+                ? 'warning'
+                : 'neutral'
+          }
+        />
+        {unchecked > 0 && editable ? (
+          <StatusChip label={t('ai.uncheckedValues', { count: unchecked })} tone="warning" />
+        ) : null}
       </View>
-      {summary.status === 'failed' ? <InfoBanner tone="danger" message={t('ai.failedNote')} /> : null}
-      {summary.status === 'generating' ? <InfoBanner tone="info" message={t('ai.generatingNote')} /> : null}
-      {summary.doctor_note ? <InfoBanner tone="info" message={t('ai.rejectedNote', { note: summary.doctor_note })} /> : null}
+      {summary.status === 'failed' ? (
+        <InfoBanner tone="danger" message={t('ai.failedNote')} />
+      ) : null}
+      {summary.status === 'generating' ? (
+        <InfoBanner tone="info" message={t('ai.generatingNote')} />
+      ) : null}
+      {summary.doctor_note ? (
+        <InfoBanner tone="info" message={t('ai.rejectedNote', { note: summary.doctor_note })} />
+      ) : null}
       {flags.length > 0 ? (
         <Card variant="soft" title={t('ai.flagsTitle')} subtitle={t('ai.flagsHint')}>
           {flags.map((f, i) => (
@@ -190,7 +262,13 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
       ) : (
         <>
           {panes.length > 1 ? (
-            <ChoiceChips scroll allowClear={false} value={pane} onChange={(v) => v !== '' && setPane(v)} options={panes} />
+            <ChoiceChips
+              scroll
+              allowClear={false}
+              value={pane}
+              onChange={(v) => v !== '' && setPane(v)}
+              options={panes}
+            />
           ) : null}
           {pane === 'original' && hasOriginal ? original : null}
           {pane === 'values' && hasValues ? values : null}
@@ -201,7 +279,9 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
       <ConfirmDialog
         visible={confirm === 'approve'}
         title={t('ai.approveTitle')}
-        message={t(unchecked > 0 ? 'ai.approveMessageUnchecked' : 'ai.approveMessage', { count: unchecked })}
+        message={t(unchecked > 0 ? 'ai.approveMessageUnchecked' : 'ai.approveMessage', {
+          count: unchecked,
+        })}
         confirmLabel={t('ai.approve')}
         loading={review.isPending}
         onDismiss={() => setConfirm(null)}
@@ -223,11 +303,28 @@ function ReviewBody({ summaryId, detail }: { summaryId: string; detail: SummaryD
             <Text variant="bodyMedium" style={styles.rejectText}>
               {t('ai.rejectMessage')}
             </Text>
-            <TextInput mode="outlined" multiline label={t('ai.rejectNote')} value={note} onChangeText={setNote} accessibilityLabel={t('ai.rejectNote')} />
+            <TextInput
+              mode="outlined"
+              multiline
+              label={t('ai.rejectNote')}
+              value={note}
+              onChangeText={setNote}
+              accessibilityLabel={t('ai.rejectNote')}
+            />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button label={t('common:actions.cancel')} variant="text" onPress={() => setRejecting(false)} />
-            <Button label={t('ai.reject')} variant="danger" fullWidth={false} loading={review.isPending} onPress={reject} />
+            <Button
+              label={t('common:actions.cancel')}
+              variant="text"
+              onPress={() => setRejecting(false)}
+            />
+            <Button
+              label={t('ai.reject')}
+              variant="danger"
+              fullWidth={false}
+              loading={review.isPending}
+              onPress={reject}
+            />
           </Dialog.Actions>
         </Dialog>
       </Portal>

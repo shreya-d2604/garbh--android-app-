@@ -13,10 +13,9 @@ export const MAX_WEEK = 42;
 export const extraVisitSchema = z.object({
   week: z
     .string()
-    .refine(
-      (v) => /^\d{1,2}$/.test(v.trim()) && Number(v) >= MIN_WEEK && Number(v) <= MAX_WEEK,
-      { error: 'doctor:validation.week' },
-    ),
+    .refine((v) => /^\d{1,2}$/.test(v.trim()) && Number(v) >= MIN_WEEK && Number(v) <= MAX_WEEK, {
+      error: 'doctor:validation.week',
+    }),
   title: z.string(),
   reason: z.string().trim().min(2, { error: 'validation.required' }),
   tests: z.string(),
@@ -26,7 +25,9 @@ export type ExtraVisitValues = z.infer<typeof extraVisitSchema>;
 export const EMPTY_EXTRA_VISIT: ExtraVisitValues = { week: '', title: '', reason: '', tests: '' };
 
 /** Visits in plan order: by due date, then sequence; undated ones last. */
-export function sortVisits<T extends Pick<VisitRow, 'due_from' | 'seq'>>(visits: readonly T[]): T[] {
+export function sortVisits<T extends Pick<VisitRow, 'due_from' | 'seq'>>(
+  visits: readonly T[],
+): T[] {
   return [...visits].sort((a, b) => {
     const da = a.due_from ?? '9999-12-31';
     const db = b.due_from ?? '9999-12-31';
@@ -77,14 +78,7 @@ export function shiftVisit(
 }
 
 export type VisitState =
-  | 'completed'
-  | 'scheduled'
-  | 'skipped'
-  | 'cancelled'
-  | 'missed'
-  | 'overdue'
-  | 'due'
-  | 'upcoming';
+  'completed' | 'scheduled' | 'skipped' | 'cancelled' | 'missed' | 'overdue' | 'due' | 'upcoming';
 
 export function visitState(
   visit: Pick<VisitRow, 'status' | 'due_from' | 'due_to'>,

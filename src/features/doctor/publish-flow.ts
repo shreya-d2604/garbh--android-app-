@@ -25,14 +25,17 @@ export async function publishFlow(args: PublishArgs): Promise<PublishOutcome> {
 
   let aiError: string | null = null;
   if (args.withAiSummary && !args.alreadyPublished) {
-    const res = await api.invokeSummaryFunction('summarize-consultation', { consultation_id: consultationId });
+    const res = await api.invokeSummaryFunction('summarize-consultation', {
+      consultation_id: consultationId,
+    });
     if (!res.ok) aiError = res.code;
   }
 
   let statusNotUpdated = false;
   if (args.appointmentStatus !== 'completed') {
     try {
-      if (canStart(args.appointmentStatus)) await api.setAppointmentStatus(args.save.appointmentId, 'in_consultation');
+      if (canStart(args.appointmentStatus))
+        await api.setAppointmentStatus(args.save.appointmentId, 'in_consultation');
       await api.setAppointmentStatus(args.save.appointmentId, 'completed');
     } catch {
       statusNotUpdated = true;

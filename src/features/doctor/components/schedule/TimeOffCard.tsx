@@ -6,11 +6,28 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { Dialog, Portal, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, DateField, EmptyState, FormField, InfoBanner, ListItem, StatusChip, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  DateField,
+  EmptyState,
+  FormField,
+  InfoBanner,
+  ListItem,
+  StatusChip,
+  palette,
+  spacing,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 
 import type { ClashAppointment } from '../../api';
-import { previewClashes, useMyId, useScheduleActions, useTimeOff, useTimeOffClashes } from '../../hooks';
+import {
+  previewClashes,
+  useMyId,
+  useScheduleActions,
+  useTimeOff,
+  useTimeOffClashes,
+} from '../../hooks';
 import { combineDateTime, findClashes, timeOffSchema, type TimeOffValues } from '../../schedule';
 import { ErrorBanner } from '../ErrorBanner';
 import { QueryBoundary } from '../QueryBoundary';
@@ -38,7 +55,13 @@ export function TimeOffCard() {
 
   const { control, handleSubmit, reset } = useForm<TimeOffValues, unknown, TimeOffValues>({
     resolver: zodResolver(timeOffSchema),
-    defaultValues: { startDate: today, startTime: '09:00', endDate: today, endTime: '18:00', reason: '' },
+    defaultValues: {
+      startDate: today,
+      startTime: '09:00',
+      endDate: today,
+      endTime: '18:00',
+      reason: '',
+    },
   });
 
   const close = () => {
@@ -49,7 +72,8 @@ export function TimeOffCard() {
     reset();
   };
 
-  const save = (p: Pick<Pending, 'startsAt' | 'endsAt' | 'reason'>) => addTimeOff.mutate(p, { onSuccess: close });
+  const save = (p: Pick<Pending, 'startsAt' | 'endsAt' | 'reason'>) =>
+    addTimeOff.mutate(p, { onSuccess: close });
 
   const submit = handleSubmit(async (v) => {
     const startsAt = combineDateTime(v.startDate, v.startTime);
@@ -73,7 +97,13 @@ export function TimeOffCard() {
       <QueryBoundary
         query={timeOff}
         isEmpty={(r) => r.length === 0}
-        empty={<EmptyState icon="beach" title={t('schedule.timeOffEmptyTitle')} message={t('schedule.timeOffEmptyMessage')} />}
+        empty={
+          <EmptyState
+            icon="beach"
+            title={t('schedule.timeOffEmptyTitle')}
+            message={t('schedule.timeOffEmptyMessage')}
+          />
+        }
       >
         {(rows) => (
           <>
@@ -87,7 +117,9 @@ export function TimeOffCard() {
                   description={r.reason ?? undefined}
                   right={
                     <>
-                      {n > 0 ? <StatusChip label={t('schedule.clashCount', { count: n })} tone="warning" /> : null}
+                      {n > 0 ? (
+                        <StatusChip label={t('schedule.clashCount', { count: n })} tone="warning" />
+                      ) : null}
                       <Button
                         label={t('schedule.removeTimeOff')}
                         variant="text"
@@ -112,7 +144,10 @@ export function TimeOffCard() {
             <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.body}>
               {pending ? (
                 <>
-                  <InfoBanner tone="warning" message={t('schedule.clashMessage', { count: pending.clashes.length })} />
+                  <InfoBanner
+                    tone="warning"
+                    message={t('schedule.clashMessage', { count: pending.clashes.length })}
+                  />
                   {pending.clashes.map((a) => (
                     <ListItem
                       key={a.id}
@@ -127,12 +162,24 @@ export function TimeOffCard() {
                 </>
               ) : (
                 <>
-                  <DateField control={control} name="startDate" label={t('schedule.startDate')} minimumDate={today} />
+                  <DateField
+                    control={control}
+                    name="startDate"
+                    label={t('schedule.startDate')}
+                    minimumDate={today}
+                  />
                   <TimeField control={control} name="startTime" label={t('schedule.startTime')} />
-                  <DateField control={control} name="endDate" label={t('schedule.endDate')} minimumDate={today} />
+                  <DateField
+                    control={control}
+                    name="endDate"
+                    label={t('schedule.endDate')}
+                    minimumDate={today}
+                  />
                   <TimeField control={control} name="endTime" label={t('schedule.endTime')} />
                   <FormField control={control} name="reason" label={t('schedule.reason')} />
-                  {checkError ? <InfoBanner tone="danger" message={t('schedule.checkFailed')} /> : null}
+                  {checkError ? (
+                    <InfoBanner tone="danger" message={t('schedule.checkFailed')} />
+                  ) : null}
                 </>
               )}
               <ErrorBanner error={addTimeOff.error} />
@@ -141,9 +188,19 @@ export function TimeOffCard() {
           <Dialog.Actions>
             <Button label={t('common:actions.cancel')} variant="text" onPress={close} />
             {pending ? (
-              <Button label={t('schedule.addAnyway')} fullWidth={false} loading={addTimeOff.isPending} onPress={() => save(pending)} />
+              <Button
+                label={t('schedule.addAnyway')}
+                fullWidth={false}
+                loading={addTimeOff.isPending}
+                onPress={() => save(pending)}
+              />
             ) : (
-              <Button label={t('common:actions.save')} fullWidth={false} loading={checking || addTimeOff.isPending} onPress={() => void submit()} />
+              <Button
+                label={t('common:actions.save')}
+                fullWidth={false}
+                loading={checking || addTimeOff.isPending}
+                onPress={() => void submit()}
+              />
             )}
           </Dialog.Actions>
         </Dialog>

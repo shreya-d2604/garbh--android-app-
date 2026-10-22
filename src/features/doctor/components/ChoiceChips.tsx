@@ -40,7 +40,11 @@ export function ChoiceChips<V extends string | number>({
     );
   });
   return scroll ? (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.row}
+    >
       {chips}
     </ScrollView>
   ) : (

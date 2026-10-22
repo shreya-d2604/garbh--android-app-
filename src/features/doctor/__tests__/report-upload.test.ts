@@ -26,9 +26,23 @@ const page = (over: Partial<PickedPage> = {}): PickedPage => ({
 describe('report upload', () => {
   it('builds the storage path from the contract', () => {
     expect(
-      storagePath({ patientId: 'pt', pregnancyId: 'pr', reportId: 'r', fileId: 'f', mime: 'application/pdf' }),
+      storagePath({
+        patientId: 'pt',
+        pregnancyId: 'pr',
+        reportId: 'r',
+        fileId: 'f',
+        mime: 'application/pdf',
+      }),
     ).toBe('pt/pr/r/f.pdf');
-    expect(storagePath({ patientId: 'pt', pregnancyId: 'pr', reportId: 'r', fileId: 'f', mime: 'image/png' })).toBe('pt/pr/r/f.png');
+    expect(
+      storagePath({
+        patientId: 'pt',
+        pregnancyId: 'pr',
+        reportId: 'r',
+        fileId: 'f',
+        mime: 'image/png',
+      }),
+    ).toBe('pt/pr/r/f.png');
   });
 
   it('maps mime types to extensions, defaulting photos to jpg', () => {
@@ -44,9 +58,9 @@ describe('report upload', () => {
     expect(validatePages([page()])).toEqual([]);
     expect(validatePages([page({ mime: 'video/mp4' })])).toEqual(['report.errors.badType']);
     expect(validatePages([page({ size: MAX_FILE_BYTES + 1 })])).toEqual(['report.errors.tooBig']);
-    expect(validatePages(Array.from({ length: MAX_PAGES + 1 }, (_, i) => page({ key: String(i) })))).toEqual([
-      'report.errors.tooManyPages',
-    ]);
+    expect(
+      validatePages(Array.from({ length: MAX_PAGES + 1 }, (_, i) => page({ key: String(i) }))),
+    ).toEqual(['report.errors.tooManyPages']);
     expect(validatePages([page({ size: null })])).toEqual([]);
   });
 
@@ -66,9 +80,24 @@ describe('report upload', () => {
 
   it('weights overall progress by file size', () => {
     expect(overallProgress([])).toBe(0);
-    expect(overallProgress([{ size: 100, sent: 0 }, { size: 300, sent: 0 }])).toBe(0);
-    expect(overallProgress([{ size: 100, sent: 100 }, { size: 300, sent: 0 }])).toBe(0.25);
-    expect(progressPercent([{ size: 100, sent: 100 }, { size: 300, sent: 300 }])).toBe(100);
+    expect(
+      overallProgress([
+        { size: 100, sent: 0 },
+        { size: 300, sent: 0 },
+      ]),
+    ).toBe(0);
+    expect(
+      overallProgress([
+        { size: 100, sent: 100 },
+        { size: 300, sent: 0 },
+      ]),
+    ).toBe(0.25);
+    expect(
+      progressPercent([
+        { size: 100, sent: 100 },
+        { size: 300, sent: 300 },
+      ]),
+    ).toBe(100);
     expect(progressPercent([{ size: 100, sent: 500 }])).toBe(100);
   });
 });
@@ -78,7 +107,9 @@ describe('report details form', () => {
   it('needs a type and a report date that is not in the future', () => {
     expect(reportMetaSchema('2026-09-20').safeParse(ok).success).toBe(true);
     expect(reportMetaSchema('2026-09-19').safeParse(ok).success).toBe(false);
-    expect(reportMetaSchema('2026-09-20').safeParse({ ...ok, report_date: '' }).success).toBe(false);
+    expect(reportMetaSchema('2026-09-20').safeParse({ ...ok, report_date: '' }).success).toBe(
+      false,
+    );
     expect(reportMetaSchema('2026-09-20').safeParse({ ...ok, type: 'xray' }).success).toBe(false);
   });
 });

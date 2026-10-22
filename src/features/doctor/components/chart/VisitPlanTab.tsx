@@ -6,7 +6,17 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Dialog, Portal, Text, TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, FormField, InfoBanner, StatusChip, palette, spacing, type Tone } from '@/components';
+import {
+  Button,
+  Card,
+  EmptyState,
+  FormField,
+  InfoBanner,
+  StatusChip,
+  palette,
+  spacing,
+  type Tone,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 
 import { parseList } from '../../format';
@@ -64,8 +74,18 @@ export function VisitPlanTab({ pregnancyId, edd }: VisitPlanTabProps) {
     <>
       <View style={styles.buttons}>
         <Button label={t('plan.addExtra')} onPress={() => setAdding(true)} disabled={!edd} />
-        <Button label={t('plan.useHighRisk')} variant="secondary" onPress={() => setSchedule('high_risk')} disabled={!edd} />
-        <Button label={t('plan.useStandard')} variant="text" onPress={() => setSchedule('standard')} disabled={!edd} />
+        <Button
+          label={t('plan.useHighRisk')}
+          variant="secondary"
+          onPress={() => setSchedule('high_risk')}
+          disabled={!edd}
+        />
+        <Button
+          label={t('plan.useStandard')}
+          variant="text"
+          onPress={() => setSchedule('standard')}
+          disabled={!edd}
+        />
       </View>
       {!edd ? <InfoBanner tone="warning" message={t('plan.needsEdd')} /> : null}
       {actions.applyTemplate.isError ? <ErrorBanner error={actions.applyTemplate.error} /> : null}
@@ -73,7 +93,13 @@ export function VisitPlanTab({ pregnancyId, edd }: VisitPlanTabProps) {
       <QueryBoundary
         query={visits}
         isEmpty={(v) => v.length === 0}
-        empty={<EmptyState icon="calendar-blank-outline" title={t('plan.emptyTitle')} message={t('plan.emptyMessage')} />}
+        empty={
+          <EmptyState
+            icon="calendar-blank-outline"
+            title={t('plan.emptyTitle')}
+            message={t('plan.emptyMessage')}
+          />
+        }
       >
         {(rows) => (
           <>
@@ -83,13 +109,20 @@ export function VisitPlanTab({ pregnancyId, edd }: VisitPlanTabProps) {
                 <Card
                   key={v.id}
                   title={v.title}
-                  subtitle={t('plan.window', { week: v.target_week, from: dateText(v.due_from), to: dateText(v.due_to) })}
+                  subtitle={t('plan.window', {
+                    week: v.target_week,
+                    from: dateText(v.due_from),
+                    to: dateText(v.due_to),
+                  })}
                   right={<StatusChip label={t(`visit.state.${state}`)} tone={TONE[state]} />}
                   onPress={isEditable(v) ? () => setEditing(v) : undefined}
                   accessibilityLabel={t('plan.edit', { title: v.title })}
                 >
                   {v.is_extra ? (
-                    <StatusChip label={t('plan.extraChip', { reason: v.reason_added ?? '' })} tone="info" />
+                    <StatusChip
+                      label={t('plan.extraChip', { reason: v.reason_added ?? '' })}
+                      tone="info"
+                    />
                   ) : null}
                   {v.recommended_tests.length > 0 ? (
                     <Text variant="bodySmall" style={styles.tests}>
@@ -112,7 +145,11 @@ export function VisitPlanTab({ pregnancyId, edd }: VisitPlanTabProps) {
           onDismiss={() => setAdding(false)}
         />
       ) : null}
-      <EditVisitDialog visit={editing} pregnancyId={pregnancyId} onDismiss={() => setEditing(null)} />
+      <EditVisitDialog
+        visit={editing}
+        pregnancyId={pregnancyId}
+        onDismiss={() => setEditing(null)}
+      />
       <ConfirmDialog
         visible={schedule !== null}
         title={t(schedule === 'high_risk' ? 'plan.highRiskTitle' : 'plan.standardTitle')}
@@ -120,7 +157,9 @@ export function VisitPlanTab({ pregnancyId, edd }: VisitPlanTabProps) {
         confirmLabel={t('plan.templateConfirm')}
         loading={actions.applyTemplate.isPending}
         onDismiss={() => setSchedule(null)}
-        onConfirm={() => schedule && actions.applyTemplate.mutate(schedule, { onSettled: () => setSchedule(null) })}
+        onConfirm={() =>
+          schedule && actions.applyTemplate.mutate(schedule, { onSettled: () => setSchedule(null) })
+        }
       />
     </>
   );
@@ -155,7 +194,14 @@ function AddVisitDialog({
   const submit = handleSubmit((values) => {
     if (!me) return;
     add.mutate(
-      buildExtraVisit({ pregnancyId, edd, addedBy: me, existing, values, defaultTitle: t('plan.defaultTitle') }),
+      buildExtraVisit({
+        pregnancyId,
+        edd,
+        addedBy: me,
+        existing,
+        values,
+        defaultTitle: t('plan.defaultTitle'),
+      }),
       { onSuccess: close },
     );
   });
@@ -166,16 +212,37 @@ function AddVisitDialog({
         <Dialog.Title>{t('plan.addTitle')}</Dialog.Title>
         <Dialog.ScrollArea style={styles.scroll}>
           <ScrollView keyboardShouldPersistTaps="handled">
-            <FormField control={control} name="week" label={t('plan.week')} hint={t('plan.weekHint')} keyboardType="number-pad" />
-            <FormField control={control} name="reason" label={t('plan.reason')} hint={t('plan.reasonHint')} />
+            <FormField
+              control={control}
+              name="week"
+              label={t('plan.week')}
+              hint={t('plan.weekHint')}
+              keyboardType="number-pad"
+            />
+            <FormField
+              control={control}
+              name="reason"
+              label={t('plan.reason')}
+              hint={t('plan.reasonHint')}
+            />
             <FormField control={control} name="title" label={t('plan.titleLabel')} />
-            <FormField control={control} name="tests" label={t('plan.tests')} hint={t('plan.testsHint')} />
+            <FormField
+              control={control}
+              name="tests"
+              label={t('plan.tests')}
+              hint={t('plan.testsHint')}
+            />
             <ErrorBanner error={add.error} />
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
           <Button label={t('common:actions.cancel')} variant="text" onPress={close} />
-          <Button label={t('plan.addConfirm')} fullWidth={false} loading={add.isPending} onPress={() => void submit()} />
+          <Button
+            label={t('plan.addConfirm')}
+            fullWidth={false}
+            loading={add.isPending}
+            onPress={() => void submit()}
+          />
         </Dialog.Actions>
       </Dialog>
     </Portal>
@@ -209,7 +276,8 @@ function EditVisitDialog({
 
   const earlier = visit ? shiftVisit(visit, -1) : null;
   const later = visit ? shiftVisit(visit, 1) : null;
-  const inactive = visit?.status === 'skipped' || visit?.status === 'cancelled' || visit?.status === 'missed';
+  const inactive =
+    visit?.status === 'skipped' || visit?.status === 'cancelled' || visit?.status === 'missed';
 
   return (
     <Portal>
@@ -220,15 +288,41 @@ function EditVisitDialog({
             {visit && !inactive ? (
               <>
                 <View style={styles.row}>
-                  <Button label={t('plan.earlier')} variant="secondary" fullWidth={false} disabled={!earlier || busy} onPress={() => earlier && patch(earlier)} />
-                  <Button label={t('plan.later')} variant="secondary" fullWidth={false} disabled={!later || busy} onPress={() => later && patch(later)} />
+                  <Button
+                    label={t('plan.earlier')}
+                    variant="secondary"
+                    fullWidth={false}
+                    disabled={!earlier || busy}
+                    onPress={() => earlier && patch(earlier)}
+                  />
+                  <Button
+                    label={t('plan.later')}
+                    variant="secondary"
+                    fullWidth={false}
+                    disabled={!later || busy}
+                    onPress={() => later && patch(later)}
+                  />
                 </View>
-                <Button label={t('plan.skip')} variant="secondary" disabled={busy} onPress={() => patch({ status: 'skipped' })} />
-                <Button label={t('plan.cancelVisit')} variant="secondary" disabled={busy} onPress={() => patch({ status: 'cancelled' })} />
+                <Button
+                  label={t('plan.skip')}
+                  variant="secondary"
+                  disabled={busy}
+                  onPress={() => patch({ status: 'skipped' })}
+                />
+                <Button
+                  label={t('plan.cancelVisit')}
+                  variant="secondary"
+                  disabled={busy}
+                  onPress={() => patch({ status: 'cancelled' })}
+                />
               </>
             ) : null}
             {visit && inactive ? (
-              <Button label={t('plan.restore')} disabled={busy} onPress={() => patch({ status: 'planned' })} />
+              <Button
+                label={t('plan.restore')}
+                disabled={busy}
+                onPress={() => patch({ status: 'planned' })}
+              />
             ) : null}
             <TextInput
               mode="outlined"
@@ -244,7 +338,12 @@ function EditVisitDialog({
               onPress={() => patch({ recommended_tests: parseList(tests) })}
             />
             {visit && canDeleteVisit(visit) ? (
-              <Button label={t('plan.deleteExtra')} variant="danger" disabled={busy} onPress={() => setConfirmDelete(true)} />
+              <Button
+                label={t('plan.deleteExtra')}
+                variant="danger"
+                disabled={busy}
+                onPress={() => setConfirmDelete(true)}
+              />
             ) : null}
             <ErrorBanner error={update.error ?? remove.error} />
           </ScrollView>

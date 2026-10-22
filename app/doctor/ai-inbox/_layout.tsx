@@ -15,7 +15,10 @@ export default function AiInboxLayout() {
         headerShadowVisible: false,
       }}
     >
-      <Stack.Screen name="index" options={{ title: t('tabs.aiInbox'), headerRight: () => <HeaderActions /> }} />
+      <Stack.Screen
+        name="index"
+        options={{ title: t('tabs.aiInbox'), headerRight: () => <HeaderActions /> }}
+      />
       <Stack.Screen name="[summaryId]" options={{ title: t('ai.reviewTitle') }} />
     </Stack>
   );

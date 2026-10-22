@@ -4,7 +4,15 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, EmptyState, ErrorState, LoadingState, Screen, palette, spacing } from '@/components';
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  Screen,
+  palette,
+  spacing,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { PatientRow } from '@/features/doctor/components/PatientRow';
@@ -29,8 +37,18 @@ export default function PatientsScreen() {
     [list.data, filters],
   );
 
-  if (list.isPending) return <Screen edges={[]}><LoadingState /></Screen>;
-  if (list.isError) return <Screen edges={[]}><ErrorState onRetry={() => void list.refetch()} /></Screen>;
+  if (list.isPending)
+    return (
+      <Screen edges={[]}>
+        <LoadingState />
+      </Screen>
+    );
+  if (list.isError)
+    return (
+      <Screen edges={[]}>
+        <ErrorState onRetry={() => void list.refetch()} />
+      </Screen>
+    );
 
   const header = (
     <View style={styles.header}>
@@ -97,16 +115,31 @@ export default function PatientsScreen() {
         refreshing={list.isRefetching}
         onRefresh={() => void list.refetch()}
         renderItem={({ item }) => (
-          <PatientRow item={item} onPress={(p) => router.push(`/doctor/patient/${p.pregnancyId}`)} />
+          <PatientRow
+            item={item}
+            onPress={(p) => router.push(`/doctor/patient/${p.pregnancyId}`)}
+          />
         )}
         ListEmptyComponent={
           hasActiveFilters(filters) ? (
             <View>
-              <EmptyState icon="account-search-outline" title={t('patients.noMatch')} message={t('patients.noMatchMessage')} />
-              <Button label={t('patients.clearFilters')} variant="secondary" onPress={() => setFilters(DEFAULT_PATIENT_FILTERS)} />
+              <EmptyState
+                icon="account-search-outline"
+                title={t('patients.noMatch')}
+                message={t('patients.noMatchMessage')}
+              />
+              <Button
+                label={t('patients.clearFilters')}
+                variant="secondary"
+                onPress={() => setFilters(DEFAULT_PATIENT_FILTERS)}
+              />
             </View>
           ) : (
-            <EmptyState icon="account-group-outline" title={t('patients.emptyTitle')} message={t('patients.emptyMessage')} />
+            <EmptyState
+              icon="account-group-outline"
+              title={t('patients.emptyTitle')}
+              message={t('patients.emptyMessage')}
+            />
           )
         }
       />

@@ -86,7 +86,11 @@ export function usePatientList() {
 }
 
 export function useDoctorDirectory() {
-  return useQuery({ queryKey: key.directory, queryFn: api.fetchDoctorDirectory, staleTime: 5 * 60_000 });
+  return useQuery({
+    queryKey: key.directory,
+    queryFn: api.fetchDoctorDirectory,
+    staleTime: 5 * 60_000,
+  });
 }
 
 // --------------------------------------------------------------------------- Chart
@@ -116,21 +120,31 @@ export function useCareTeam(pregnancyId: string, fallbackName: string): CareTeam
 export const usePregnancyVisits = (id: string) =>
   useQuery({ queryKey: [...key.pregnancy(id), 'visits'], queryFn: () => api.fetchVisits(id) });
 export const usePregnancyConsultations = (id: string) =>
-  useQuery({ queryKey: [...key.pregnancy(id), 'consultations'], queryFn: () => api.fetchConsultations(id) });
+  useQuery({
+    queryKey: [...key.pregnancy(id), 'consultations'],
+    queryFn: () => api.fetchConsultations(id),
+  });
 export const usePregnancyReports = (id: string) =>
   useQuery({ queryKey: [...key.pregnancy(id), 'reports'], queryFn: () => api.fetchReports(id) });
 export const usePregnancyPrescriptions = (id: string) =>
-  useQuery({ queryKey: [...key.pregnancy(id), 'prescriptions'], queryFn: () => api.fetchPrescriptions(id) });
+  useQuery({
+    queryKey: [...key.pregnancy(id), 'prescriptions'],
+    queryFn: () => api.fetchPrescriptions(id),
+  });
 export const usePregnancyLabResults = (id: string) =>
   useQuery({ queryKey: [...key.pregnancy(id), 'labs'], queryFn: () => api.fetchLabResults(id) });
 export const usePregnancySummaries = (id: string) =>
-  useQuery({ queryKey: [...key.pregnancy(id), 'summaries'], queryFn: () => api.fetchPregnancySummaries(id) });
+  useQuery({
+    queryKey: [...key.pregnancy(id), 'summaries'],
+    queryFn: () => api.fetchPregnancySummaries(id),
+  });
 
 // --------------------------------------------------------------------------- Care team + pregnancy mutations
 export function useAddBackup(pregnancyId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (v: { doctorId: string; note: string }) => api.addBackupDoctor(pregnancyId, v.doctorId, v.note),
+    mutationFn: (v: { doctorId: string; note: string }) =>
+      api.addBackupDoctor(pregnancyId, v.doctorId, v.note),
     onSuccess: () => invalidatePregnancy(qc, pregnancyId),
   });
 }
@@ -174,12 +188,14 @@ export function useVisitPlanActions(pregnancyId: string) {
   return {
     add: useMutation({ mutationFn: api.addExtraVisit, onSuccess: done }),
     update: useMutation({
-      mutationFn: (v: { id: string; patch: Parameters<typeof api.updateVisit>[1] }) => api.updateVisit(v.id, v.patch),
+      mutationFn: (v: { id: string; patch: Parameters<typeof api.updateVisit>[1] }) =>
+        api.updateVisit(v.id, v.patch),
       onSuccess: done,
     }),
     remove: useMutation({ mutationFn: api.deleteVisit, onSuccess: done }),
     applyTemplate: useMutation({
-      mutationFn: (schedule: 'standard' | 'high_risk') => api.applyVisitTemplate(pregnancyId, schedule),
+      mutationFn: (schedule: 'standard' | 'high_risk') =>
+        api.applyVisitTemplate(pregnancyId, schedule),
       onSuccess: done,
     }),
   };
@@ -225,7 +241,10 @@ export function usePublishConsultation(pregnancyId: string) {
 
 // --------------------------------------------------------------------------- Reports
 export function useReportDetail(reportId: string) {
-  return useQuery({ queryKey: key.report(reportId), queryFn: () => api.fetchReportDetail(reportId) });
+  return useQuery({
+    queryKey: key.report(reportId),
+    queryFn: () => api.fetchReportDetail(reportId),
+  });
 }
 
 export function useSignedUrl(path: string | null) {
@@ -250,8 +269,10 @@ export function useUploadReport(pregnancyId: string) {
 export function useSummaryFunction(pregnancyId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (v: { name: Parameters<typeof api.invokeSummaryFunction>[0]; body: Record<string, string> }) =>
-      api.invokeSummaryFunction(v.name, v.body),
+    mutationFn: (v: {
+      name: Parameters<typeof api.invokeSummaryFunction>[0];
+      body: Record<string, string>;
+    }) => api.invokeSummaryFunction(v.name, v.body),
     onSuccess: () => {
       invalidatePregnancy(qc, pregnancyId);
       void qc.invalidateQueries({ queryKey: ['doctor', 'report'] });
@@ -269,11 +290,15 @@ export function useReportActions(reportId: string, pregnancyId: string) {
   return {
     addLab: useMutation({ mutationFn: api.addManualLabResult, onSuccess: done }),
     updateLab: useMutation({
-      mutationFn: (v: { id: string; patch: Parameters<typeof api.updateLabResult>[1] }) => api.updateLabResult(v.id, v.patch),
+      mutationFn: (v: { id: string; patch: Parameters<typeof api.updateLabResult>[1] }) =>
+        api.updateLabResult(v.id, v.patch),
       onSuccess: done,
     }),
     deleteLab: useMutation({ mutationFn: api.deleteLabResult, onSuccess: done }),
-    comment: useMutation({ mutationFn: (text: string) => api.updateReportComment(reportId, text), onSuccess: done }),
+    comment: useMutation({
+      mutationFn: (text: string) => api.updateReportComment(reportId, text),
+      onSuccess: done,
+    }),
     remove: useMutation({ mutationFn: () => api.softDeleteReport(reportId), onSuccess: done }),
   };
 }
@@ -301,8 +326,9 @@ export function useSummaryDetail(summaryId: string) {
 export function useReviewSummary(summaryId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (v: Parameters<typeof api.reviewAiSummary> extends [string, ...infer R] ? R : never) =>
-      api.reviewAiSummary(summaryId, ...v),
+    mutationFn: (
+      v: Parameters<typeof api.reviewAiSummary> extends [string, ...infer R] ? R : never,
+    ) => api.reviewAiSummary(summaryId, ...v),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: key.summary(summaryId) });
       void qc.invalidateQueries({ queryKey: key.inbox });
@@ -338,7 +364,9 @@ export function useTimeOffClashes() {
     enabled: me !== null && timeOff.data !== undefined && timeOff.data.length > 0,
     queryFn: async () => {
       const rows = timeOff.data ?? [];
-      const all = await Promise.all(rows.map((t) => api.fetchAppointmentsBetween(me as string, t.starts_at, t.ends_at)));
+      const all = await Promise.all(
+        rows.map((t) => api.fetchAppointmentsBetween(me as string, t.starts_at, t.ends_at)),
+      );
       return Object.fromEntries(rows.map((t, i) => [t.id, all[i] ?? []]));
     },
   });
@@ -359,7 +387,8 @@ export function useScheduleActions() {
   const done = () => void qc.invalidateQueries({ queryKey: key.schedule });
   return {
     saveAvailability: useMutation({
-      mutationFn: (row: Parameters<typeof api.saveAvailability>[1]) => api.saveAvailability(me as string, row),
+      mutationFn: (row: Parameters<typeof api.saveAvailability>[1]) =>
+        api.saveAvailability(me as string, row),
       onSuccess: done,
     }),
     deleteAvailability: useMutation({ mutationFn: api.deleteAvailability, onSuccess: done }),

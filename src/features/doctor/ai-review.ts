@@ -14,7 +14,9 @@ export function isLowConfidence(confidence: number | null | undefined): boolean 
   return confidence != null && confidence < LOW_CONFIDENCE;
 }
 
-export function countLowConfidence(results: readonly Pick<LabResultRow, 'confidence' | 'verified'>[]): number {
+export function countLowConfidence(
+  results: readonly Pick<LabResultRow, 'confidence' | 'verified'>[],
+): number {
   return results.filter((r) => !r.verified && isLowConfidence(r.confidence)).length;
 }
 
@@ -104,13 +106,17 @@ export function labDisplayValue(r: Pick<LabResultRow, 'value_num' | 'value_text'
   return r.value_text ?? '';
 }
 
-
 /**
  * Error code of a failed Edge Function call. The function's own `{ error: CODE }` wins; a 404
  * without it means the function is not deployed yet (backend not merged) -> NOT_IMPLEMENTED.
  */
 export function parseFunctionError(status: number | null, body: unknown): string {
-  if (body && typeof body === 'object' && 'error' in body && typeof (body as { error: unknown }).error === 'string') {
+  if (
+    body &&
+    typeof body === 'object' &&
+    'error' in body &&
+    typeof (body as { error: unknown }).error === 'string'
+  ) {
     return (body as { error: string }).error;
   }
   return status === 404 ? 'NOT_IMPLEMENTED' : 'GENERIC';
@@ -133,13 +139,18 @@ export function inboxTabFor(status: AiSummaryRow['status']): InboxTab {
   }
 }
 
-export function filterInbox<T extends Pick<AiSummaryRow, 'status' | 'created_at'>>(rows: readonly T[], tab: InboxTab): T[] {
+export function filterInbox<T extends Pick<AiSummaryRow, 'status' | 'created_at'>>(
+  rows: readonly T[],
+  tab: InboxTab,
+): T[] {
   return rows
     .filter((r) => inboxTabFor(r.status) === tab)
     .sort((a, b) => b.created_at.localeCompare(a.created_at));
 }
 
-export function inboxCounts(rows: readonly Pick<AiSummaryRow, 'status'>[]): Record<InboxTab, number> {
+export function inboxCounts(
+  rows: readonly Pick<AiSummaryRow, 'status'>[],
+): Record<InboxTab, number> {
   const counts: Record<InboxTab, number> = { review: 0, done: 0, issues: 0 };
   for (const r of rows) counts[inboxTabFor(r.status)] += 1;
   return counts;

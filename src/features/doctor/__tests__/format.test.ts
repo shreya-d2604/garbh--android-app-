@@ -1,4 +1,12 @@
-import { ageInYears, formatGa, formatGpal, gaFromEdd, joinList, parseList, textOrNull } from '../format';
+import {
+  ageInYears,
+  formatGa,
+  formatGpal,
+  gaFromEdd,
+  joinList,
+  parseList,
+  textOrNull,
+} from '../format';
 
 describe('format helpers', () => {
   it('formats gestational age', () => {
@@ -22,7 +30,9 @@ describe('format helpers', () => {
 
   it('formats G/P/A/L with dashes for unknowns', () => {
     expect(formatGpal({ gravida: 2, para: 1, abortus: 0, living: 1 })).toBe('G2 P1 A0 L1');
-    expect(formatGpal({ gravida: null, para: null, abortus: null, living: null })).toBe('G- P- A- L-');
+    expect(formatGpal({ gravida: null, para: null, abortus: null, living: null })).toBe(
+      'G- P- A- L-',
+    );
   });
 
   it('parses comma/newline lists without blanks or duplicates', () => {

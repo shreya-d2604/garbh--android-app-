@@ -9,7 +9,11 @@ import { buildTimeline, type TimelineEntry } from '../../chart';
 import { usePregnancyConsultations, usePregnancyReports, usePregnancyVisits } from '../../hooks';
 import { combineQueries, QueryBoundary } from '../QueryBoundary';
 
-const ICON = { visit: 'calendar-check-outline', consultation: 'stethoscope', report: 'file-document-outline' } as const;
+const ICON = {
+  visit: 'calendar-check-outline',
+  consultation: 'stethoscope',
+  report: 'file-document-outline',
+} as const;
 
 export function TimelineTab({ pregnancyId }: { pregnancyId: string }) {
   const { t } = useTranslation('doctor');
@@ -25,7 +29,8 @@ export function TimelineTab({ pregnancyId }: { pregnancyId: string }) {
 
   const open = (e: TimelineEntry) => {
     if (e.kind === 'report') router.push(`/doctor/patient/${pregnancyId}/report/${e.id}`);
-    else if (e.kind === 'consultation' && e.appointmentId) router.push(`/doctor/consult/${e.appointmentId}`);
+    else if (e.kind === 'consultation' && e.appointmentId)
+      router.push(`/doctor/consult/${e.appointmentId}`);
   };
 
   const describe = (e: TimelineEntry) => {
@@ -44,7 +49,13 @@ export function TimelineTab({ pregnancyId }: { pregnancyId: string }) {
     <QueryBoundary
       query={{ ...combineQueries(visits, consultations, reports), data: entries }}
       isEmpty={(data) => data.length === 0}
-      empty={<EmptyState icon="timeline-outline" title={t('timeline.emptyTitle')} message={t('timeline.emptyMessage')} />}
+      empty={
+        <EmptyState
+          icon="timeline-outline"
+          title={t('timeline.emptyTitle')}
+          message={t('timeline.emptyMessage')}
+        />
+      }
     >
       {(data) => (
         <Card>
@@ -54,7 +65,11 @@ export function TimelineTab({ pregnancyId }: { pregnancyId: string }) {
               icon={ICON[e.kind]}
               title={label(e)}
               description={describe(e)}
-              onPress={e.kind === 'report' || (e.kind === 'consultation' && e.appointmentId) ? () => open(e) : undefined}
+              onPress={
+                e.kind === 'report' || (e.kind === 'consultation' && e.appointmentId)
+                  ? () => open(e)
+                  : undefined
+              }
               right={
                 e.kind === 'consultation' ? (
                   <StatusChip
@@ -62,7 +77,10 @@ export function TimelineTab({ pregnancyId }: { pregnancyId: string }) {
                     tone={e.published ? 'success' : 'warning'}
                   />
                 ) : e.kind === 'visit' ? (
-                  <StatusChip label={t(`visit.state.${e.status}`)} tone={e.status === 'completed' ? 'success' : 'info'} />
+                  <StatusChip
+                    label={t(`visit.state.${e.status}`)}
+                    tone={e.status === 'completed' ? 'success' : 'info'}
+                  />
                 ) : undefined
               }
             />

@@ -20,7 +20,8 @@ export interface SummaryEditorProps {
 /** Editable patient-facing summary (PLAN.md §9.3). The doctor-only flags are shown separately and never edited. */
 export function SummaryEditor({ value, onChange, readOnly = false }: SummaryEditorProps) {
   const { t } = useTranslation('doctor');
-  const set = <K extends keyof AiSummary>(key: K, v: AiSummary[K]) => onChange({ ...value, [key]: v });
+  const set = <K extends keyof AiSummary>(key: K, v: AiSummary[K]) =>
+    onChange({ ...value, [key]: v });
 
   return (
     <Card title={t('ai.summaryTitle')} subtitle={readOnly ? undefined : t('ai.summaryHint')}>
@@ -53,13 +54,19 @@ export function SummaryEditor({ value, onChange, readOnly = false }: SummaryEdit
             label={t('ai.finding')}
             value={f.finding}
             editable={!readOnly}
-            onChangeText={(v) => set('key_findings', replaceAt(value.key_findings, i, { ...f, finding: v }))}
+            onChangeText={(v) =>
+              set('key_findings', replaceAt(value.key_findings, i, { ...f, finding: v }))
+            }
           />
           <ChoiceChips
             scroll
             allowClear={false}
             value={f.status}
-            onChange={(v) => !readOnly && v !== '' && set('key_findings', replaceAt(value.key_findings, i, { ...f, status: v }))}
+            onChange={(v) =>
+              !readOnly &&
+              v !== '' &&
+              set('key_findings', replaceAt(value.key_findings, i, { ...f, status: v }))
+            }
             options={STATUSES.map((s) => ({ value: s, label: t(`ai.status.${s}`) }))}
           />
           <TextInput
@@ -69,10 +76,16 @@ export function SummaryEditor({ value, onChange, readOnly = false }: SummaryEdit
             label={t('ai.explanation')}
             value={f.explanation}
             editable={!readOnly}
-            onChangeText={(v) => set('key_findings', replaceAt(value.key_findings, i, { ...f, explanation: v }))}
+            onChangeText={(v) =>
+              set('key_findings', replaceAt(value.key_findings, i, { ...f, explanation: v }))
+            }
           />
           {!readOnly ? (
-            <Button label={t('ai.remove')} variant="text" onPress={() => set('key_findings', removeAt(value.key_findings, i))} />
+            <Button
+              label={t('ai.remove')}
+              variant="text"
+              onPress={() => set('key_findings', removeAt(value.key_findings, i))}
+            />
           ) : null}
         </View>
       ))}
@@ -80,21 +93,58 @@ export function SummaryEditor({ value, onChange, readOnly = false }: SummaryEdit
         <Button
           label={t('ai.addItem')}
           variant="text"
-          onPress={() => set('key_findings', [...value.key_findings, { finding: '', status: 'normal', explanation: '' }])}
+          onPress={() =>
+            set('key_findings', [
+              ...value.key_findings,
+              { finding: '', status: 'normal', explanation: '' },
+            ])
+          }
         />
       ) : null}
 
-      <PairListEditor label={t('ai.foodsEat')} items={value.foods_to_eat} onChange={(v) => set('foods_to_eat', v)} readOnly={readOnly} />
-      <PairListEditor label={t('ai.foodsAvoid')} items={value.foods_to_avoid} onChange={(v) => set('foods_to_avoid', v)} readOnly={readOnly} />
-      <PairListEditor label={t('ai.medicines')} items={value.medicines_to_avoid} onChange={(v) => set('medicines_to_avoid', v)} readOnly={readOnly} />
-      <StringListEditor label={t('ai.tips')} items={value.lifestyle_tips} onChange={(v) => set('lifestyle_tips', v)} readOnly={readOnly} />
-      <StringListEditor label={t('ai.questions')} items={value.questions_for_doctor} onChange={(v) => set('questions_for_doctor', v)} readOnly={readOnly} />
-      {value.confidence_note ? <InfoBanner tone="info" icon="information-outline" message={value.confidence_note} /> : null}
+      <PairListEditor
+        label={t('ai.foodsEat')}
+        items={value.foods_to_eat}
+        onChange={(v) => set('foods_to_eat', v)}
+        readOnly={readOnly}
+      />
+      <PairListEditor
+        label={t('ai.foodsAvoid')}
+        items={value.foods_to_avoid}
+        onChange={(v) => set('foods_to_avoid', v)}
+        readOnly={readOnly}
+      />
+      <PairListEditor
+        label={t('ai.medicines')}
+        items={value.medicines_to_avoid}
+        onChange={(v) => set('medicines_to_avoid', v)}
+        readOnly={readOnly}
+      />
+      <StringListEditor
+        label={t('ai.tips')}
+        items={value.lifestyle_tips}
+        onChange={(v) => set('lifestyle_tips', v)}
+        readOnly={readOnly}
+      />
+      <StringListEditor
+        label={t('ai.questions')}
+        items={value.questions_for_doctor}
+        onChange={(v) => set('questions_for_doctor', v)}
+        readOnly={readOnly}
+      />
+      {value.confidence_note ? (
+        <InfoBanner tone="info" icon="information-outline" message={value.confidence_note} />
+      ) : null}
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
   heading: { color: palette.maroon, marginTop: spacing.sm },
-  finding: { gap: spacing.xs, paddingBottom: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.outline },
+  finding: {
+    gap: spacing.xs,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: palette.outline,
+  },
 });

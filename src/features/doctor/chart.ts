@@ -24,13 +24,25 @@ export interface TimelineEntry {
 /** Newest first. Planned and cancelled visits live in the Visit plan tab, not the timeline. */
 export function buildTimeline(
   visits: readonly Pick<VisitRow, 'id' | 'title' | 'status' | 'due_from' | 'created_at'>[],
-  consultations: readonly Pick<ConsultationRow, 'id' | 'created_at' | 'published_at' | 'advice' | 'appointment_id'>[],
-  reports: readonly Pick<ReportRow, 'id' | 'title' | 'type' | 'report_date' | 'created_at' | 'deleted_at'>[],
+  consultations: readonly Pick<
+    ConsultationRow,
+    'id' | 'created_at' | 'published_at' | 'advice' | 'appointment_id'
+  >[],
+  reports: readonly Pick<
+    ReportRow,
+    'id' | 'title' | 'type' | 'report_date' | 'created_at' | 'deleted_at'
+  >[],
 ): TimelineEntry[] {
   const entries: TimelineEntry[] = [];
   for (const v of visits) {
     if (v.status === 'planned' || v.status === 'cancelled') continue;
-    entries.push({ kind: 'visit', id: v.id, at: v.due_from ?? v.created_at, title: v.title, status: v.status });
+    entries.push({
+      kind: 'visit',
+      id: v.id,
+      at: v.due_from ?? v.created_at,
+      title: v.title,
+      status: v.status,
+    });
   }
   for (const c of consultations) {
     entries.push({
@@ -76,12 +88,7 @@ type ConsultationVitals = Pick<
   | 'fetal_heart_rate'
 >;
 export type VitalSeriesKey =
-  | 'weight_kg'
-  | 'bp_systolic'
-  | 'bp_diastolic'
-  | 'pulse'
-  | 'fundal_height_cm'
-  | 'fetal_heart_rate';
+  'weight_kg' | 'bp_systolic' | 'bp_diastolic' | 'pulse' | 'fundal_height_cm' | 'fetal_heart_rate';
 
 /** One series per vital, oldest first, skipping consultations that did not record it. */
 export function vitalSeries(
@@ -112,7 +119,10 @@ export function vitalSeries(
 
 /** Trend of one lab test: verified numeric values only (PLAN.md §5.2), oldest first. */
 export function labSeries(
-  results: readonly Pick<LabResultRow, 'test_code' | 'value_num' | 'verified' | 'observed_on' | 'created_at'>[],
+  results: readonly Pick<
+    LabResultRow,
+    'test_code' | 'value_num' | 'verified' | 'observed_on' | 'created_at'
+  >[],
   code: string,
 ): SeriesPoint[] {
   return results
@@ -139,4 +149,3 @@ export function groupPrescriptions(
     .filter((g) => g.items.length > 0)
     .sort((a, b) => b.at.localeCompare(a.at));
 }
-

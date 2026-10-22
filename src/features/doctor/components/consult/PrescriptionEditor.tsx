@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Controller, useFieldArray, useWatch, type Control, type UseFormSetValue } from 'react-hook-form';
+import {
+  Controller,
+  useFieldArray,
+  useWatch,
+  type Control,
+  type UseFormSetValue,
+} from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
@@ -32,9 +38,19 @@ export interface PrescriptionEditorProps {
 }
 
 /** Manual prescription entry: one card per drug, catalog autocomplete, "copy from last visit". */
-export function PrescriptionEditor({ control, setValue, catalog, pregnancyId, consultationId }: PrescriptionEditorProps) {
+export function PrescriptionEditor({
+  control,
+  setValue,
+  catalog,
+  pregnancyId,
+  consultationId,
+}: PrescriptionEditorProps) {
   const { t } = useTranslation('doctor');
-  const { fields, append, remove } = useFieldArray({ control, name: 'prescriptions', keyName: 'rhfKey' });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'prescriptions',
+    keyName: 'rhfKey',
+  });
   const [copyState, setCopyState] = useState<'idle' | 'loading' | 'none' | 'error'>('idle');
 
   const addRow = () => append(newPrescriptionRow(newId(), todayISO()));
@@ -100,8 +116,9 @@ function PrescriptionRowCard({
   const suggestions = suggestDrugs(catalog, name);
   const known = catalog.find((d) => d.name.toLowerCase() === name.trim().toLowerCase());
   const end = row ? endDate(row.start_date, row.duration_days) : null;
-  const field = (k: 'drug_name' | 'strength' | 'dose' | 'frequency' | 'duration_days' | 'instructions') =>
-    `prescriptions.${index}.${k}` as const;
+  const field = (
+    k: 'drug_name' | 'strength' | 'dose' | 'frequency' | 'duration_days' | 'instructions',
+  ) => `prescriptions.${index}.${k}` as const;
 
   const pick = (d: DrugRow) => {
     setValue(field('drug_name'), d.name, { shouldDirty: true, shouldValidate: true });
@@ -115,7 +132,12 @@ function PrescriptionRowCard({
       <Text variant="labelLarge" style={styles.rowTitle}>
         {t('consult.drugN', { n: index + 1 })}
       </Text>
-      <FormField control={control} name={field('drug_name')} label={t('consult.drugName')} autoCapitalize="words" />
+      <FormField
+        control={control}
+        name={field('drug_name')}
+        label={t('consult.drugName')}
+        autoCapitalize="words"
+      />
       {suggestions.length > 0 ? (
         <View style={styles.suggestions} accessibilityLabel={t('consult.suggestions')}>
           {suggestions.map((d) => (
@@ -133,41 +155,91 @@ function PrescriptionRowCard({
         control={control}
         name={`prescriptions.${index}.dosage_form`}
         render={({ field: { value, onChange } }) => (
-          <ChoiceChips scroll value={value} onChange={onChange} options={DOSAGE_FORMS.map((v) => ({ value: v, label: v }))} />
+          <ChoiceChips
+            scroll
+            value={value}
+            onChange={onChange}
+            options={DOSAGE_FORMS.map((v) => ({ value: v, label: v }))}
+          />
         )}
       />
-      <FormField control={control} name={field('dose')} label={t('consult.dose')} hint={t('consult.doseHint')} />
-      <FormField control={control} name={field('frequency')} label={t('consult.frequency')} hint={t('consult.frequencyHint')} autoCapitalize="characters" />
+      <FormField
+        control={control}
+        name={field('dose')}
+        label={t('consult.dose')}
+        hint={t('consult.doseHint')}
+      />
+      <FormField
+        control={control}
+        name={field('frequency')}
+        label={t('consult.frequency')}
+        hint={t('consult.frequencyHint')}
+        autoCapitalize="characters"
+      />
       <Controller
         control={control}
         name={`prescriptions.${index}.frequency`}
         render={({ field: { value, onChange } }) => (
-          <ChoiceChips scroll value={value} onChange={onChange} options={FREQUENCY_PRESETS.map((v) => ({ value: v, label: v }))} />
+          <ChoiceChips
+            scroll
+            value={value}
+            onChange={onChange}
+            options={FREQUENCY_PRESETS.map((v) => ({ value: v, label: v }))}
+          />
         )}
       />
       <Controller
         control={control}
         name={`prescriptions.${index}.timing`}
         render={({ field: { value, onChange } }) => (
-          <ChoiceChips scroll value={value} onChange={onChange} options={TIMING_OPTIONS.map((v) => ({ value: v, label: v }))} />
+          <ChoiceChips
+            scroll
+            value={value}
+            onChange={onChange}
+            options={TIMING_OPTIONS.map((v) => ({ value: v, label: v }))}
+          />
         )}
       />
       <Controller
         control={control}
         name={`prescriptions.${index}.route`}
         render={({ field: { value, onChange } }) => (
-          <ChoiceChips scroll value={value} onChange={onChange} options={ROUTES.map((v) => ({ value: v, label: v }))} />
+          <ChoiceChips
+            scroll
+            value={value}
+            onChange={onChange}
+            options={ROUTES.map((v) => ({ value: v, label: v }))}
+          />
         )}
       />
-      <FormField control={control} name={field('duration_days')} label={t('consult.duration')} keyboardType="number-pad" />
-      <DateField control={control} name={`prescriptions.${index}.start_date`} label={t('consult.startDate')} />
+      <FormField
+        control={control}
+        name={field('duration_days')}
+        label={t('consult.duration')}
+        keyboardType="number-pad"
+      />
+      <DateField
+        control={control}
+        name={`prescriptions.${index}.start_date`}
+        label={t('consult.startDate')}
+      />
       {end ? (
         <Text variant="bodySmall" style={styles.muted}>
           {t('consult.endsOn', { date: end })}
         </Text>
       ) : null}
-      <FormField control={control} name={field('instructions')} label={t('consult.instructions')} multiline />
-      <Button label={t('consult.removeDrug')} variant="text" onPress={onRemove} accessibilityLabel={t('consult.removeDrugN', { n: index + 1 })} />
+      <FormField
+        control={control}
+        name={field('instructions')}
+        label={t('consult.instructions')}
+        multiline
+      />
+      <Button
+        label={t('consult.removeDrug')}
+        variant="text"
+        onPress={onRemove}
+        accessibilityLabel={t('consult.removeDrugN', { n: index + 1 })}
+      />
     </View>
   );
 }

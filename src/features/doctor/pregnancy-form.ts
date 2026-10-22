@@ -37,7 +37,16 @@ export interface PregnancyFormValues {
 export function pregnancyDefaults(
   p: Pick<
     PregnancyRow,
-    'lmp_date' | 'edd_usg' | 'lmp_source' | 'risk_level' | 'risk_factors' | 'gravida' | 'para' | 'abortus' | 'living' | 'multiple_gestation'
+    | 'lmp_date'
+    | 'edd_usg'
+    | 'lmp_source'
+    | 'risk_level'
+    | 'risk_factors'
+    | 'gravida'
+    | 'para'
+    | 'abortus'
+    | 'living'
+    | 'multiple_gestation'
   >,
   patient: Pick<PatientRow, 'blood_group' | 'rh_negative' | 'allergies' | 'chronic_conditions'>,
 ): PregnancyFormValues {
@@ -61,7 +70,11 @@ export function pregnancyDefaults(
 }
 
 const count = (key: string) =>
-  z.string().refine((v) => v.trim() === '' || (/^\d{1,2}$/.test(v.trim()) && Number(v) <= 20), { error: key });
+  z
+    .string()
+    .refine((v) => v.trim() === '' || (/^\d{1,2}$/.test(v.trim()) && Number(v) <= 20), {
+      error: key,
+    });
 
 export function pregnancyFormSchema(today: ISODate) {
   return z
@@ -75,24 +88,43 @@ export function pregnancyFormSchema(today: ISODate) {
       para: count('doctor:validation.count'),
       abortus: count('doctor:validation.count'),
       living: count('doctor:validation.count'),
-      multiple_gestation: z.string().refine((v) => /^[1-6]$/.test(v.trim()), { error: 'doctor:validation.multiple' }),
-      blood_group: z.string().refine((v) => v === '' || (BLOOD_GROUPS as readonly string[]).includes(v), { error: 'validation.required' }),
+      multiple_gestation: z
+        .string()
+        .refine((v) => /^[1-6]$/.test(v.trim()), { error: 'doctor:validation.multiple' }),
+      blood_group: z
+        .string()
+        .refine((v) => v === '' || (BLOOD_GROUPS as readonly string[]).includes(v), {
+          error: 'validation.required',
+        }),
       rh_negative: z.boolean(),
       allergies: z.string(),
       chronic_conditions: z.string(),
     })
     .superRefine((v, ctx) => {
       if (v.lmp_date === '' && v.edd_usg === '') {
-        ctx.addIssue({ code: 'custom', message: 'doctor:validation.needDates', path: ['lmp_date'] });
+        ctx.addIssue({
+          code: 'custom',
+          message: 'doctor:validation.needDates',
+          path: ['lmp_date'],
+        });
       }
       if (v.lmp_date !== '' && isISODate(v.lmp_date)) {
-        if (v.lmp_date > today) ctx.addIssue({ code: 'custom', message: 'doctor:validation.lmpFuture', path: ['lmp_date'] });
+        if (v.lmp_date > today)
+          ctx.addIssue({
+            code: 'custom',
+            message: 'doctor:validation.lmpFuture',
+            path: ['lmp_date'],
+          });
         else if (v.lmp_date < addDays(today, -300))
           ctx.addIssue({ code: 'custom', message: 'doctor:validation.lmpOld', path: ['lmp_date'] });
       }
       if (v.edd_usg !== '' && isISODate(v.edd_usg)) {
         if (v.edd_usg < addDays(today, -60) || v.edd_usg > addDays(today, 300))
-          ctx.addIssue({ code: 'custom', message: 'doctor:validation.eddRange', path: ['edd_usg'] });
+          ctx.addIssue({
+            code: 'custom',
+            message: 'doctor:validation.eddRange',
+            path: ['edd_usg'],
+          });
       }
     });
 }
@@ -142,14 +174,19 @@ export function toMedicalPatch(v: PregnancyFormValues) {
 
 /** The due date the form would produce (preview), or null. */
 export function previewEdd(v: Pick<PregnancyFormValues, 'lmp_date' | 'edd_usg'>): ISODate | null {
-  return eddFinal(isISODate(v.lmp_date) ? v.lmp_date : null, isISODate(v.edd_usg) ? v.edd_usg : null);
+  return eddFinal(
+    isISODate(v.lmp_date) ? v.lmp_date : null,
+    isISODate(v.edd_usg) ? v.edd_usg : null,
+  );
 }
 
 /** Closing a pregnancy needs a closing status and a date that is not in the future. */
 export const outcomeSchema = (today: ISODate) =>
   z.object({
     status: z.enum(['delivered', 'miscarriage', 'terminated', 'transferred', 'closed']),
-    outcome_date: z.string().refine((v) => isISODate(v) && v <= today, { error: 'validation.date' }),
+    outcome_date: z
+      .string()
+      .refine((v) => isISODate(v) && v <= today, { error: 'validation.date' }),
     outcome_notes: z.string(),
   });
 export type OutcomeValues = z.infer<ReturnType<typeof outcomeSchema>>;

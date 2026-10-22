@@ -18,18 +18,17 @@ export interface QueueItem {
 }
 
 /** Shape of the joined row returned by the queue query (see api.ts). */
-export interface QueueRow
-  extends Pick<
-    AppointmentRow,
-    | 'id'
-    | 'starts_at'
-    | 'ends_at'
-    | 'status'
-    | 'reason'
-    | 'booking_channel'
-    | 'pregnancy_id'
-    | 'patient_id'
-  > {
+export interface QueueRow extends Pick<
+  AppointmentRow,
+  | 'id'
+  | 'starts_at'
+  | 'ends_at'
+  | 'status'
+  | 'reason'
+  | 'booking_channel'
+  | 'pregnancy_id'
+  | 'patient_id'
+> {
   patients: { full_name: string; mrn: string | null; is_verified: boolean } | null;
   pregnancies: { edd_final: string | null; risk_level: 'low' | 'moderate' | 'high' } | null;
 }
@@ -53,7 +52,13 @@ export function toQueueItem(row: QueueRow): QueueItem {
 }
 
 /** Display order of the groups: what needs the doctor now comes first. */
-export const QUEUE_GROUP_ORDER = ['in_consultation', 'checked_in', 'booked', 'done', 'closed'] as const;
+export const QUEUE_GROUP_ORDER = [
+  'in_consultation',
+  'checked_in',
+  'booked',
+  'done',
+  'closed',
+] as const;
 export type QueueGroupKey = (typeof QUEUE_GROUP_ORDER)[number];
 
 export interface QueueGroup {

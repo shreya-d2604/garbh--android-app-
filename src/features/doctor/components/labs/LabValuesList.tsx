@@ -25,7 +25,14 @@ export interface LabValuesListProps {
 const EMPTY: LabFormValues = { test_code: '', value: '', unit: '' };
 
 /** Extracted / manual lab values with edit, verify and delete; low-confidence AI values are highlighted. */
-export function LabValuesList({ reportId, pregnancyId, results, tests, observedOn, readOnly = false }: LabValuesListProps) {
+export function LabValuesList({
+  reportId,
+  pregnancyId,
+  results,
+  tests,
+  observedOn,
+  readOnly = false,
+}: LabValuesListProps) {
   const { t } = useTranslation('doctor');
   const actions = useReportActions(reportId, pregnancyId);
   const [editing, setEditing] = useState<LabResultRow | 'new' | null>(null);
@@ -40,13 +47,21 @@ export function LabValuesList({ reportId, pregnancyId, results, tests, observedO
   return (
     <Card title={t('labs.title')} subtitle={readOnly ? undefined : t('labs.subtitle')}>
       {results.length === 0 ? (
-        <EmptyState icon="flask-outline" title={t('labs.emptyTitle')} message={t('labs.emptyMessage')} />
+        <EmptyState
+          icon="flask-outline"
+          title={t('labs.emptyTitle')}
+          message={t('labs.emptyMessage')}
+        />
       ) : (
         results.map((r) => {
           const test = r.test_code ? testByCode.get(r.test_code) : undefined;
           const low = r.source === 'ai_extracted' && !r.verified && isLowConfidence(r.confidence);
           return (
-            <View key={r.id} style={[styles.row, low && styles.lowRow]} accessibilityLabel={test?.name ?? r.raw_name ?? ''}>
+            <View
+              key={r.id}
+              style={[styles.row, low && styles.lowRow]}
+              accessibilityLabel={test?.name ?? r.raw_name ?? ''}
+            >
               <View style={styles.main}>
                 <Text variant="bodyLarge">{test?.name ?? r.raw_name ?? r.test_code}</Text>
                 <Text variant="titleMedium" style={styles.value}>
@@ -59,9 +74,16 @@ export function LabValuesList({ reportId, pregnancyId, results, tests, observedO
                 ) : null}
               </View>
               <View style={styles.chips}>
-                {r.flag ? <StatusChip label={t(`labs.flag.${r.flag}`)} tone={flagTone(r.flag)} /> : null}
+                {r.flag ? (
+                  <StatusChip label={t(`labs.flag.${r.flag}`)} tone={flagTone(r.flag)} />
+                ) : null}
                 <StatusChip label={t(`labs.source.${r.source}`)} tone="neutral" />
-                {low ? <StatusChip label={t('labs.lowConfidence', { pct: Math.round((r.confidence ?? 0) * 100) })} tone="warning" /> : null}
+                {low ? (
+                  <StatusChip
+                    label={t('labs.lowConfidence', { pct: Math.round((r.confidence ?? 0) * 100) })}
+                    tone="warning"
+                  />
+                ) : null}
                 {r.verified ? <StatusChip label={t('labs.verifiedChip')} tone="success" /> : null}
               </View>
               {!readOnly && !r.verified ? (
@@ -70,9 +92,15 @@ export function LabValuesList({ reportId, pregnancyId, results, tests, observedO
                   <Button
                     label={t('labs.verify')}
                     variant="text"
-                    onPress={() => actions.updateLab.mutate({ id: r.id, patch: { verified: true } })}
+                    onPress={() =>
+                      actions.updateLab.mutate({ id: r.id, patch: { verified: true } })
+                    }
                   />
-                  <Button label={t('labs.remove')} variant="text" onPress={() => actions.deleteLab.mutate(r.id)} />
+                  <Button
+                    label={t('labs.remove')}
+                    variant="text"
+                    onPress={() => actions.deleteLab.mutate(r.id)}
+                  />
                 </View>
               ) : null}
             </View>
@@ -80,7 +108,9 @@ export function LabValuesList({ reportId, pregnancyId, results, tests, observedO
         })
       )}
       <ErrorBanner error={actions.updateLab.error ?? actions.deleteLab.error} />
-      {!readOnly ? <Button label={t('labs.add')} variant="secondary" onPress={() => setEditing('new')} /> : null}
+      {!readOnly ? (
+        <Button label={t('labs.add')} variant="secondary" onPress={() => setEditing('new')} />
+      ) : null}
 
       <LabEditDialog
         visible={editing !== null}
@@ -93,7 +123,10 @@ export function LabValuesList({ reportId, pregnancyId, results, tests, observedO
         onSubmit={(values, verify) => {
           const test = testByCode.get(values.test_code);
           if (editing === 'new') {
-            actions.addLab.mutate({ reportId, pregnancyId, values, test, observedOn, verify }, { onSuccess: close });
+            actions.addLab.mutate(
+              { reportId, pregnancyId, values, test, observedOn, verify },
+              { onSuccess: close },
+            );
           } else if (editing) {
             actions.updateLab.mutate(
               { id: editing.id, patch: labPatch(values, test) },
@@ -107,7 +140,12 @@ export function LabValuesList({ reportId, pregnancyId, results, tests, observedO
 }
 
 const styles = StyleSheet.create({
-  row: { gap: spacing.xs, paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.outline },
+  row: {
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: palette.outline,
+  },
   lowRow: { backgroundColor: palette.warningSoft, paddingHorizontal: spacing.sm, borderRadius: 8 },
   main: { gap: 2 },
   value: { color: palette.maroon },

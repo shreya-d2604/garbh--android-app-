@@ -16,7 +16,11 @@ export interface TimeFieldProps<T extends FieldValues, TOut = T> {
 }
 
 /** Time picker bound to react-hook-form; the form value is "HH:MM" (24-hour). */
-export function TimeField<T extends FieldValues, TOut = T>({ control, name, label }: TimeFieldProps<T, TOut>) {
+export function TimeField<T extends FieldValues, TOut = T>({
+  control,
+  name,
+  label,
+}: TimeFieldProps<T, TOut>) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
@@ -30,11 +34,16 @@ export function TimeField<T extends FieldValues, TOut = T>({ control, name, labe
         current.setHours(Math.floor((minutes ?? 540) / 60), (minutes ?? 540) % 60, 0, 0);
         const onPick = (event: DateTimePickerEvent, date?: Date) => {
           setOpen(false);
-          if (event.type === 'set' && date) onChange(formatTime(date.getHours() * 60 + date.getMinutes()));
+          if (event.type === 'set' && date)
+            onChange(formatTime(date.getHours() * 60 + date.getMinutes()));
         };
         return (
           <View>
-            <Pressable onPress={() => setOpen(true)} accessibilityRole="button" accessibilityLabel={label}>
+            <Pressable
+              onPress={() => setOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={label}
+            >
               <View pointerEvents="none">
                 <TextInput
                   mode="outlined"
@@ -51,7 +60,9 @@ export function TimeField<T extends FieldValues, TOut = T>({ control, name, labe
             <HelperText type="error" visible={!!error}>
               {error?.message ? t(error.message) : ''}
             </HelperText>
-            {open ? <DateTimePicker mode="time" is24Hour value={current} onChange={onPick} /> : null}
+            {open ? (
+              <DateTimePicker mode="time" is24Hour value={current} onChange={onPick} />
+            ) : null}
           </View>
         );
       }}

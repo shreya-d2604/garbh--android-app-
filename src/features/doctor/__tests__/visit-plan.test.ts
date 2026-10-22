@@ -16,10 +16,18 @@ const issues = (values: object) => {
 describe('extra visit form', () => {
   it('needs a week between 4 and 42 and a reason', () => {
     expect(issues({ week: '26', title: '', reason: 'High BP follow-up', tests: '' })).toEqual([]);
-    expect(issues({ week: '3', title: '', reason: 'x1', tests: '' })).toEqual(['week:doctor:validation.week']);
-    expect(issues({ week: '43', title: '', reason: 'x1', tests: '' })).toEqual(['week:doctor:validation.week']);
-    expect(issues({ week: 'ab', title: '', reason: 'x1', tests: '' })).toEqual(['week:doctor:validation.week']);
-    expect(issues({ week: '26', title: '', reason: ' ', tests: '' })).toEqual(['reason:validation.required']);
+    expect(issues({ week: '3', title: '', reason: 'x1', tests: '' })).toEqual([
+      'week:doctor:validation.week',
+    ]);
+    expect(issues({ week: '43', title: '', reason: 'x1', tests: '' })).toEqual([
+      'week:doctor:validation.week',
+    ]);
+    expect(issues({ week: 'ab', title: '', reason: 'x1', tests: '' })).toEqual([
+      'week:doctor:validation.week',
+    ]);
+    expect(issues({ week: '26', title: '', reason: ' ', tests: '' })).toEqual([
+      'reason:validation.required',
+    ]);
   });
 });
 
@@ -76,18 +84,36 @@ describe('visit ordering and state', () => {
 
   it('derives the display state of a visit', () => {
     const today = '2026-09-20';
-    expect(visitState({ status: 'completed', due_from: '2026-01-01', due_to: '2026-01-07' }, today)).toBe('completed');
-    expect(visitState({ status: 'scheduled', due_from: null, due_to: null }, today)).toBe('scheduled');
-    expect(visitState({ status: 'planned', due_from: '2026-08-01', due_to: '2026-08-14' }, today)).toBe('overdue');
-    expect(visitState({ status: 'planned', due_from: '2026-09-15', due_to: '2026-09-25' }, today)).toBe('due');
-    expect(visitState({ status: 'planned', due_from: '2026-10-01', due_to: '2026-10-10' }, today)).toBe('upcoming');
+    expect(
+      visitState({ status: 'completed', due_from: '2026-01-01', due_to: '2026-01-07' }, today),
+    ).toBe('completed');
+    expect(visitState({ status: 'scheduled', due_from: null, due_to: null }, today)).toBe(
+      'scheduled',
+    );
+    expect(
+      visitState({ status: 'planned', due_from: '2026-08-01', due_to: '2026-08-14' }, today),
+    ).toBe('overdue');
+    expect(
+      visitState({ status: 'planned', due_from: '2026-09-15', due_to: '2026-09-25' }, today),
+    ).toBe('due');
+    expect(
+      visitState({ status: 'planned', due_from: '2026-10-01', due_to: '2026-10-10' }, today),
+    ).toBe('upcoming');
     expect(visitState({ status: 'skipped', due_from: null, due_to: null }, today)).toBe('skipped');
   });
 
   it('shifts a whole window by weeks and refuses to leave 4..42 weeks', () => {
     const visit = { target_week: 28, due_from: '2026-10-25', due_to: '2026-11-08' };
-    expect(shiftVisit(visit, 1)).toEqual({ target_week: 29, due_from: '2026-11-01', due_to: '2026-11-15' });
-    expect(shiftVisit(visit, -2)).toEqual({ target_week: 26, due_from: '2026-10-11', due_to: '2026-10-25' });
+    expect(shiftVisit(visit, 1)).toEqual({
+      target_week: 29,
+      due_from: '2026-11-01',
+      due_to: '2026-11-15',
+    });
+    expect(shiftVisit(visit, -2)).toEqual({
+      target_week: 26,
+      due_from: '2026-10-11',
+      due_to: '2026-10-25',
+    });
     expect(shiftVisit({ ...visit, target_week: 42 }, 1)).toBeNull();
     expect(shiftVisit({ ...visit, target_week: 4 }, -1)).toBeNull();
     expect(shiftVisit({ target_week: 20, due_from: null, due_to: null }, 1)).toBeNull();

@@ -34,17 +34,31 @@ export function PrescriptionsTab({ pregnancyId }: { pregnancyId: string }) {
             <Card
               key={g.consultationId}
               title={format(new Date(g.at), 'd MMM yyyy')}
-              right={<StatusChip label={t(g.published ? 'timeline.published' : 'timeline.draft')} tone={g.published ? 'success' : 'warning'} />}
+              right={
+                <StatusChip
+                  label={t(g.published ? 'timeline.published' : 'timeline.draft')}
+                  tone={g.published ? 'success' : 'warning'}
+                />
+              }
             >
               {g.items.map((i) => (
                 <View key={i.id} style={styles.row}>
                   <ListItem
                     icon="pill"
                     title={[i.drug_name, i.strength].filter(Boolean).join(' ')}
-                    description={[i.dose, i.frequency, i.timing, i.duration_days ? t('rx.days', { count: i.duration_days }) : null]
+                    description={[
+                      i.dose,
+                      i.frequency,
+                      i.timing,
+                      i.duration_days ? t('rx.days', { count: i.duration_days }) : null,
+                    ]
                       .filter(Boolean)
                       .join(' · ')}
-                    right={isActiveToday(i, today) ? <StatusChip label={t('rx.active')} tone="success" /> : undefined}
+                    right={
+                      isActiveToday(i, today) ? (
+                        <StatusChip label={t('rx.active')} tone="success" />
+                      ) : undefined
+                    }
                   />
                   {i.instructions ? (
                     <Text variant="bodySmall" style={styles.note}>

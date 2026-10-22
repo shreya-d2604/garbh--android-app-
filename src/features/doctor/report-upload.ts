@@ -73,7 +73,8 @@ export function validatePages(pages: readonly PickedPage[]): string[] {
   if (pages.length === 0) issues.push('report.errors.noFiles');
   if (pages.length > MAX_PAGES) issues.push('report.errors.tooManyPages');
   if (pages.some((p) => !isAllowedMime(p.mime))) issues.push('report.errors.badType');
-  if (pages.some((p) => p.size != null && p.size > MAX_FILE_BYTES)) issues.push('report.errors.tooBig');
+  if (pages.some((p) => p.size != null && p.size > MAX_FILE_BYTES))
+    issues.push('report.errors.tooBig');
   return issues;
 }
 
@@ -83,7 +84,8 @@ export function resizeWidthFor(width: number | null | undefined): number | null 
 }
 
 export function movePage<T>(items: readonly T[], from: number, to: number): T[] {
-  if (from < 0 || from >= items.length || to < 0 || to >= items.length || from === to) return [...items];
+  if (from < 0 || from >= items.length || to < 0 || to >= items.length || from === to)
+    return [...items];
   const next = [...items];
   const [moved] = next.splice(from, 1);
   if (moved !== undefined) next.splice(to, 0, moved);
@@ -111,7 +113,19 @@ export function progressPercent(files: readonly FileProgress[]): number {
 /** Report details typed before uploading. */
 export const reportMetaSchema = (today: string) =>
   z.object({
-    type: z.enum(['blood', 'urine', 'ultrasound', 'nt_scan', 'anomaly_scan', 'growth_scan', 'doppler', 'gtt', 'thyroid', 'ecg', 'other']),
+    type: z.enum([
+      'blood',
+      'urine',
+      'ultrasound',
+      'nt_scan',
+      'anomaly_scan',
+      'growth_scan',
+      'doppler',
+      'gtt',
+      'thyroid',
+      'ecg',
+      'other',
+    ]),
     title: z.string(),
     report_date: z.string().refine((v) => isISODate(v) && v <= today, { error: 'validation.date' }),
     lab_name: z.string(),

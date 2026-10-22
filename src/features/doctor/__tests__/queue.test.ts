@@ -37,7 +37,13 @@ describe('today queue', () => {
       item({ id: 'done', status: 'completed' }),
       item({ id: 'x', status: 'cancelled' }),
     ]);
-    expect(groups.map((g) => g.key)).toEqual(['in_consultation', 'checked_in', 'booked', 'done', 'closed']);
+    expect(groups.map((g) => g.key)).toEqual([
+      'in_consultation',
+      'checked_in',
+      'booked',
+      'done',
+      'closed',
+    ]);
     expect(groups[2]?.items.map((i) => i.id)).toEqual(['early', 'late']);
   });
 
@@ -73,8 +79,14 @@ describe('today queue', () => {
   });
 
   it('shows the App chip for app bookings and New · Unverified for unverified patients', () => {
-    expect(queueChips({ channel: 'app', verified: false })).toEqual({ app: true, newUnverified: true });
-    expect(queueChips({ channel: 'reception', verified: true })).toEqual({ app: false, newUnverified: false });
+    expect(queueChips({ channel: 'app', verified: false })).toEqual({
+      app: true,
+      newUnverified: true,
+    });
+    expect(queueChips({ channel: 'reception', verified: true })).toEqual({
+      app: false,
+      newUnverified: false,
+    });
   });
 
   it('maps a joined row and tolerates missing joins', () => {
@@ -90,7 +102,12 @@ describe('today queue', () => {
       patients: { full_name: 'Kavya Iyer', mrn: null, is_verified: false },
       pregnancies: { edd_final: '2027-01-10', risk_level: 'high' },
     };
-    expect(toQueueItem(row)).toMatchObject({ patientName: 'Kavya Iyer', verified: false, riskLevel: 'high', channel: 'app' });
+    expect(toQueueItem(row)).toMatchObject({
+      patientName: 'Kavya Iyer',
+      verified: false,
+      riskLevel: 'high',
+      channel: 'app',
+    });
     expect(toQueueItem({ ...row, patients: null, pregnancies: null })).toMatchObject({
       patientName: '',
       verified: false,

@@ -8,7 +8,11 @@ import { useSignedUrl } from '../hooks';
 import type { ReportFileRow } from '../types';
 
 /** One page of a report: photos are shown in place; PDFs open in the phone's PDF viewer (60 s signed link). */
-export function ReportPageView({ file }: { file: Pick<ReportFileRow, 'storage_path' | 'mime_type' | 'page_no'> }) {
+export function ReportPageView({
+  file,
+}: {
+  file: Pick<ReportFileRow, 'storage_path' | 'mime_type' | 'page_no'>;
+}) {
   const { t } = useTranslation('doctor');
   const url = useSignedUrl(file.storage_path);
   const isPdf = file.mime_type === 'application/pdf';
@@ -21,9 +25,17 @@ export function ReportPageView({ file }: { file: Pick<ReportFileRow, 'storage_pa
       {url.isPending ? (
         <ActivityIndicator color={palette.rose} />
       ) : url.isError || !url.data ? (
-        <Button label={t('report.fileRetry')} variant="secondary" onPress={() => void url.refetch()} />
+        <Button
+          label={t('report.fileRetry')}
+          variant="secondary"
+          onPress={() => void url.refetch()}
+        />
       ) : isPdf ? (
-        <Button label={t('report.openPdf')} variant="secondary" onPress={() => void Linking.openURL(url.data)} />
+        <Button
+          label={t('report.openPdf')}
+          variant="secondary"
+          onPress={() => void Linking.openURL(url.data)}
+        />
       ) : (
         <Image
           source={{ uri: url.data }}

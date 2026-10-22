@@ -4,12 +4,7 @@ import { z } from 'zod';
 import type { TablesInsert, TablesUpdate } from '@/types/database';
 
 import { textOrNull } from './format';
-import {
-  isRowBlank,
-  rowFromItem,
-  validateRow,
-  type PrescriptionFormRow,
-} from './prescription';
+import { isRowBlank, rowFromItem, validateRow, type PrescriptionFormRow } from './prescription';
 import type { ConsultationRow, PrescriptionItemRow } from './types';
 
 /** Plausible human ranges. Outside them the value is almost certainly a typo (BP 300/20). */
@@ -135,9 +130,12 @@ export const consultationSchema = z
     diet_advice: z.string(),
     next_visit_after_weeks: z
       .string()
-      .refine((v) => v.trim() === '' || (/^\d{1,2}$/.test(v.trim()) && Number(v) >= 1 && Number(v) <= 40), {
-        error: 'doctor:validation.nextVisit',
-      }),
+      .refine(
+        (v) => v.trim() === '' || (/^\d{1,2}$/.test(v.trim()) && Number(v) >= 1 && Number(v) <= 40),
+        {
+          error: 'doctor:validation.nextVisit',
+        },
+      ),
     private_note: z.string(),
     prescriptions: z.array(prescriptionRowSchema),
   })
@@ -145,12 +143,17 @@ export const consultationSchema = z
     const sys = parseNumber(v.bp_systolic);
     const dia = parseNumber(v.bp_diastolic);
     if (sys !== null && dia !== null && !Number.isNaN(sys) && !Number.isNaN(dia) && sys <= dia) {
-      ctx.addIssue({ code: 'custom', message: 'doctor:validation.bpOrder', path: ['bp_diastolic'] });
+      ctx.addIssue({
+        code: 'custom',
+        message: 'doctor:validation.bpOrder',
+        path: ['bp_diastolic'],
+      });
     }
   });
 
 /** Clinically abnormal (but possible) readings, shown as chips. Typos are caught by the schema. */
-export type VitalWarning = 'bp_high' | 'bp_low' | 'fever' | 'spo2_low' | 'fhr_abnormal' | 'pulse_abnormal';
+export type VitalWarning =
+  'bp_high' | 'bp_low' | 'fever' | 'spo2_low' | 'fhr_abnormal' | 'pulse_abnormal';
 
 export function vitalWarnings(values: Pick<ConsultationFormValues, VitalField>): VitalWarning[] {
   const num = (f: VitalField) => {
@@ -199,7 +202,13 @@ function vitalNumber(field: VitalField, text: string): number | null | undefined
 
 type ConsultationColumns = Omit<
   TablesUpdate<'consultations'>,
-  'id' | 'created_at' | 'updated_at' | 'doctor_id' | 'pregnancy_id' | 'appointment_id' | 'published_at'
+  | 'id'
+  | 'created_at'
+  | 'updated_at'
+  | 'doctor_id'
+  | 'pregnancy_id'
+  | 'appointment_id'
+  | 'published_at'
 >;
 
 /** Columns to save. Fields with an invalid value are omitted so a draft never fails a DB check. */

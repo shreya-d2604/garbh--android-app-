@@ -7,5 +7,11 @@ import { rpcErrorKey } from '@/domain/rpc-errors';
 export function ErrorBanner({ error }: { error: unknown }) {
   const { t } = useTranslation();
   if (!error) return null;
-  return <InfoBanner tone="danger" icon="alert-circle-outline" message={t(rpcErrorKey(error as { message?: string; code?: string }))} />;
+  return (
+    <InfoBanner
+      tone="danger"
+      icon="alert-circle-outline"
+      message={t(rpcErrorKey(error as { message?: string; code?: string }))}
+    />
+  );
 }

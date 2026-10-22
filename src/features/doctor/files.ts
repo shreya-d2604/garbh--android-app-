@@ -60,7 +60,10 @@ export async function compressPage(page: PickedPage): Promise<PickedPage> {
   const context = ImageManipulator.ImageManipulator.manipulate(page.uri);
   if (width !== null) context.resize({ width });
   const image = await context.renderAsync();
-  const result = await image.saveAsync({ compress: JPEG_QUALITY, format: ImageManipulator.SaveFormat.JPEG });
+  const result = await image.saveAsync({
+    compress: JPEG_QUALITY,
+    format: ImageManipulator.SaveFormat.JPEG,
+  });
   return { ...page, uri: result.uri, mime: 'image/jpeg', width: result.width, size: null };
 }
 

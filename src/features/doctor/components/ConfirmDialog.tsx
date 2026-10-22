@@ -25,7 +25,7 @@ export function ConfirmDialog({
   onConfirm,
   onDismiss,
 }: ConfirmDialogProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('doctor');
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={onDismiss}>
@@ -34,7 +34,12 @@ export function ConfirmDialog({
           <Text variant="bodyMedium">{message}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button label={t('actions.cancel')} variant="text" onPress={onDismiss} disabled={loading} />
+          <Button
+            label={t('common:actions.cancel')}
+            variant="text"
+            onPress={onDismiss}
+            disabled={loading}
+          />
           <Button
             label={confirmLabel}
             variant={danger ? 'danger' : 'primary'}

@@ -59,12 +59,26 @@ export default function ConsultScreen() {
   const { t } = useTranslation('doctor');
   const bundle = useConsultationBundle(appointmentId);
 
-  if (bundle.isPending) return <Screen edges={['bottom']}><LoadingState /></Screen>;
-  if (bundle.isError) return <Screen edges={['bottom']}><ErrorState onRetry={() => void bundle.refetch()} /></Screen>;
+  if (bundle.isPending)
+    return (
+      <Screen edges={['bottom']}>
+        <LoadingState />
+      </Screen>
+    );
+  if (bundle.isError)
+    return (
+      <Screen edges={['bottom']}>
+        <ErrorState onRetry={() => void bundle.refetch()} />
+      </Screen>
+    );
   if (!bundle.data) {
     return (
       <Screen edges={['bottom']}>
-        <EmptyState icon="calendar-remove-outline" title={t('consult.notFoundTitle')} message={t('consult.notFoundMessage')} />
+        <EmptyState
+          icon="calendar-remove-outline"
+          title={t('consult.notFoundTitle')}
+          message={t('consult.notFoundMessage')}
+        />
       </Screen>
     );
   }
@@ -72,7 +86,13 @@ export default function ConsultScreen() {
 }
 
 /** One sectioned form with autosave. Publishing makes advice + prescription visible to the patient. */
-function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle: ConsultationBundle }) {
+function ConsultForm({
+  appointmentId,
+  bundle,
+}: {
+  appointmentId: string;
+  bundle: ConsultationBundle;
+}) {
   const { t } = useTranslation('doctor');
   const router = useRouter();
   useSecureScreen('doctor-consult');
@@ -89,7 +109,11 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
     () => valuesFromConsultation(consultation, bundle.privateNote, bundle.items),
     [consultation, bundle.privateNote, bundle.items],
   );
-  const { control, getValues, setValue, trigger } = useForm<ConsultationFormValues, unknown, ConsultationFormValues>({
+  const { control, getValues, setValue, trigger } = useForm<
+    ConsultationFormValues,
+    unknown,
+    ConsultationFormValues
+  >({
     resolver: zodResolver(consultationSchema),
     mode: 'onChange',
     defaultValues: initial,
@@ -108,6 +132,7 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
   const lastSaved = useRef(JSON.stringify(initial));
   const inflight = useRef<Promise<string | null> | null>(null);
   const [tick, setTick] = useState(0);
+  const [consultationId, setConsultationId] = useState<string | null>(consultation?.id ?? null);
 
   const ga = gaFromEdd(appointment.pregnancies?.edd_final, todayISO());
 
@@ -129,6 +154,7 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
       })
       .then((id) => {
         idRef.current = id;
+        setConsultationId(id);
         lastSaved.current = JSON.stringify(snapshot);
         setSaveState('saved');
         return id;
@@ -157,7 +183,8 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
     return () => clearTimeout(timer);
   }, [values, persist, publish.isPending, outcome, confirming, tick]);
 
-  const onStart = () => start.mutate(appointmentId, { onSuccess: () => setStatus('in_consultation') });
+  const onStart = () =>
+    start.mutate(appointmentId, { onSuccess: () => setStatus('in_consultation') });
 
   const onPublishPressed = async () => {
     const valid = await trigger();
@@ -188,6 +215,7 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
       {
         onSuccess: (res) => {
           idRef.current = res.consultationId;
+          setConsultationId(res.consultationId);
           lastSaved.current = JSON.stringify(getValues());
           setPublished(true);
           setStatus('completed');
@@ -206,10 +234,19 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
     return (
       <Screen edges={['bottom']}>
         <Card variant="soft" title={t('publish.doneTitle')} subtitle={t('publish.doneMessage')}>
-          {outcome.aiError ? <InfoBanner tone="warning" message={t('publish.aiNotStarted')} /> : null}
-          {withAi && !outcome.aiError ? <InfoBanner tone="success" message={t('publish.aiStarted')} /> : null}
-          {outcome.statusNotUpdated ? <InfoBanner tone="warning" message={t('publish.statusNotUpdated')} /> : null}
-          <Button label={t('publish.backToToday')} onPress={() => router.replace('/doctor/today')} />
+          {outcome.aiError ? (
+            <InfoBanner tone="warning" message={t('publish.aiNotStarted')} />
+          ) : null}
+          {withAi && !outcome.aiError ? (
+            <InfoBanner tone="success" message={t('publish.aiStarted')} />
+          ) : null}
+          {outcome.statusNotUpdated ? (
+            <InfoBanner tone="warning" message={t('publish.statusNotUpdated')} />
+          ) : null}
+          <Button
+            label={t('publish.backToToday')}
+            onPress={() => router.replace('/doctor/today')}
+          />
           <Button
             label={t('publish.openChart')}
             variant="secondary"
@@ -224,7 +261,13 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
     <Screen
       edges={['bottom']}
       title={appointment.patients?.full_name ?? ''}
-      subtitle={[format(new Date(appointment.starts_at), 'h:mm a'), appointment.reason, ga ? formatGa(ga) : null].filter(Boolean).join(' · ')}
+      subtitle={[
+        format(new Date(appointment.starts_at), 'h:mm a'),
+        appointment.reason,
+        ga ? formatGa(ga) : null,
+      ]
+        .filter(Boolean)
+        .join(' · ')}
       footer={
         <View style={styles.footer}>
           <Text variant="bodySmall" style={styles.saveState} accessibilityLiveRegion="polite">
@@ -256,16 +299,58 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
 
       <Card title={t('consult.vitals')}>
         <View style={styles.row}>
-          <View style={styles.half}><FormField control={control} name="weight_kg" label={t('consult.weight')} keyboardType="decimal-pad" /></View>
-          <View style={styles.half}><FormField control={control} name="pulse" label={t('consult.pulse')} keyboardType="number-pad" /></View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="weight_kg"
+              label={t('consult.weight')}
+              keyboardType="decimal-pad"
+            />
+          </View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="pulse"
+              label={t('consult.pulse')}
+              keyboardType="number-pad"
+            />
+          </View>
         </View>
         <View style={styles.row}>
-          <View style={styles.half}><FormField control={control} name="bp_systolic" label={t('consult.bpSystolic')} keyboardType="number-pad" /></View>
-          <View style={styles.half}><FormField control={control} name="bp_diastolic" label={t('consult.bpDiastolic')} keyboardType="number-pad" /></View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="bp_systolic"
+              label={t('consult.bpSystolic')}
+              keyboardType="number-pad"
+            />
+          </View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="bp_diastolic"
+              label={t('consult.bpDiastolic')}
+              keyboardType="number-pad"
+            />
+          </View>
         </View>
         <View style={styles.row}>
-          <View style={styles.half}><FormField control={control} name="temperature" label={t('consult.temperature')} keyboardType="decimal-pad" /></View>
-          <View style={styles.half}><FormField control={control} name="spo2" label={t('consult.spo2')} keyboardType="number-pad" /></View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="temperature"
+              label={t('consult.temperature')}
+              keyboardType="decimal-pad"
+            />
+          </View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="spo2"
+              label={t('consult.spo2')}
+              keyboardType="number-pad"
+            />
+          </View>
         </View>
         {warnings.length > 0 ? (
           <View style={styles.chips}>
@@ -278,14 +363,48 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
 
       <Card title={t('consult.exam')}>
         <View style={styles.row}>
-          <View style={styles.half}><FormField control={control} name="fundal_height_cm" label={t('consult.fundal')} keyboardType="decimal-pad" /></View>
-          <View style={styles.half}><FormField control={control} name="fetal_heart_rate" label={t('consult.fhr')} keyboardType="number-pad" /></View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="fundal_height_cm"
+              label={t('consult.fundal')}
+              keyboardType="decimal-pad"
+            />
+          </View>
+          <View style={styles.half}>
+            <FormField
+              control={control}
+              name="fetal_heart_rate"
+              label={t('consult.fhr')}
+              keyboardType="number-pad"
+            />
+          </View>
         </View>
-        <Chips control={control} name="presentation" label={t('consult.presentation')} options={PRESENTATION} />
-        <Chips control={control} name="fetal_movements" label={t('consult.movements')} options={MOVEMENTS} />
+        <Chips
+          control={control}
+          name="presentation"
+          label={t('consult.presentation')}
+          options={PRESENTATION}
+        />
+        <Chips
+          control={control}
+          name="fetal_movements"
+          label={t('consult.movements')}
+          options={MOVEMENTS}
+        />
         <Chips control={control} name="edema" label={t('consult.edema')} options={EDEMA} />
-        <Chips control={control} name="urine_albumin" label={t('consult.urineAlbumin')} options={URINE} />
-        <Chips control={control} name="urine_sugar" label={t('consult.urineSugar')} options={URINE} />
+        <Chips
+          control={control}
+          name="urine_albumin"
+          label={t('consult.urineAlbumin')}
+          options={URINE}
+        />
+        <Chips
+          control={control}
+          name="urine_sugar"
+          label={t('consult.urineSugar')}
+          options={URINE}
+        />
       </Card>
 
       <Card title={t('consult.findings')}>
@@ -303,15 +422,26 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
         setValue={setValue}
         catalog={catalog.data ?? []}
         pregnancyId={pregnancyId}
-        consultationId={idRef.current}
+        consultationId={consultationId}
       />
 
       <Card title={t('consult.private')} subtitle={t('consult.privateHint')}>
-        <FormField control={control} name="private_note" label={t('consult.privateLabel')} multiline />
+        <FormField
+          control={control}
+          name="private_note"
+          label={t('consult.privateLabel')}
+          multiline
+        />
       </Card>
 
       <Card title={t('consult.nextVisit')}>
-        <FormField control={control} name="next_visit_after_weeks" label={t('consult.nextVisitWeeks')} keyboardType="number-pad" hint={t('consult.nextVisitHint')} />
+        <FormField
+          control={control}
+          name="next_visit_after_weeks"
+          label={t('consult.nextVisitWeeks')}
+          keyboardType="number-pad"
+          hint={t('consult.nextVisitHint')}
+        />
       </Card>
 
       {issues.map((k) => (
@@ -324,11 +454,25 @@ function ConsultForm({ appointmentId, bundle }: { appointmentId: string; bundle:
           <Dialog.Title>{t('publish.confirmTitle')}</Dialog.Title>
           <Dialog.Content style={styles.dialog}>
             <Text variant="bodyMedium">{t('publish.confirmMessage')}</Text>
-            <SwitchRow label={t('publish.withAi')} hint={t('publish.withAiHint')} value={withAi} onChange={setWithAi} />
+            <SwitchRow
+              label={t('publish.withAi')}
+              hint={t('publish.withAiHint')}
+              value={withAi}
+              onChange={setWithAi}
+            />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button label={t('common:actions.cancel')} variant="text" onPress={() => setConfirming(false)} />
-            <Button label={t('consult.publish')} fullWidth={false} loading={publish.isPending} onPress={() => void onConfirmPublish()} />
+            <Button
+              label={t('common:actions.cancel')}
+              variant="text"
+              onPress={() => setConfirming(false)}
+            />
+            <Button
+              label={t('consult.publish')}
+              fullWidth={false}
+              loading={publish.isPending}
+              onPress={() => void onConfirmPublish()}
+            />
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -356,7 +500,12 @@ function Chips({
         control={control}
         name={name}
         render={({ field: { value, onChange } }) => (
-          <ChoiceChips scroll value={value} onChange={onChange} options={options.map((o) => ({ value: o, label: o }))} />
+          <ChoiceChips
+            scroll
+            value={value}
+            onChange={onChange}
+            options={options.map((o) => ({ value: o, label: o }))}
+          />
         )}
       />
     </View>

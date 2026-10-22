@@ -6,9 +6,23 @@ import { textOrNull } from './format';
 import type { ConsultationRow, DrugRow, PrescriptionItemRow } from './types';
 
 /** Values stored exactly as written on the prescription (clinical data, not UI chrome). */
-export const DOSAGE_FORMS = ['Tablet', 'Capsule', 'Syrup', 'Injection', 'Drops', 'Cream', 'Powder'] as const;
+export const DOSAGE_FORMS = [
+  'Tablet',
+  'Capsule',
+  'Syrup',
+  'Injection',
+  'Drops',
+  'Cream',
+  'Powder',
+] as const;
 export const ROUTES = ['Oral', 'IV', 'IM', 'Topical', 'Vaginal', 'Sublingual'] as const;
-export const TIMING_OPTIONS = ['Before food', 'After food', 'With food', 'At bedtime', 'Any time'] as const;
+export const TIMING_OPTIONS = [
+  'Before food',
+  'After food',
+  'With food',
+  'At bedtime',
+  'Any time',
+] as const;
 export const FREQUENCY_PRESETS = ['1-0-0', '0-1-0', '0-0-1', '1-0-1', '1-1-1', 'SOS'] as const;
 
 export interface PrescriptionFormRow {
@@ -105,7 +119,8 @@ export function validateRow(row: PrescriptionFormRow): Partial<Record<RowErrorFi
   if (!isValidFrequency(row.frequency)) errors.frequency = 'validation.frequency';
   if (row.duration_days.trim() !== '' && parseDuration(row.duration_days) === null)
     errors.duration_days = 'validation.duration';
-  if (row.start_date.trim() !== '' && !isISODate(row.start_date)) errors.start_date = 'validation.date';
+  if (row.start_date.trim() !== '' && !isISODate(row.start_date))
+    errors.start_date = 'validation.date';
   return errors;
 }
 
@@ -179,7 +194,13 @@ export function suggestDrugs(catalog: readonly DrugRow[], text: string, limit = 
     .map((d) => {
       const name = d.name.toLowerCase();
       const generic = (d.generic ?? '').toLowerCase();
-      const rank = name.startsWith(q) ? 0 : generic.startsWith(q) ? 1 : name.includes(q) || generic.includes(q) ? 2 : 3;
+      const rank = name.startsWith(q)
+        ? 0
+        : generic.startsWith(q)
+          ? 1
+          : name.includes(q) || generic.includes(q)
+            ? 2
+            : 3;
       return { d, rank };
     })
     .filter((x) => x.rank < 3 && x.d.name.toLowerCase() !== q)

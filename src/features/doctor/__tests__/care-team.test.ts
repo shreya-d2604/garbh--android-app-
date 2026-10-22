@@ -14,7 +14,11 @@ const m = (doctorId: string, role: 'primary' | 'backup', name: string): CareTeam
   name,
   note: null,
 });
-const team = [m('b', 'backup', 'Dr. Zed'), m('a', 'primary', 'Dr. Asha'), m('c', 'backup', 'Dr. Meera')];
+const team = [
+  m('b', 'backup', 'Dr. Zed'),
+  m('a', 'primary', 'Dr. Asha'),
+  m('c', 'backup', 'Dr. Meera'),
+];
 const directory: DoctorOption[] = [
   { id: 'a', name: 'Dr. Asha', specialization: null },
   { id: 'b', name: 'Dr. Zed', specialization: null },
@@ -29,8 +33,17 @@ describe('care team panel rules', () => {
   });
 
   it('only the primary can manage the team; backups are read-only', () => {
-    expect(teamPermissions(team, 'a')).toMatchObject({ onTeam: true, isPrimary: true, canManage: true, primaryName: 'Dr. Asha' });
-    expect(teamPermissions(team, 'b')).toMatchObject({ onTeam: true, isBackup: true, canManage: false });
+    expect(teamPermissions(team, 'a')).toMatchObject({
+      onTeam: true,
+      isPrimary: true,
+      canManage: true,
+      primaryName: 'Dr. Asha',
+    });
+    expect(teamPermissions(team, 'b')).toMatchObject({
+      onTeam: true,
+      isBackup: true,
+      canManage: false,
+    });
     expect(teamPermissions(team, 'x')).toMatchObject({ onTeam: false, canManage: false });
     expect(teamPermissions(team, null).canManage).toBe(false);
     expect(teamPermissions([], 'a').primaryName).toBeNull();

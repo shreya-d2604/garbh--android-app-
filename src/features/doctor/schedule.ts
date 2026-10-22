@@ -32,9 +32,11 @@ export const availabilitySchema = z
   .object({
     start: z.string().refine((v) => parseTime(v) !== null, { error: 'doctor:validation.time' }),
     end: z.string().refine((v) => parseTime(v) !== null, { error: 'doctor:validation.time' }),
-    slot: z.string().refine((v) => /^\d{1,3}$/.test(v.trim()) && Number(v) >= 5 && Number(v) <= 120, {
-      error: 'doctor:validation.slot',
-    }),
+    slot: z
+      .string()
+      .refine((v) => /^\d{1,3}$/.test(v.trim()) && Number(v) >= 5 && Number(v) <= 120, {
+        error: 'doctor:validation.slot',
+      }),
   })
   .superRefine((v, ctx) => {
     const s = parseTime(v.start);
@@ -68,12 +70,16 @@ export function groupByWeekday<T extends Pick<AvailabilityRow, 'weekday' | 'star
 ): { weekday: number; rows: T[] }[] {
   return WEEKDAY_DISPLAY_ORDER.map((weekday) => ({
     weekday,
-    rows: rows.filter((r) => r.weekday === weekday).sort((a, b) => a.start_time.localeCompare(b.start_time)),
+    rows: rows
+      .filter((r) => r.weekday === weekday)
+      .sort((a, b) => a.start_time.localeCompare(b.start_time)),
   }));
 }
 
 /** Weekly bookable minutes, for the "N hours a week" summary line. */
-export function weeklyMinutes(rows: readonly Pick<AvailabilityRow, 'start_time' | 'end_time'>[]): number {
+export function weeklyMinutes(
+  rows: readonly Pick<AvailabilityRow, 'start_time' | 'end_time'>[],
+): number {
   return rows.reduce((sum, r) => {
     const s = parseTime(r.start_time);
     const e = parseTime(r.end_time);
@@ -101,7 +107,13 @@ export function combineDateTime(date: string, time: string): string | null {
   const mins = parseTime(time);
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
   if (mins === null || !m) return null;
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Math.floor(mins / 60), mins % 60);
+  const d = new Date(
+    Number(m[1]),
+    Number(m[2]) - 1,
+    Number(m[3]),
+    Math.floor(mins / 60),
+    mins % 60,
+  );
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
@@ -117,6 +129,10 @@ export const timeOffSchema = z
     const s = combineDateTime(v.startDate, v.startTime);
     const e = combineDateTime(v.endDate, v.endTime);
     if (s && e && Date.parse(s) >= Date.parse(e))
-      ctx.addIssue({ code: 'custom', message: 'doctor:validation.timeOffOrder', path: ['endDate'] });
+      ctx.addIssue({
+        code: 'custom',
+        message: 'doctor:validation.timeOffOrder',
+        path: ['endDate'],
+      });
   });
 export type TimeOffValues = z.infer<typeof timeOffSchema>;

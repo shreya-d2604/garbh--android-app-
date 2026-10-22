@@ -7,7 +7,13 @@ import { Button, Card, EmptyState, ListItem, StatusChip } from '@/components';
 import { usePregnancyReports } from '../../hooks';
 import { QueryBoundary } from '../QueryBoundary';
 
-const TONE = { pending: 'neutral', processing: 'info', done: 'success', failed: 'danger', skipped: 'neutral' } as const;
+const TONE = {
+  pending: 'neutral',
+  processing: 'info',
+  done: 'success',
+  failed: 'danger',
+  skipped: 'neutral',
+} as const;
 
 const toDate = (iso: string) => {
   const [y, m, d] = iso.split('-').map(Number);
@@ -26,7 +32,13 @@ export function ReportsTab({ pregnancyId }: { pregnancyId: string }) {
       <QueryBoundary
         query={reports}
         isEmpty={(r) => r.length === 0}
-        empty={<EmptyState icon="file-document-outline" title={t('reports.emptyTitle')} message={t('reports.emptyMessage')} />}
+        empty={
+          <EmptyState
+            icon="file-document-outline"
+            title={t('reports.emptyTitle')}
+            message={t('reports.emptyMessage')}
+          />
+        }
       >
         {(rows) => (
           <Card>
@@ -46,7 +58,10 @@ export function ReportsTab({ pregnancyId }: { pregnancyId: string }) {
                   r.verified_at ? (
                     <StatusChip label={t('reports.verified')} tone="success" />
                   ) : (
-                    <StatusChip label={t(`reports.extraction.${r.extraction_status}`)} tone={TONE[r.extraction_status]} />
+                    <StatusChip
+                      label={t(`reports.extraction.${r.extraction_status}`)}
+                      tone={TONE[r.extraction_status]}
+                    />
                   )
                 }
                 onPress={() => router.push(`/doctor/patient/${pregnancyId}/report/${r.id}`)}

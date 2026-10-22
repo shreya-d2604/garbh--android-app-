@@ -13,7 +13,12 @@ export interface StringListEditorProps {
   readOnly?: boolean;
 }
 
-export function StringListEditor({ label, items, onChange, readOnly = false }: StringListEditorProps) {
+export function StringListEditor({
+  label,
+  items,
+  onChange,
+  readOnly = false,
+}: StringListEditorProps) {
   const { t } = useTranslation('doctor');
   return (
     <View style={styles.group}>
@@ -33,11 +38,18 @@ export function StringListEditor({ label, items, onChange, readOnly = false }: S
             accessibilityLabel={`${label} ${i + 1}`}
           />
           {!readOnly ? (
-            <Button label={t('ai.remove')} variant="text" onPress={() => onChange(removeAt(items, i))} accessibilityLabel={t('ai.removeItem', { label })} />
+            <Button
+              label={t('ai.remove')}
+              variant="text"
+              onPress={() => onChange(removeAt(items, i))}
+              accessibilityLabel={t('ai.removeItem', { label })}
+            />
           ) : null}
         </View>
       ))}
-      {!readOnly ? <Button label={t('ai.addItem')} variant="text" onPress={() => onChange([...items, ''])} /> : null}
+      {!readOnly ? (
+        <Button label={t('ai.addItem')} variant="text" onPress={() => onChange([...items, ''])} />
+      ) : null}
     </View>
   );
 }
@@ -77,11 +89,22 @@ export function PairListEditor({ label, items, onChange, readOnly = false }: Pai
             onChangeText={(v) => onChange(replaceAt(items, i, { ...p, why: v }))}
           />
           {!readOnly ? (
-            <Button label={t('ai.remove')} variant="text" onPress={() => onChange(removeAt(items, i))} accessibilityLabel={t('ai.removeItem', { label })} />
+            <Button
+              label={t('ai.remove')}
+              variant="text"
+              onPress={() => onChange(removeAt(items, i))}
+              accessibilityLabel={t('ai.removeItem', { label })}
+            />
           ) : null}
         </View>
       ))}
-      {!readOnly ? <Button label={t('ai.addItem')} variant="text" onPress={() => onChange([...items, { item: '', why: '' }])} /> : null}
+      {!readOnly ? (
+        <Button
+          label={t('ai.addItem')}
+          variant="text"
+          onPress={() => onChange([...items, { item: '', why: '' }])}
+        />
+      ) : null}
     </View>
   );
 }

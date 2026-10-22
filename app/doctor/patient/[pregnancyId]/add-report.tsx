@@ -56,19 +56,35 @@ export default function AddReport() {
   const [progress, setProgress] = useState<FileProgress[]>([]);
   const [issues, setIssues] = useState<string[]>([]);
   const [reportId, setReportId] = useState<string | null>(null);
-  const [aiMessage, setAiMessage] = useState<{ tone: 'success' | 'danger'; key: string } | null>(null);
+  const [aiMessage, setAiMessage] = useState<{ tone: 'success' | 'danger'; key: string } | null>(
+    null,
+  );
 
   const { control, handleSubmit } = useForm<ReportMetaValues, unknown, ReportMetaValues>({
     resolver: zodResolver(reportMetaSchema(today)),
     defaultValues: { type: 'blood', title: '', report_date: today, lab_name: '' },
   });
 
-  if (chart.isPending) return <Screen edges={['bottom']}><LoadingState /></Screen>;
-  if (chart.isError) return <Screen edges={['bottom']}><ErrorState onRetry={() => void chart.refetch()} /></Screen>;
+  if (chart.isPending)
+    return (
+      <Screen edges={['bottom']}>
+        <LoadingState />
+      </Screen>
+    );
+  if (chart.isError)
+    return (
+      <Screen edges={['bottom']}>
+        <ErrorState onRetry={() => void chart.refetch()} />
+      </Screen>
+    );
   if (!chart.data) {
     return (
       <Screen edges={['bottom']}>
-        <EmptyState icon="account-off-outline" title={t('chart.notFoundTitle')} message={t('chart.notFoundMessage')} />
+        <EmptyState
+          icon="account-off-outline"
+          title={t('chart.notFoundTitle')}
+          message={t('chart.notFoundMessage')}
+        />
       </Screen>
     );
   }
@@ -108,7 +124,11 @@ export default function AddReport() {
       { name: 'process-report', body: { report_id: reportId } },
       {
         onSuccess: (res) =>
-          setAiMessage(res.ok ? { tone: 'success', key: 'ai.started' } : { tone: 'danger', key: functionErrorKey(res.code) }),
+          setAiMessage(
+            res.ok
+              ? { tone: 'success', key: 'ai.started' }
+              : { tone: 'danger', key: functionErrorKey(res.code) },
+          ),
       },
     );
   };
@@ -116,7 +136,11 @@ export default function AddReport() {
   if (reportId) {
     return (
       <Screen edges={['bottom']}>
-        <Card variant="soft" title={t('report.uploadedTitle')} subtitle={t('report.uploadedMessage')}>
+        <Card
+          variant="soft"
+          title={t('report.uploadedTitle')}
+          subtitle={t('report.uploadedMessage')}
+        >
           {aiMessage ? <InfoBanner tone={aiMessage.tone} message={t(aiMessage.key)} /> : null}
           <Button label={t('report.extract')} loading={ai.isPending} onPress={runAi} />
           <Button
@@ -146,8 +170,18 @@ export default function AddReport() {
             />
           )}
         />
-        <FormField control={control} name="title" label={t('report.titleLabel')} hint={t('report.titleHint')} />
-        <DateField control={control} name="report_date" label={t('report.date')} maximumDate={today} />
+        <FormField
+          control={control}
+          name="title"
+          label={t('report.titleLabel')}
+          hint={t('report.titleHint')}
+        />
+        <DateField
+          control={control}
+          name="report_date"
+          label={t('report.date')}
+          maximumDate={today}
+        />
         <FormField control={control} name="lab_name" label={t('report.lab')} />
       </Card>
 
@@ -158,23 +192,60 @@ export default function AddReport() {
               <ListItem icon="file-pdf-box" title={p.name} description={t('report.pdf')} />
             ) : (
               <View style={styles.thumbRow}>
-                <Image source={{ uri: p.uri }} style={styles.thumb} accessibilityLabel={t('report.page', { n: i + 1 })} />
+                <Image
+                  source={{ uri: p.uri }}
+                  style={styles.thumb}
+                  accessibilityLabel={t('report.page', { n: i + 1 })}
+                />
                 <Text variant="bodyLarge" style={styles.pageLabel}>
                   {t('report.page', { n: i + 1 })}
                 </Text>
               </View>
             )}
             <View style={styles.pageActions}>
-              <Button label={t('report.up')} variant="text" disabled={busy || i === 0} onPress={() => setPages((l) => movePage(l, i, i - 1))} />
-              <Button label={t('report.down')} variant="text" disabled={busy || i === pages.length - 1} onPress={() => setPages((l) => movePage(l, i, i + 1))} />
-              <Button label={t('report.remove')} variant="text" disabled={busy} onPress={() => setPages((l) => l.filter((x) => x.key !== p.key))} />
+              <Button
+                label={t('report.up')}
+                variant="text"
+                disabled={busy || i === 0}
+                onPress={() => setPages((l) => movePage(l, i, i - 1))}
+              />
+              <Button
+                label={t('report.down')}
+                variant="text"
+                disabled={busy || i === pages.length - 1}
+                onPress={() => setPages((l) => movePage(l, i, i + 1))}
+              />
+              <Button
+                label={t('report.remove')}
+                variant="text"
+                disabled={busy}
+                onPress={() => setPages((l) => l.filter((x) => x.key !== p.key))}
+              />
             </View>
           </View>
         ))}
         <View style={styles.pickRow}>
-          <Button label={t('report.takePhoto')} variant="secondary" fullWidth={false} disabled={busy} onPress={() => void add(takePhoto)} />
-          <Button label={t('report.choosePhotos')} variant="secondary" fullWidth={false} disabled={busy} onPress={() => void add(pickPhotos)} />
-          <Button label={t('report.choosePdf')} variant="secondary" fullWidth={false} disabled={busy} onPress={() => void add(pickPdf)} />
+          <Button
+            label={t('report.takePhoto')}
+            variant="secondary"
+            fullWidth={false}
+            disabled={busy}
+            onPress={() => void add(takePhoto)}
+          />
+          <Button
+            label={t('report.choosePhotos')}
+            variant="secondary"
+            fullWidth={false}
+            disabled={busy}
+            onPress={() => void add(pickPhotos)}
+          />
+          <Button
+            label={t('report.choosePdf')}
+            variant="secondary"
+            fullWidth={false}
+            disabled={busy}
+            onPress={() => void add(pickPdf)}
+          />
         </View>
         {issues.map((k) => (
           <InfoBanner key={k} tone="danger" message={t(k)} />
@@ -183,9 +254,16 @@ export default function AddReport() {
 
       {busy ? (
         <Card title={t('report.uploading')}>
-          <ProgressBar progress={overallProgress(progress)} color={palette.rose} style={styles.bar} />
+          <ProgressBar
+            progress={overallProgress(progress)}
+            color={palette.rose}
+            style={styles.bar}
+          />
           <Text variant="bodySmall" style={styles.muted}>
-            {t('report.progress', { done: progress.filter((f) => f.sent >= f.size && f.size > 0).length, total: pages.length })}
+            {t('report.progress', {
+              done: progress.filter((f) => f.sent >= f.size && f.size > 0).length,
+              total: pages.length,
+            })}
           </Text>
         </Card>
       ) : null}
@@ -196,7 +274,12 @@ export default function AddReport() {
 }
 
 const styles = StyleSheet.create({
-  page: { gap: spacing.xs, paddingBottom: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.outline },
+  page: {
+    gap: spacing.xs,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: palette.outline,
+  },
   thumbRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   thumb: { width: 64, height: 80, borderRadius: radius.sm, backgroundColor: palette.cream },
   pageLabel: { flex: 1 },

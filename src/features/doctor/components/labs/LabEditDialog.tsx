@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Dialog, Portal, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
@@ -26,9 +26,18 @@ export interface LabEditDialogProps {
 }
 
 /** Add or correct a lab value: pick the test, type the value; unit and range come from the catalog. */
-export function LabEditDialog({ visible, tests, initial, adding, saving, error, onSubmit, onDismiss }: LabEditDialogProps) {
+export function LabEditDialog({
+  visible,
+  tests,
+  initial,
+  adding,
+  saving,
+  error,
+  onSubmit,
+  onDismiss,
+}: LabEditDialogProps) {
   const { t } = useTranslation('doctor');
-  const { control, handleSubmit, reset, watch } = useForm<LabFormValues, unknown, LabFormValues>({
+  const { control, handleSubmit, reset } = useForm<LabFormValues, unknown, LabFormValues>({
     resolver: zodResolver(labFormSchema),
     defaultValues: initial,
   });
@@ -36,7 +45,8 @@ export function LabEditDialog({ visible, tests, initial, adding, saving, error, 
   useEffect(() => {
     if (visible) reset(initial);
   }, [visible, initial, reset]);
-  const test = tests.find((x) => x.code === watch('test_code'));
+  const testCode = useWatch({ control, name: 'test_code' });
+  const test = tests.find((x) => x.code === testCode);
 
   return (
     <Portal>
@@ -59,9 +69,26 @@ export function LabEditDialog({ visible, tests, initial, adding, saving, error, 
                 </>
               )}
             />
-            <FormField control={control} name="value" label={t('labs.value')} keyboardType="default" />
-            <FormField control={control} name="unit" label={t('labs.unit')} hint={test?.unit ? t('labs.unitHint', { unit: test.unit }) : undefined} />
-            {adding ? <SwitchRow label={t('labs.verified')} hint={t('labs.verifiedHint')} value={verify} onChange={setVerify} /> : null}
+            <FormField
+              control={control}
+              name="value"
+              label={t('labs.value')}
+              keyboardType="default"
+            />
+            <FormField
+              control={control}
+              name="unit"
+              label={t('labs.unit')}
+              hint={test?.unit ? t('labs.unitHint', { unit: test.unit }) : undefined}
+            />
+            {adding ? (
+              <SwitchRow
+                label={t('labs.verified')}
+                hint={t('labs.verifiedHint')}
+                value={verify}
+                onChange={setVerify}
+              />
+            ) : null}
             <ErrorBanner error={error} />
           </ScrollView>
         </Dialog.ScrollArea>

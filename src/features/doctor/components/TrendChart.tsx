@@ -15,7 +15,8 @@ export interface TrendChartProps {
   emptyText: string;
 }
 
-const toData = (points: readonly SeriesPoint[]) => points.map((p) => ({ value: p.value, label: p.label }));
+const toData = (points: readonly SeriesPoint[]) =>
+  points.map((p) => ({ value: p.value, label: p.label }));
 
 /** One small line chart card; shows a plain sentence when there are no readings yet. */
 export function TrendChart({ title, unit, primary, secondary, emptyText }: TrendChartProps) {
@@ -23,7 +24,10 @@ export function TrendChart({ title, unit, primary, secondary, emptyText }: Trend
   const chartWidth = Math.max(220, width - spacing.md * 4 - 40);
   const last = primary[primary.length - 1];
   return (
-    <Card title={title} subtitle={last ? `${last.value}${unit ? ` ${unit}` : ''} · ${last.label}` : undefined}>
+    <Card
+      title={title}
+      subtitle={last ? `${last.value}${unit ? ` ${unit}` : ''} · ${last.label}` : undefined}
+    >
       {primary.length === 0 ? (
         <Text variant="bodyMedium" style={styles.empty}>
           {emptyText}

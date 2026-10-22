@@ -4,7 +4,16 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Dialog, Portal, Text, TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, ListItem, StatusChip, palette, radius, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  InfoBanner,
+  ListItem,
+  StatusChip,
+  palette,
+  radius,
+  spacing,
+} from '@/components';
 
 import {
   addableDoctors,
@@ -47,7 +56,10 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
     handOver.reset();
   };
 
-  const options = dialog === 'add' ? addableDoctors(directory, members) : handOverCandidates(directory, members, me);
+  const options =
+    dialog === 'add'
+      ? addableDoctors(directory, members)
+      : handOverCandidates(directory, members, me);
 
   return (
     <Card title={t('team.title')} subtitle={t('team.subtitle')}>
@@ -66,7 +78,10 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
                 onPress={() => setToRemove(m)}
               />
             ) : (
-              <StatusChip label={t(`team.role.${m.role}`)} tone={m.role === 'primary' ? 'primary' : 'neutral'} />
+              <StatusChip
+                label={t(`team.role.${m.role}`)}
+                tone={m.role === 'primary' ? 'primary' : 'neutral'}
+              />
             )
           }
         />
@@ -88,7 +103,9 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
 
       <Portal>
         <Dialog visible={dialog !== null} onDismiss={close}>
-          <Dialog.Title>{dialog === 'add' ? t('team.addTitle') : t('team.handOverTitle')}</Dialog.Title>
+          <Dialog.Title>
+            {dialog === 'add' ? t('team.addTitle') : t('team.handOverTitle')}
+          </Dialog.Title>
           <Dialog.ScrollArea style={styles.scroll}>
             <ScrollView>
               {options.length === 0 ? (
@@ -97,7 +114,12 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
                 </Text>
               ) : (
                 options.map((d) => (
-                  <DoctorOptionRow key={d.id} doctor={d} selected={picked === d.id} onPress={() => setPicked(d.id)} />
+                  <DoctorOptionRow
+                    key={d.id}
+                    doctor={d}
+                    selected={picked === d.id}
+                    onPress={() => setPicked(d.id)}
+                  />
                 ))
               )}
             </ScrollView>
@@ -142,13 +164,23 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
         danger
         loading={remove.isPending}
         onDismiss={() => setToRemove(null)}
-        onConfirm={() => toRemove && remove.mutate(toRemove.doctorId, { onSettled: () => setToRemove(null) })}
+        onConfirm={() =>
+          toRemove && remove.mutate(toRemove.doctorId, { onSettled: () => setToRemove(null) })
+        }
       />
     </Card>
   );
 }
 
-function DoctorOptionRow({ doctor, selected, onPress }: { doctor: DoctorOption; selected: boolean; onPress: () => void }) {
+function DoctorOptionRow({
+  doctor,
+  selected,
+  onPress,
+}: {
+  doctor: DoctorOption;
+  selected: boolean;
+  onPress: () => void;
+}) {
   return (
     <Pressable
       onPress={onPress}

@@ -32,7 +32,9 @@ export function ageInYears(dob: string | null | undefined, today: ISODate): numb
 }
 
 /** "G2 P1 A0 L1"; unknown values are shown as a dash. */
-export function formatGpal(p: Pick<PregnancyRow, 'gravida' | 'para' | 'abortus' | 'living'>): string {
+export function formatGpal(
+  p: Pick<PregnancyRow, 'gravida' | 'para' | 'abortus' | 'living'>,
+): string {
   const v = (n: number | null) => (n == null ? '-' : String(n));
   return `G${v(p.gravida)} P${v(p.para)} A${v(p.abortus)} L${v(p.living)}`;
 }

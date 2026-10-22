@@ -26,7 +26,11 @@ export function parseLabValue(text: string): { num: number | null; text: string 
 }
 
 /** Flag against the reference range; null when the value is not numeric or there is no range. */
-export function labFlag(value: number | null, low: number | null, high: number | null): LabResultRow['flag'] {
+export function labFlag(
+  value: number | null,
+  low: number | null,
+  high: number | null,
+): LabResultRow['flag'] {
   if (value === null) return null;
   if (low !== null && value < low) return 'low';
   if (high !== null && value > high) return 'high';
@@ -39,7 +43,10 @@ type LabFields = Pick<
 >;
 
 /** Fields for a manual value, taking unit and reference range from the catalog test. */
-export function labFields(values: LabFormValues, test: Pick<LabTestRow, 'unit' | 'ref_low' | 'ref_high'> | undefined): LabFields {
+export function labFields(
+  values: LabFormValues,
+  test: Pick<LabTestRow, 'unit' | 'ref_low' | 'ref_high'> | undefined,
+): LabFields {
   const v = parseLabValue(values.value);
   const low = test?.ref_low ?? null;
   const high = test?.ref_high ?? null;
@@ -61,7 +68,9 @@ export function labPatch(
   return labFields(values, test);
 }
 
-export function labFormFromRow(r: Pick<LabResultRow, 'test_code' | 'value_num' | 'value_text' | 'unit'>): LabFormValues {
+export function labFormFromRow(
+  r: Pick<LabResultRow, 'test_code' | 'value_num' | 'value_text' | 'unit'>,
+): LabFormValues {
   return {
     test_code: r.test_code ?? '',
     value: r.value_num != null ? String(r.value_num) : (r.value_text ?? ''),

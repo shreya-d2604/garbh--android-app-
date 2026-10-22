@@ -30,12 +30,26 @@ export default function PatientChart() {
   const team = useCareTeam(pregnancyId, t('team.unknownDoctor'));
   const [tab, setTab] = useState<Tab>('timeline');
 
-  if (chart.isPending) return <Screen edges={['bottom']}><LoadingState /></Screen>;
-  if (chart.isError) return <Screen edges={['bottom']}><ErrorState onRetry={() => void chart.refetch()} /></Screen>;
+  if (chart.isPending)
+    return (
+      <Screen edges={['bottom']}>
+        <LoadingState />
+      </Screen>
+    );
+  if (chart.isError)
+    return (
+      <Screen edges={['bottom']}>
+        <ErrorState onRetry={() => void chart.refetch()} />
+      </Screen>
+    );
   if (!chart.data) {
     return (
       <Screen edges={['bottom']}>
-        <EmptyState icon="account-off-outline" title={t('chart.notFoundTitle')} message={t('chart.notFoundMessage')} />
+        <EmptyState
+          icon="account-off-outline"
+          title={t('chart.notFoundTitle')}
+          message={t('chart.notFoundMessage')}
+        />
       </Screen>
     );
   }
@@ -46,8 +60,18 @@ export default function PatientChart() {
       refreshing={chart.isRefetching}
       onRefresh={() => void chart.refetch()}
     >
-      <ChartHeader chart={chart.data} onManage={() => router.push(`/doctor/patient/${pregnancyId}/manage`)} />
-      {team ? <CareTeamPanel pregnancyId={pregnancyId} members={team} directory={directory.data ?? []} me={me} /> : null}
+      <ChartHeader
+        chart={chart.data}
+        onManage={() => router.push(`/doctor/patient/${pregnancyId}/manage`)}
+      />
+      {team ? (
+        <CareTeamPanel
+          pregnancyId={pregnancyId}
+          members={team}
+          directory={directory.data ?? []}
+          me={me}
+        />
+      ) : null}
       <ChoiceChips
         scroll
         allowClear={false}
@@ -59,7 +83,9 @@ export default function PatientChart() {
       {tab === 'vitals' ? <VitalsTab pregnancyId={pregnancyId} /> : null}
       {tab === 'reports' ? <ReportsTab pregnancyId={pregnancyId} /> : null}
       {tab === 'prescriptions' ? <PrescriptionsTab pregnancyId={pregnancyId} /> : null}
-      {tab === 'plan' ? <VisitPlanTab pregnancyId={pregnancyId} edd={chart.data.pregnancy.edd_final} /> : null}
+      {tab === 'plan' ? (
+        <VisitPlanTab pregnancyId={pregnancyId} edd={chart.data.pregnancy.edd_final} />
+      ) : null}
       {tab === 'summaries' ? <SummariesTab pregnancyId={pregnancyId} /> : null}
     </Screen>
   );

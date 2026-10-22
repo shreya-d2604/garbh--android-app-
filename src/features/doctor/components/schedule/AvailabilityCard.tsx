@@ -5,7 +5,16 @@ import { StyleSheet, View } from 'react-native';
 import { Dialog, Portal, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, FormField, InfoBanner, ListItem, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  EmptyState,
+  FormField,
+  InfoBanner,
+  ListItem,
+  palette,
+  spacing,
+} from '@/components';
 
 import { useAvailability, useScheduleActions } from '../../hooks';
 import {
@@ -39,8 +48,15 @@ export function AvailabilityCard() {
       isEmpty={(r) => r.length === 0}
       empty={
         <Card title={t('schedule.hoursTitle')}>
-          <EmptyState icon="calendar-clock" title={t('schedule.hoursEmptyTitle')} message={t('schedule.hoursEmptyMessage')} />
-          <Button label={t('schedule.addHours')} onPress={() => setEditing({ id: null, weekday: 1 })} />
+          <EmptyState
+            icon="calendar-clock"
+            title={t('schedule.hoursEmptyTitle')}
+            message={t('schedule.hoursEmptyMessage')}
+          />
+          <Button
+            label={t('schedule.addHours')}
+            onPress={() => setEditing({ id: null, weekday: 1 })}
+          />
           <AvailabilityDialog editing={editing} rows={rows} onDismiss={() => setEditing(null)} />
         </Card>
       }
@@ -48,7 +64,10 @@ export function AvailabilityCard() {
       {(data) => {
         const mins = weeklyMinutes(data);
         return (
-          <Card title={t('schedule.hoursTitle')} subtitle={t('schedule.hoursSummary', { hours: Math.round((mins / 60) * 10) / 10 })}>
+          <Card
+            title={t('schedule.hoursTitle')}
+            subtitle={t('schedule.hoursSummary', { hours: Math.round((mins / 60) * 10) / 10 })}
+          >
             {groupByWeekday(data).map((day) => (
               <View key={day.weekday} style={styles.day}>
                 <Text variant="labelLarge" style={styles.dayName}>
@@ -66,11 +85,17 @@ export function AvailabilityCard() {
                       title={`${trimTime(r.start_time)} - ${trimTime(r.end_time)}`}
                       description={t('schedule.slotMinutes', { minutes: r.slot_minutes })}
                       onPress={() => setEditing({ id: r.id, weekday: r.weekday })}
-                      accessibilityLabel={t('schedule.editHours', { day: t(`schedule.weekday.${day.weekday}`) })}
+                      accessibilityLabel={t('schedule.editHours', {
+                        day: t(`schedule.weekday.${day.weekday}`),
+                      })}
                     />
                   ))
                 )}
-                <Button label={t('schedule.addHoursFor', { day: t(`schedule.weekday.${day.weekday}`) })} variant="text" onPress={() => setEditing({ id: null, weekday: day.weekday })} />
+                <Button
+                  label={t('schedule.addHoursFor', { day: t(`schedule.weekday.${day.weekday}`) })}
+                  variant="text"
+                  onPress={() => setEditing({ id: null, weekday: day.weekday })}
+                />
               </View>
             ))}
             <AvailabilityDialog editing={editing} rows={data} onDismiss={() => setEditing(null)} />
@@ -95,14 +120,16 @@ function AvailabilityDialog({
   const existing = editing?.id ? rows.find((r) => r.id === editing.id) : undefined;
   const [overlap, setOverlap] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm<AvailabilityValues, unknown, AvailabilityValues>({
-    resolver: zodResolver(availabilitySchema),
-    values: {
-      start: existing ? trimTime(existing.start_time) : '10:00',
-      end: existing ? trimTime(existing.end_time) : '13:00',
-      slot: String(existing?.slot_minutes ?? 15),
+  const { control, handleSubmit, reset } = useForm<AvailabilityValues, unknown, AvailabilityValues>(
+    {
+      resolver: zodResolver(availabilitySchema),
+      values: {
+        start: existing ? trimTime(existing.start_time) : '10:00',
+        end: existing ? trimTime(existing.end_time) : '13:00',
+        slot: String(existing?.slot_minutes ?? 15),
+      },
     },
-  });
+  );
 
   const close = () => {
     setOverlap(false);
@@ -120,7 +147,13 @@ function AvailabilityDialog({
     }
     setOverlap(false);
     saveAvailability.mutate(
-      { id: editing.id, weekday: editing.weekday, start: v.start, end: v.end, slot: Number(v.slot) },
+      {
+        id: editing.id,
+        weekday: editing.weekday,
+        start: v.start,
+        end: v.end,
+        slot: Number(v.slot),
+      },
       { onSuccess: close },
     );
   });
@@ -132,7 +165,13 @@ function AvailabilityDialog({
         <Dialog.Content>
           <TimeField control={control} name="start" label={t('schedule.from')} />
           <TimeField control={control} name="end" label={t('schedule.to')} />
-          <FormField control={control} name="slot" label={t('schedule.slot')} hint={t('schedule.slotHint')} keyboardType="number-pad" />
+          <FormField
+            control={control}
+            name="slot"
+            label={t('schedule.slot')}
+            hint={t('schedule.slotHint')}
+            keyboardType="number-pad"
+          />
           {overlap ? <InfoBanner tone="danger" message={t('schedule.overlap')} /> : null}
           <ErrorBanner error={saveAvailability.error ?? deleteAvailability.error} />
         </Dialog.Content>
@@ -142,17 +181,23 @@ function AvailabilityDialog({
               label={t('schedule.deleteHours')}
               variant="text"
               loading={deleteAvailability.isPending}
-              onPress={() => editing.id && deleteAvailability.mutate(editing.id, { onSuccess: close })}
+              onPress={() =>
+                editing.id && deleteAvailability.mutate(editing.id, { onSuccess: close })
+              }
             />
           ) : null}
           <Button label={t('common:actions.cancel')} variant="text" onPress={close} />
-          <Button label={t('common:actions.save')} fullWidth={false} loading={saveAvailability.isPending} onPress={() => void submit()} />
+          <Button
+            label={t('common:actions.save')}
+            fullWidth={false}
+            loading={saveAvailability.isPending}
+            onPress={() => void submit()}
+          />
         </Dialog.Actions>
       </Dialog>
     </Portal>
   );
 }
-
 
 const styles = StyleSheet.create({
   day: { gap: 2, paddingBottom: spacing.xs },

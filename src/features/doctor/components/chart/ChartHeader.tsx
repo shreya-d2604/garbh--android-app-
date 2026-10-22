@@ -22,7 +22,9 @@ export function ChartHeader({ chart, onManage }: { chart: ChartData; onManage: (
   const today = todayISO();
   const ga = gaFromEdd(pregnancy.edd_final, today);
   const age = ageInYears(patient.dob, today);
-  const blood = [patient.blood_group, patient.rh_negative ? t('chart.rhNegative') : null].filter(Boolean).join(' · ');
+  const blood = [patient.blood_group, patient.rh_negative ? t('chart.rhNegative') : null]
+    .filter(Boolean)
+    .join(' · ');
   const facts = [
     age !== null ? t('chart.age', { years: age }) : null,
     formatGpal(pregnancy),
@@ -33,7 +35,10 @@ export function ChartHeader({ chart, onManage }: { chart: ChartData; onManage: (
   return (
     <Card variant="soft" title={patient.full_name} subtitle={facts.join(' · ')}>
       <View style={styles.chips}>
-        <StatusChip label={t(`chart.risk.${pregnancy.risk_level}`)} tone={RISK_TONE[pregnancy.risk_level]} />
+        <StatusChip
+          label={t(`chart.risk.${pregnancy.risk_level}`)}
+          tone={RISK_TONE[pregnancy.risk_level]}
+        />
         {!patient.is_verified ? <StatusChip label={t('chart.unverified')} tone="warning" /> : null}
         {pregnancy.lmp_source === 'patient_reported' ? (
           <StatusChip label={t('chart.lmpReported')} tone="warning" />
@@ -42,7 +47,10 @@ export function ChartHeader({ chart, onManage }: { chart: ChartData; onManage: (
           <StatusChip label={t(`chart.outcome.${pregnancy.status}`)} tone="neutral" />
         ) : null}
         {pregnancy.multiple_gestation > 1 ? (
-          <StatusChip label={t('chart.multiple', { n: pregnancy.multiple_gestation })} tone="info" />
+          <StatusChip
+            label={t('chart.multiple', { n: pregnancy.multiple_gestation })}
+            tone="info"
+          />
         ) : null}
       </View>
 

@@ -17,7 +17,13 @@ export interface QueueCardProps {
 }
 
 /** One appointment in the Today queue: who, when, chips, and the next action. */
-export function QueueCard({ item, starting = false, onStart, onContinue, onOpenChart }: QueueCardProps) {
+export function QueueCard({
+  item,
+  starting = false,
+  onStart,
+  onContinue,
+  onOpenChart,
+}: QueueCardProps) {
   const { t } = useTranslation('doctor');
   const chips = queueChips(item);
   const ga = gaFromEdd(item.eddFinal, todayISO());
@@ -30,12 +36,21 @@ export function QueueCard({ item, starting = false, onStart, onContinue, onOpenC
       subtitle={subtitle}
       onPress={() => onOpenChart(item)}
       accessibilityLabel={t('today.openChart', { name: item.patientName })}
-      right={<StatusChip label={t(`common:status.${item.status}`)} tone={APPOINTMENT_STATUS_TONE[item.status]} />}
+      right={
+        <StatusChip
+          label={t(`common:status.${item.status}`)}
+          tone={APPOINTMENT_STATUS_TONE[item.status]}
+        />
+      }
     >
       <View style={styles.chips}>
         {chips.app ? <StatusChip label={t('today.appChip')} tone="info" /> : null}
-        {chips.newUnverified ? <StatusChip label={t('today.newUnverified')} tone="warning" /> : null}
-        {item.riskLevel === 'high' ? <StatusChip label={t('chart.highRisk')} tone="danger" /> : null}
+        {chips.newUnverified ? (
+          <StatusChip label={t('today.newUnverified')} tone="warning" />
+        ) : null}
+        {item.riskLevel === 'high' ? (
+          <StatusChip label={t('chart.highRisk')} tone="danger" />
+        ) : null}
         {ga ? <StatusChip label={formatGa(ga)} tone="neutral" /> : null}
       </View>
       {canStart(item.status) ? (

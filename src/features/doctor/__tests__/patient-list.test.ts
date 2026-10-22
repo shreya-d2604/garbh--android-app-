@@ -25,7 +25,15 @@ const p = (over: Partial<PatientListItem>): PatientListItem => ({
 
 const list = [
   p({ pregnancyId: '1', name: 'Priya Sharma', mrn: 'GH-0001', eddFinal: '2027-04-20' }), // 9w
-  p({ pregnancyId: '2', name: 'Anjali Gupta', mrn: 'GH-0004', careRole: 'backup', riskLevel: 'high', eddFinal: '2026-11-25', overdueVisits: 2 }), // 33w
+  p({
+    pregnancyId: '2',
+    name: 'Anjali Gupta',
+    mrn: 'GH-0004',
+    careRole: 'backup',
+    riskLevel: 'high',
+    eddFinal: '2026-11-25',
+    overdueVisits: 2,
+  }), // 33w
   p({ pregnancyId: '3', name: 'Kavya Iyer', mrn: 'GH-0003' }), // 24w
   p({ pregnancyId: '4', name: 'Old Case', status: 'delivered', mrn: null }),
 ];
@@ -38,30 +46,57 @@ describe('patient list filters', () => {
   });
 
   it('searches name and MRN, case-insensitively', () => {
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, query: 'kav' }, TODAY))).toEqual(['3']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, query: 'gh-0004' }, TODAY))).toEqual(['2']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, query: '  ' }, TODAY))).toHaveLength(3);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, query: 'kav' }, TODAY)),
+    ).toEqual(['3']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, query: 'gh-0004' }, TODAY)),
+    ).toEqual(['2']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, query: '  ' }, TODAY)),
+    ).toHaveLength(3);
   });
 
   it('filters by care role', () => {
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, role: 'backup' }, TODAY))).toEqual(['2']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, role: 'primary' }, TODAY))).toEqual(['3', '1']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, role: 'backup' }, TODAY)),
+    ).toEqual(['2']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, role: 'primary' }, TODAY)),
+    ).toEqual(['3', '1']);
   });
 
   it('filters high risk, overdue and trimester', () => {
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, highRisk: true }, TODAY))).toEqual(['2']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, overdueOnly: true }, TODAY))).toEqual(['2']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, trimester: 1 }, TODAY))).toEqual(['1']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, trimester: 2 }, TODAY))).toEqual(['3']);
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, trimester: 3 }, TODAY))).toEqual(['2']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, highRisk: true }, TODAY)),
+    ).toEqual(['2']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, overdueOnly: true }, TODAY)),
+    ).toEqual(['2']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, trimester: 1 }, TODAY)),
+    ).toEqual(['1']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, trimester: 2 }, TODAY)),
+    ).toEqual(['3']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, trimester: 3 }, TODAY)),
+    ).toEqual(['2']);
   });
 
   it('shows closed pregnancies on request', () => {
-    expect(ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, closed: true }, TODAY))).toEqual(['4']);
+    expect(
+      ids(applyPatientFilters(list, { ...DEFAULT_PATIENT_FILTERS, closed: true }, TODAY)),
+    ).toEqual(['4']);
   });
 
   it('combines filters', () => {
-    const f = { ...DEFAULT_PATIENT_FILTERS, role: 'backup' as const, highRisk: true, trimester: 3 as const };
+    const f = {
+      ...DEFAULT_PATIENT_FILTERS,
+      role: 'backup' as const,
+      highRisk: true,
+      trimester: 3 as const,
+    };
     expect(ids(applyPatientFilters(list, f, TODAY))).toEqual(['2']);
     expect(ids(applyPatientFilters(list, { ...f, trimester: 1 }, TODAY))).toEqual([]);
   });

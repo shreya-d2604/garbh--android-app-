@@ -16,7 +16,9 @@ export interface DoctorOption {
 }
 
 /** Primary first, then backups by name. */
-export function sortTeam<T extends Pick<CareTeamMember, 'role' | 'name'>>(members: readonly T[]): T[] {
+export function sortTeam<T extends Pick<CareTeamMember, 'role' | 'name'>>(
+  members: readonly T[],
+): T[] {
   return [...members].sort((a, b) =>
     a.role === b.role ? a.name.localeCompare(b.name) : a.role === 'primary' ? -1 : 1,
   );

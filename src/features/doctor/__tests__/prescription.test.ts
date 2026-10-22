@@ -92,13 +92,25 @@ describe('prescription rows', () => {
   it('validates a row only when it is not blank', () => {
     const row = newPrescriptionRow('k', TODAY);
     expect(validateRow(row)).toEqual({});
-    expect(validateRow({ ...row, strength: '5 mg' })).toEqual({ drug_name: 'validation.drugRequired' });
-    expect(validateRow({ ...row, drug_name: 'X', frequency: 'bad', duration_days: '0', start_date: 'nope' })).toEqual({
+    expect(validateRow({ ...row, strength: '5 mg' })).toEqual({
+      drug_name: 'validation.drugRequired',
+    });
+    expect(
+      validateRow({
+        ...row,
+        drug_name: 'X',
+        frequency: 'bad',
+        duration_days: '0',
+        start_date: 'nope',
+      }),
+    ).toEqual({
       frequency: 'validation.frequency',
       duration_days: 'validation.duration',
       start_date: 'validation.date',
     });
-    expect(validateRow({ ...row, drug_name: 'X', frequency: '1-0-1', duration_days: '30' })).toEqual({});
+    expect(
+      validateRow({ ...row, drug_name: 'X', frequency: '1-0-1', duration_days: '30' }),
+    ).toEqual({});
   });
 
   it('maps a row to an insert payload with trimmed text and nulls for blanks', () => {
@@ -125,7 +137,12 @@ describe('prescription rows', () => {
   });
 
   it('round-trips a database item into a form row', () => {
-    expect(rowFromItem(item({ strength: null }))).toMatchObject({ id: 'i1', key: 'i1', strength: '', duration_days: '30' });
+    expect(rowFromItem(item({ strength: null }))).toMatchObject({
+      id: 'i1',
+      key: 'i1',
+      strength: '',
+      duration_days: '30',
+    });
   });
 });
 
@@ -133,7 +150,11 @@ describe('copy from last visit', () => {
   it('copies rows as new, starting today, skipping stopped ones', () => {
     let n = 0;
     const rows = copyFromPrevious(
-      [item({ id: 'a' }), item({ id: 'b', stopped_at: '2026-09-01T00:00:00Z' }), item({ id: 'c', drug_name: 'Calcium' })],
+      [
+        item({ id: 'a' }),
+        item({ id: 'b', stopped_at: '2026-09-01T00:00:00Z' }),
+        item({ id: 'c', drug_name: 'Calcium' }),
+      ],
       TODAY,
       () => `new-${++n}`,
     );
@@ -164,7 +185,9 @@ describe('copy from last visit', () => {
   it('knows what is active today', () => {
     expect(isActiveToday(item({ end_date: '2026-10-01' }), TODAY)).toBe(true);
     expect(isActiveToday(item({ end_date: '2026-09-19' }), TODAY)).toBe(false);
-    expect(isActiveToday(item({ start_date: '2026-09-21', end_date: '2026-10-20' }), TODAY)).toBe(false);
+    expect(isActiveToday(item({ start_date: '2026-09-21', end_date: '2026-10-20' }), TODAY)).toBe(
+      false,
+    );
     expect(isActiveToday(item({ stopped_at: '2026-09-10T00:00:00Z' }), TODAY)).toBe(false);
   });
 });

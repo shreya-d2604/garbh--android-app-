@@ -32,7 +32,13 @@ export default function TodayScreen() {
       <QueryBoundary
         query={queue}
         isEmpty={(items) => items.length === 0}
-        empty={<EmptyState icon="calendar-blank-outline" title={t('today.emptyTitle')} message={t('today.emptyMessage')} />}
+        empty={
+          <EmptyState
+            icon="calendar-blank-outline"
+            title={t('today.emptyTitle')}
+            message={t('today.emptyMessage')}
+          />
+        }
       >
         {(items) => {
           const counts = queueCounts(items);
@@ -42,12 +48,24 @@ export default function TodayScreen() {
                 <InfoBanner
                   tone="info"
                   icon="clock-outline"
-                  message={t('today.summaryLine', { waiting: counts.waiting, inConsultation: counts.inConsultation, done: counts.done })}
+                  message={t('today.summaryLine', {
+                    waiting: counts.waiting,
+                    inConsultation: counts.inConsultation,
+                    done: counts.done,
+                  })}
                 />
               </Card>
-              {start.isError ? <InfoBanner tone="danger" message={t(rpcErrorKey(start.error as { message?: string }))} /> : null}
+              {start.isError ? (
+                <InfoBanner
+                  tone="danger"
+                  message={t(rpcErrorKey(start.error as { message?: string }))}
+                />
+              ) : null}
               {groupQueue(items).map((group) => (
-                <Section key={group.key} title={`${t(`today.group.${group.key}`)} (${group.items.length})`}>
+                <Section
+                  key={group.key}
+                  title={`${t(`today.group.${group.key}`)} (${group.items.length})`}
+                >
                   {group.items.map((item) => (
                     <QueueCard
                       key={item.id}
