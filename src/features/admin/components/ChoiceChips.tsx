@@ -16,7 +16,12 @@ interface Props<T extends string> {
 }
 
 /** Single-choice chips (filters, short selects). */
-export function ChoiceChips<T extends string>({ options, value, onChange, accessibilityLabel }: Props<T>) {
+export function ChoiceChips<T extends string>({
+  options,
+  value,
+  onChange,
+  accessibilityLabel,
+}: Props<T>) {
   return (
     <View style={styles.row} accessibilityLabel={accessibilityLabel}>
       {options.map((o) => (
@@ -38,7 +43,12 @@ export function ChoiceChips<T extends string>({ options, value, onChange, access
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip: { backgroundColor: palette.white, borderWidth: 1, borderColor: palette.outline, minHeight: 40 },
+  chip: {
+    backgroundColor: palette.white,
+    borderWidth: 1,
+    borderColor: palette.outline,
+    minHeight: 40,
+  },
   selected: { backgroundColor: palette.roseSoft, borderColor: palette.rose },
   text: { color: palette.ink },
 });

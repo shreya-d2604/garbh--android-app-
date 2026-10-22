@@ -16,14 +16,25 @@ export function StaffFields({ control, doctor }: Props) {
   const { t } = useTranslation('admin');
   return (
     <>
-      <FormField control={control} name="full_name" label={t('staff.fullName')} autoComplete="name" />
+      <FormField
+        control={control}
+        name="full_name"
+        label={t('staff.fullName')}
+        autoComplete="name"
+      />
       <FormField control={control} name="phone" label={t('staff.phone')} keyboardType="phone-pad" />
       <FormField control={control} name="designation" label={t('staff.designation')} />
       {doctor ? (
         <>
           <FormField control={control} name="specialization" label={t('staff.specialization')} />
           <FormField control={control} name="registration_no" label={t('staff.registrationNo')} />
-          <FormField control={control} name="bio" label={t('staff.bio')} multiline numberOfLines={3} />
+          <FormField
+            control={control}
+            name="bio"
+            label={t('staff.bio')}
+            multiline
+            numberOfLines={3}
+          />
         </>
       ) : null}
     </>

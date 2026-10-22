@@ -28,7 +28,11 @@ function ReasonDialogBody({ minLength = 3, confirmWord, onConfirm, ...rest }: Pr
   const wordOk = !confirmWord || typed.trim().toUpperCase() === confirmWord.toUpperCase();
 
   return (
-    <ConfirmDialog {...rest} confirmDisabled={!reasonOk || !wordOk} onConfirm={() => onConfirm(reason.trim())}>
+    <ConfirmDialog
+      {...rest}
+      confirmDisabled={!reasonOk || !wordOk}
+      onConfirm={() => onConfirm(reason.trim())}
+    >
       <TextInput
         mode="outlined"
         label={t('dialogs.reason')}

@@ -25,9 +25,13 @@ describe('adminErrorKey', () => {
   });
 
   it('knows the second active pregnancy and a failed invite email', () => {
-    expect(adminErrorKey({ code: '23505', message: 'duplicate key value violates unique constraint "pregnancies_one_active_per_patient"' })).toBe(
-      'admin:errors.ACTIVE_PREGNANCY',
-    );
+    expect(
+      adminErrorKey({
+        code: '23505',
+        message:
+          'duplicate key value violates unique constraint "pregnancies_one_active_per_patient"',
+      }),
+    ).toBe('admin:errors.ACTIVE_PREGNANCY');
     expect(adminErrorKey({ message: 'INVITE_FAILED' })).toBe('admin:users.inviteFailed');
   });
 

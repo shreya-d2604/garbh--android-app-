@@ -28,6 +28,12 @@ export function SwitchRow({ label, value, onChange, disabled }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, gap: spacing.md },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 48,
+    gap: spacing.md,
+  },
   label: { flex: 1, color: palette.ink },
 });

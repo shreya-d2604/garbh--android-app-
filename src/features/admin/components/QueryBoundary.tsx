@@ -28,7 +28,8 @@ interface Props<T> {
 /** Loading -> error (with retry) -> empty -> data: the order every data screen follows. */
 export function QueryBoundary<T>({ query, isEmpty, empty, children }: Props<T>) {
   if (query.isLoading) return <LoadingState />;
-  if (query.isError || query.data === undefined) return <ErrorState onRetry={() => void query.refetch()} />;
+  if (query.isError || query.data === undefined)
+    return <ErrorState onRetry={() => void query.refetch()} />;
   if (empty && isEmpty?.(query.data)) {
     return (
       <EmptyState

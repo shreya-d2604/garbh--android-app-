@@ -1,1 +1,672 @@
-{}
+{
+  "tabs": {
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "users": "Users",
+    "quality": "Data quality",
+    "more": "More"
+  },
+  "roles": {
+    "admin": "Admin",
+    "doctor": "Doctor",
+    "receptionist": "Reception",
+    "patient": "Patient",
+    "companion": "Family member"
+  },
+  "generic": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "errors": {
+    "DUPLICATE": "That already exists. Please check the details and try again.",
+    "IN_USE": "This is still used by other records. Switch it off instead of deleting it.",
+    "EMAIL_TAKEN": "This email already has an account.",
+    "ACTIVE_PREGNANCY": "This patient already has an active pregnancy. Close it first."
+  },
+  "validation": {
+    "reason": "Please write a short reason",
+    "tooLong": "This is too long",
+    "needDate": "Give the last period date or the dating-scan due date",
+    "doctorNeedsLmp": "Add the last period date to choose a doctor",
+    "windowOrder": "The weeks must be in order: start, target, end",
+    "rangeOrder": "The lower value must not be above the upper value",
+    "code": "Use only letters, numbers and underscores",
+    "integer": "Enter a whole number in the allowed range",
+    "number": "Enter a number",
+    "choice": "Pick one of the options",
+    "json": "This is not in the expected format"
+  },
+  "dialogs": {
+    "reason": "Reason",
+    "typeToConfirm": "Type {{word}} to confirm"
+  },
+  "dashboard": {
+    "hello": "Hello, {{name}}",
+    "subtitle": "How the hospital is doing today",
+    "pregnancies": "Pregnancies",
+    "pregnanciesHint": "Active pregnancies right now",
+    "active": "Active",
+    "highRisk": "High risk",
+    "trimester": "Trimester {{n}}",
+    "undated": "{{count}} active pregnancies have no dates yet",
+    "appointments": "Appointments",
+    "today": "Today",
+    "thisWeek": "This week",
+    "noShow": "No-shows, last 30 days ({{count}} visits)",
+    "attention": "Needs attention",
+    "allClear": "Everything looks good. Nothing needs attention.",
+    "items": {
+      "openIssues": "Data-quality problems to fix",
+      "unverifiedPatients": "App registrations waiting to be verified",
+      "aiPending": "AI summaries waiting for a doctor",
+      "unverifiedValues": "Lab values not yet verified",
+      "missedVisits": "Missed or overdue visits"
+    }
+  },
+  "staff": {
+    "email": "Email",
+    "fullName": "Full name",
+    "phone": "Phone number",
+    "role": "Role",
+    "designation": "Designation",
+    "specialization": "Specialization",
+    "registrationNo": "Medical registration number",
+    "bio": "About (shown to patients)"
+  },
+  "users": {
+    "title": "Staff",
+    "search": "Search by name or email",
+    "all": "All",
+    "doctors": "Doctors",
+    "reception": "Reception",
+    "admins": "Admins",
+    "showInactive": "Show deactivated accounts",
+    "add": "Add staff member",
+    "empty": "No staff found",
+    "emptyHint": "Try another search or filter.",
+    "inactive": "Deactivated",
+    "active": "Active",
+    "new": "New staff member",
+    "newHint": "They get an email with a 6-digit sign-in code. They sign in to the app with that email.",
+    "create": "Create account",
+    "detail": "Staff member",
+    "notFound": "We could not find this person.",
+    "thisIsYou": "This is your own account. You cannot change your role or deactivate yourself.",
+    "details": "Details",
+    "saved": "Saved.",
+    "changeRole": "Change role",
+    "changeRoleHint": "A new role applies the next time they open the app.",
+    "cannotChangeSelf": "You cannot change your own role.",
+    "confirmRoleTitle": "Change role?",
+    "confirmRole": "This person will become: {{role}}.",
+    "roleChanged": "Role changed.",
+    "access": "Access",
+    "resend": "Send a new sign-in code",
+    "inviteSent": "A sign-in code was emailed.",
+    "inviteFailed": "The account is ready, but the email could not be sent. Try again with “Send a new sign-in code”.",
+    "deactivate": "Deactivate account",
+    "reactivate": "Reactivate account",
+    "confirmDeactivateTitle": "Deactivate this account?",
+    "confirmDeactivate": "They will be signed out and lose access at once. Their records and history stay. You can reactivate them later.",
+    "deactivated": "Account deactivated.",
+    "reactivated": "Account reactivated."
+  },
+  "patient": {
+    "fullName": "Full name",
+    "mrn": "Hospital number (MRN)",
+    "dob": "Date of birth",
+    "phone": "Phone number",
+    "email": "Email",
+    "emailHint": "If she signs in with this email she is linked to this record",
+    "address": "Address",
+    "bloodGroup": "Blood group",
+    "rhNegative": "Rh negative",
+    "rhShort": "Rh negative",
+    "allergies": "Allergies",
+    "conditions": "Health conditions",
+    "emergencyContact": "Emergency contact",
+    "listHint": "Separate with commas"
+  },
+  "patients": {
+    "title": "Patients",
+    "search": "Search name, hospital number or phone",
+    "add": "Add patient",
+    "empty": "No patients found",
+    "emptyHint": "Try another search or filter.",
+    "noMrn": "No hospital number",
+    "ga": "{{ga}} pregnant",
+    "noDates": "no dates yet",
+    "noActive": "no active pregnancy",
+    "deleted": "Deleted",
+    "unverified": "Unverified",
+    "verified": "Verified",
+    "highRisk": "High risk",
+    "app": "App",
+    "desk": "Desk",
+    "filter": {
+      "all": "All",
+      "unverified": "Unverified",
+      "deleted": "Deleted"
+    },
+    "deletedForever": "The patient was permanently deleted.",
+    "deletedFilesLeft": "The patient was permanently deleted, but some report files could not be removed. Remove them from storage.",
+    "new": "New patient",
+    "newHint": "This creates a verified record, like registration at the desk.",
+    "create": "Create patient",
+    "pregnancy": "Pregnancy",
+    "lmpOptional": "Optional. Needed to create the pregnancy and visit plan.",
+    "primaryDoctor": "Primary doctor",
+    "detail": "Patient",
+    "edit": "Edit details",
+    "notFound": "We could not find this patient.",
+    "appAccount": "Has app account",
+    "pregnancies": "Pregnancies",
+    "noPregnancies": "No pregnancies yet",
+    "manage": "Manage record",
+    "deletedBanner": "This patient is deleted. She has no app access and is hidden from staff lists. You can restore her.",
+    "merge": "Merge into another record",
+    "mergeHint": "Pick the record to keep. “{{name}}” will be merged into it and then hidden.",
+    "mergeSearch": "Search the record to keep",
+    "mergeConfirmTitle": "Merge these records?",
+    "mergeConfirm": "“{{source}}” will be merged into “{{target}}”. Appointments and pregnancy data move to “{{target}}”.",
+    "softDelete": "Delete patient",
+    "softDeleteTitle": "Delete this patient?",
+    "softDeleteMessage": "She will lose app access and disappear from lists. Nothing is destroyed and you can restore her. Please say why.",
+    "restore": "Restore patient",
+    "restoreTitle": "Restore this patient?",
+    "restoreMessage": "She will appear in lists again.",
+    "hardDelete": "Delete permanently…",
+    "hardDeleteTitle": "Permanent delete",
+    "hardDeleteWarning": "This removes the patient and all her pregnancies, visits, appointments, consultations, reports and summaries for good. It cannot be undone. Medical records normally have to be kept by law.",
+    "hardDeleteFinalTitle": "Are you completely sure?",
+    "hardDeleteFinal": "Write the reason (it is saved in the audit log) and type the word to confirm.",
+    "hardDeleteConfirm": "Delete forever"
+  },
+  "pregnancy": {
+    "title": "Pregnancy",
+    "notFound": "We could not find this pregnancy.",
+    "add": "Add pregnancy",
+    "create": "Start pregnancy",
+    "lmp": "First day of last period",
+    "eddUsg": "Due date from dating scan",
+    "eddUsgHint": "Leave empty if there was no dating scan",
+    "eddFinal": "Due date used",
+    "eddValue": "due {{date}}",
+    "source": "Dates entered by",
+    "gpal": "Pregnancies (G P A L)",
+    "sources": {
+      "patient_reported": "The patient",
+      "clinician": "Hospital staff"
+    },
+    "risk": {
+      "label": "Risk",
+      "low": "Low risk",
+      "moderate": "Moderate risk",
+      "high": "High risk"
+    },
+    "status": {
+      "active": "Active",
+      "delivered": "Delivered",
+      "miscarriage": "Miscarriage",
+      "terminated": "Terminated",
+      "transferred": "Transferred",
+      "closed": "Closed"
+    },
+    "fixDates": "Fix the dates",
+    "fixDatesHint": "Changing the due date moves the visits that are not booked yet.",
+    "clearEddUsg": "Clear dating-scan due date",
+    "reason": "Why are you changing this?",
+    "reasonHint": "Saved in the audit log",
+    "saveDates": "Save dates",
+    "datesSaved": "Dates updated.",
+    "riskAndStatus": "Risk and status",
+    "riskFactors": "Risk factors",
+    "statusLabel": "Status",
+    "outcomeDate": "Outcome date",
+    "outcomeNotes": "Outcome notes",
+    "statusSaved": "Saved."
+  },
+  "careTeam": {
+    "title": "Care team",
+    "open": "Primary doctor and backups",
+    "primary": "Primary doctor",
+    "backups": "Backup doctors",
+    "noPrimary": "This pregnancy has no primary doctor. Choose one so the patient can be seen and booked.",
+    "noBackups": "No backup doctors yet.",
+    "since": "Since {{date}}",
+    "deactivated": "Deactivated",
+    "setPrimary": "Choose primary doctor",
+    "changePrimary": "Change primary doctor",
+    "pickPrimary": "Choose the new primary doctor",
+    "confirmPrimary": "Make primary",
+    "primaryChanged": "Primary doctor changed. The previous primary stays as a backup if still active.",
+    "addBackup": "Add backup doctor",
+    "pickBackup": "Choose a backup doctor",
+    "note": "Note (optional)",
+    "backupAdded": "Backup doctor added.",
+    "remove": "Remove",
+    "removeNamed": "Remove {{name}} from the care team",
+    "removeTitle": "Remove from care team?",
+    "removeMessage": "{{name}} will lose access to this patient at once.",
+    "removed": "Removed from the care team."
+  },
+  "dq": {
+    "title": "Data quality",
+    "subtitle": "Problems in the records, with a way to fix each one",
+    "allClear": "All clear. No data problems found.",
+    "total": "{{count}} items need a look",
+    "clear": "Clear",
+    "unknownRule": "We do not know this check.",
+    "noneLeft": "Nothing left to fix",
+    "noneLeftHint": "This check is now clear.",
+    "unnamed": "Unnamed patient",
+    "openToFix": "Fix the problem for {{name}}",
+    "severity": {
+      "high": "Urgent",
+      "medium": "Soon",
+      "low": "Info"
+    },
+    "rules": {
+      "no_edd": {
+        "title": "No due date",
+        "hint": "Active pregnancies with no last-period date or due date.",
+        "detail": "No dates entered"
+      },
+      "ga_over_42": {
+        "title": "Over 42 weeks and still active",
+        "hint": "Probably a wrong date, or a pregnancy that was never closed.",
+        "detail": "Now {{weeks}} weeks {{days}} days"
+      },
+      "no_primary": {
+        "title": "No primary doctor",
+        "hint": "Verified patients whose pregnancy has no primary doctor.",
+        "detail": "Nobody is in charge of this pregnancy"
+      },
+      "primary_inactive": {
+        "title": "Doctor has left",
+        "hint": "Care teams where every doctor is deactivated.",
+        "detail": "All doctors on the team are deactivated"
+      },
+      "t3_no_backup": {
+        "title": "Third trimester without a backup",
+        "hint": "From 28 weeks a backup doctor should be named.",
+        "detail": "{{weeks}} weeks, no backup doctor"
+      },
+      "unverified_14d": {
+        "title": "Not verified for 14 days",
+        "hint": "App registrations still waiting to be checked at the desk.",
+        "detail": "Waiting for {{days}} days"
+      },
+      "past_booked": {
+        "title": "Old appointments still booked",
+        "hint": "Appointments from earlier days that were never closed.",
+        "detail": "Still booked"
+      },
+      "consult_unpublished": {
+        "title": "Advice never published",
+        "hint": "Consultations older than a day whose advice the patient cannot see.",
+        "detail": "Not published to the patient"
+      },
+      "lab_unverified_48h": {
+        "title": "Lab values not verified",
+        "hint": "Values waiting for a doctor to verify for over 48 hours.",
+        "detail": "{{count}} values waiting"
+      },
+      "ai_draft_24h": {
+        "title": "AI drafts waiting",
+        "hint": "AI summaries waiting for review for over a day.",
+        "detail": "Waiting for a doctor"
+      },
+      "no_app_account": {
+        "title": "No app account",
+        "hint": "Patients who cannot use the app yet.",
+        "detail": "She has no app account"
+      },
+      "implausible_values": {
+        "title": "Values that look like typos",
+        "hint": "For example blood pressure 300/20. Please check and correct.",
+        "detail": "{{values}}"
+      }
+    },
+    "fix": {
+      "related": "Related",
+      "openPatient": "Open patient",
+      "openPregnancy": "Open pregnancy",
+      "careTeamHint": "Reassign if the doctor has left",
+      "gone": "Already fixed",
+      "goneHint": "This record was changed or removed. Nothing more to do.",
+      "appointment": "Appointment",
+      "when": "When",
+      "reason": "Reason",
+      "pastBookedHint": "This appointment was never closed. Say what happened to it.",
+      "markNoShow": "Mark as no-show",
+      "markCompleted": "Mark as completed",
+      "cancelAppointment": "Cancel appointment",
+      "confirmTitle": "Close this appointment?",
+      "confirmButton": "Yes, close it",
+      "confirm": {
+        "no_show": "The patient did not come. The appointment will be marked as a no-show.",
+        "completed": "The visit took place. The appointment will be marked as completed.",
+        "cancelled": "The appointment will be cancelled."
+      },
+      "consultation": "Consultation",
+      "created": "Created",
+      "advice": "Advice",
+      "adviceWritten": "Written, not published",
+      "adviceMissing": "No advice written",
+      "publishHint": "The doctor normally publishes this. You can publish it for them; the patient is notified.",
+      "noAdviceHint": "There is no advice to publish. Please ask the doctor to complete this visit.",
+      "alreadyPublished": "Already published.",
+      "publish": "Publish advice",
+      "publishTitle": "Publish this advice?",
+      "publishMessage": "The patient and her approved family members will see the advice and prescriptions.",
+      "report": "Report",
+      "labHint": "A doctor on the care team must verify these values. If the doctor has left, change the care team.",
+      "verified": "Verified",
+      "unverified": "Not verified",
+      "aiDraft": "AI summary draft",
+      "source": "Made from",
+      "generated": "Created",
+      "status": "Status",
+      "sources": {
+        "report": "A report",
+        "consultation": "A consultation",
+        "cumulative": "The whole pregnancy"
+      },
+      "aiHint": "Only a doctor on the care team can review this. If nobody is available, change the care team.",
+      "vitals": "Vitals",
+      "vitalsHint": "Correct the typo. Leave a field empty to clear it.",
+      "unusual": "These look unusual: {{fields}}",
+      "expected": "Usually between {{min}} and {{max}}",
+      "vital": {
+        "bp_systolic": "Blood pressure, top number",
+        "bp_diastolic": "Blood pressure, bottom number",
+        "pulse": "Pulse",
+        "temperature": "Temperature (°C)",
+        "spo2": "Oxygen (SpO2 %)",
+        "weight_kg": "Weight (kg)",
+        "fetal_heart_rate": "Baby's heart rate",
+        "fundal_height_cm": "Fundal height (cm)"
+      },
+      "labValue": "Lab value",
+      "labValueHint": "A lab value cannot be negative. Correct it or clear it."
+    }
+  },
+  "config": {
+    "title": "Configuration",
+    "subtitle": "The rules and content the whole app uses",
+    "saved": "Saved.",
+    "none": "None",
+    "listHint": "Separate with commas",
+    "add": "Add",
+    "empty": "Nothing here yet",
+    "emptyHint": "Add the first one.",
+    "inactive": "Not in use",
+    "unknown": "We do not know this setting.",
+    "notFound": "We could not find this entry.",
+    "new": "New entry",
+    "edit": "Edit entry",
+    "delete": "Delete",
+    "deleteTitle": "Delete this entry?",
+    "deleteMessage": "This cannot be undone. If it is already used elsewhere, switch it off instead.",
+    "single": {
+      "booking": "Booking rules",
+      "bookingSummary": "Lead time, advance window, cancel cut-off, limits",
+      "hospital": "Hospital settings",
+      "hospitalSummary": "Name, address, phone, time zone, reminders"
+    },
+    "singleHint": {
+      "booking": "These rules apply to patients booking in the app. Reception and admins are not limited by them.",
+      "hospital": "Shown to patients. The time zone decides what “today” means."
+    },
+    "tables": {
+      "visit_templates": {
+        "title": "Visit templates",
+        "summary": "The standard and high-risk visit schedules",
+        "hint": "New pregnancies get the active standard visits. Existing visit plans do not change."
+      },
+      "lab_tests": {
+        "title": "Lab tests",
+        "summary": "Test names and normal ranges",
+        "hint": "Ranges are used to flag low and high values. Ranges per trimester are optional."
+      },
+      "drug_catalog": {
+        "title": "Drug catalog",
+        "summary": "Medicines doctors can pick from",
+        "hint": "Doctors see these names when writing a prescription."
+      },
+      "curated_guidance": {
+        "title": "Care guidance",
+        "summary": "What to eat, avoid and watch for",
+        "hint": "Reviewed by an obstetrician. The AI never replaces this list."
+      },
+      "week_content": {
+        "title": "Week by week",
+        "summary": "Baby development and tips for each week",
+        "hint": "Shown on the patient's journey."
+      },
+      "milestones": {
+        "title": "Milestones",
+        "summary": "Scans, tests and vaccines with their weeks",
+        "hint": "Shown on the patient's journey."
+      }
+    },
+    "options": {
+      "schedule": {
+        "standard": "Standard",
+        "high_risk": "High risk"
+      },
+      "kind": {
+        "food_recommend": "Eat more",
+        "food_avoid": "Avoid eating",
+        "med_avoid": "Medicines to check first",
+        "warning_sign": "Warning sign"
+      },
+      "category": {
+        "scan": "Scan",
+        "test": "Test",
+        "vaccine": "Vaccine",
+        "education": "Education",
+        "trimester": "Trimester"
+      }
+    },
+    "hints": {
+      "lab_tests": {
+        "code": "Capital letters, e.g. HB. Cannot be changed later."
+      },
+      "milestones": {
+        "key": "Lower-case, e.g. nt_scan. Cannot be changed later."
+      },
+      "week_content": {
+        "week": "4 to 42. Cannot be changed later."
+      }
+    },
+    "fields": {
+      "visit_templates": {
+        "schedule": "Schedule",
+        "seq": "Visit number",
+        "title": "Title",
+        "target_week": "Target week",
+        "window_start_week": "Window starts (week)",
+        "window_end_week": "Window ends (week)",
+        "purpose": "Purpose",
+        "recommended_tests": "Recommended tests",
+        "is_active": "In use"
+      },
+      "lab_tests": {
+        "code": "Code",
+        "name": "Name",
+        "unit": "Unit",
+        "ref_low": "Normal from",
+        "ref_high": "Normal up to",
+        "trimester_ref": "Trimester ranges (JSON)",
+        "is_active": "In use"
+      },
+      "drug_catalog": {
+        "name": "Name",
+        "generic": "Generic name",
+        "common_strengths": "Common strengths",
+        "pregnancy_caution_note": "Pregnancy caution",
+        "is_active": "In use"
+      },
+      "curated_guidance": {
+        "kind": "Type",
+        "text": "Advice text",
+        "reason": "Reason",
+        "trimester": "Trimester",
+        "condition": "Condition (e.g. gdm)",
+        "is_active": "In use"
+      },
+      "week_content": {
+        "week": "Week",
+        "baby_size_label": "Baby is the size of",
+        "baby_length_cm": "Length (cm)",
+        "baby_weight_g": "Weight (g)",
+        "baby_development": "How the baby is growing",
+        "mother_changes": "Changes for the mother",
+        "tips": "Tips"
+      },
+      "milestones": {
+        "key": "Key",
+        "title": "Title",
+        "category": "Category",
+        "week_from": "From week",
+        "week_to": "To week",
+        "description": "Description"
+      },
+      "hospital": {
+        "name": "Hospital name",
+        "address": "Address",
+        "phone": "Phone",
+        "timezone": "Time zone",
+        "default_slot_minutes": "Default appointment length (minutes)",
+        "reminder_lead_hours": "Reminders (hours before)"
+      },
+      "booking": {
+        "min_lead_hours": "Book at least (hours ahead)",
+        "max_advance_days": "Book at most (days ahead)",
+        "patient_cancel_cutoff_hours": "Patients can change up to (hours before)",
+        "unverified_max_upcoming": "Upcoming visits, unverified patient",
+        "verified_max_upcoming": "Upcoming visits, verified patient"
+      }
+    }
+  },
+  "audit": {
+    "title": "Audit log",
+    "showFilters": "Filters",
+    "hideFilters": "Hide filters",
+    "byUser": "Search who did it",
+    "byPatient": "Search a patient",
+    "byAction": "What happened",
+    "byTable": "Which records",
+    "from": "From date",
+    "to": "To date",
+    "clear": "Clear filters",
+    "empty": "Nothing in the log",
+    "emptyHint": "Try other filters.",
+    "more": "Show more",
+    "system": "System",
+    "unknownUser": "Unknown user",
+    "event": "Action",
+    "reason": "Reason",
+    "record": "Record",
+    "changes": "Changes",
+    "noChanges": "No details recorded",
+    "tapForDetails": "Tap for details",
+    "changeCount": "{{count}} fields",
+    "actions": {
+      "insert": "Added",
+      "update": "Changed",
+      "delete": "Deleted",
+      "view_sensitive": "Viewed",
+      "export": "Exported"
+    },
+    "events": {
+      "soft_delete": "Patient deleted",
+      "restore": "Patient restored",
+      "hard_delete": "Patient permanently deleted",
+      "fix_dates": "Pregnancy dates corrected",
+      "staff_create": "Staff account created",
+      "staff_update": "Staff account changed",
+      "staff_set_role": "Staff role changed",
+      "staff_set_active": "Staff account switched on or off",
+      "deidentify_account": "Account de-identified",
+      "dpdp_export": "Data exported for the person"
+    }
+  },
+  "requests": {
+    "title": "Requests",
+    "hint": "People can ask to export their data or delete their account. Clinical records are kept as the law requires: a deletion removes the person's details and app access, not the medical record.",
+    "open": "Open",
+    "closed": "Closed",
+    "noneOpen": "No open requests",
+    "noneClosed": "No closed requests",
+    "unknownUser": "Unknown person",
+    "email": "Email",
+    "role": "Role",
+    "note": "Note",
+    "kind": {
+      "deletion": "Delete account",
+      "export": "Export my data"
+    },
+    "status": {
+      "open": "New",
+      "in_progress": "In progress",
+      "done": "Done",
+      "rejected": "Rejected"
+    },
+    "exportHint": "Prepare the export, send it to the person safely, then mark the request as done.",
+    "prepareExport": "Prepare export",
+    "markDone": "Mark as done",
+    "exportReady": "Export ready",
+    "exportSize": "About {{kb}} KB of data. Copy or share it only through a safe channel.",
+    "copy": "Copy",
+    "share": "Share…",
+    "copied": "Copied to the clipboard.",
+    "deletionHint": "Deleting removes the person's name, contact details and app access. Medical records stay.",
+    "deleteAccount": "Delete account",
+    "deleteTitle": "De-identify this account?",
+    "deleteMessage": "The person is signed out for good and her name and contact details are removed. Her medical records stay, as the law requires. Her upcoming appointments are cancelled.",
+    "deleted": "The account was de-identified and the request is done.",
+    "start": "Start working on it",
+    "reject": "Reject",
+    "rejectTitle": "Reject this request?",
+    "rejectMessage": "Please say why. This is saved with the request."
+  },
+  "more": {
+    "title": "More",
+    "config": "Configuration",
+    "configHint": "Booking rules, visit templates, catalogs, content",
+    "audit": "Audit log",
+    "auditHint": "Who changed or viewed what",
+    "requests": "Requests",
+    "requestsHint": "Account deletion and data export"
+  },
+  "profile": {
+    "title": "Profile",
+    "email": "Email",
+    "details": "Your details",
+    "fullName": "Full name",
+    "phone": "Phone number",
+    "saved": "Saved.",
+    "privacy": "Your data",
+    "privacyHint": "You can ask the hospital for a copy of your data or to delete your account. The hospital must keep medical records by law, so a deletion removes your details and app access, not the record.",
+    "exportData": "Ask for a copy of my data",
+    "exportTitle": "Ask for your data?",
+    "exportMessage": "The hospital will prepare a copy of your data and contact you.",
+    "exportConfirm": "Send request",
+    "exportSent": "Request sent. The hospital will contact you.",
+    "exportPending": "You already asked for a copy. We are working on it.",
+    "deleteAccount": "Delete my account",
+    "deleteTitle": "Delete your account?",
+    "deleteMessage": "This sends a request to the hospital. When it is done you will be signed out for good and your name and contact details are removed. Medical records are kept as the law requires.",
+    "deleteConfirm": "Send request",
+    "deletionSent": "Request sent. The hospital will process it and contact you.",
+    "deletionPending": "Your deletion request is being processed.",
+    "myRequests": "Your requests",
+    "kind": {
+      "deletion": "Account deletion",
+      "export": "Copy of my data"
+    }
+  }
+}

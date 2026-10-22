@@ -44,10 +44,12 @@ import {
   hardDeletePatient,
   mergePatients,
   resolveRequest,
+  searchPatients,
+  searchPeople,
   saveConfigRow,
   saveHospitalSettings,
   setPatientDeleted,
-  updateConsultationVitals,
+  updateConsultation,
   updateLabValue,
   updateOwnProfile,
   updatePatient,
@@ -68,7 +70,8 @@ export const adminKeys = {
   staff: ['admin', 'staff'] as const,
   staffMember: (id: string) => ['admin', 'staff', id] as const,
   doctors: ['admin', 'doctors'] as const,
-  patients: (search: string, filter: PatientFilter) => ['admin', 'patients', search, filter] as const,
+  patients: (search: string, filter: PatientFilter) =>
+    ['admin', 'patients', search, filter] as const,
   patient: (id: string) => ['admin', 'patient', id] as const,
   pregnancies: (patientId: string) => ['admin', 'pregnancies', patientId] as const,
   pregnancy: (id: string) => ['admin', 'pregnancy', id] as const,
@@ -91,7 +94,8 @@ function useAdminMutation<V, D = void>(fn: (v: V) => Promise<D>, invalidate: Que
 }
 
 // ---------------------------------------------------------------- dashboard + data quality
-export const useDashboard = () => useQuery({ queryKey: adminKeys.dashboard, queryFn: fetchDashboard });
+export const useDashboard = () =>
+  useQuery({ queryKey: adminKeys.dashboard, queryFn: fetchDashboard });
 export const useDqCounts = () => useQuery({ queryKey: adminKeys.dqCounts, queryFn: fetchDqCounts });
 export const useDqIssues = (rule: string) =>
   useQuery({ queryKey: adminKeys.dqIssues(rule), queryFn: () => fetchDqIssues(rule) });
@@ -103,7 +107,9 @@ export const useStaffMember = (id: string) =>
 export const useDoctors = () => useQuery({ queryKey: adminKeys.doctors, queryFn: fetchDoctors });
 export const useCreateStaff = () => useAdminMutation(adminUsers.create);
 export const useUpdateStaff = () =>
-  useAdminMutation((v: { id: string; fields: Record<string, unknown> }) => adminUsers.update(v.id, v.fields));
+  useAdminMutation((v: { id: string; fields: Record<string, unknown> }) =>
+    adminUsers.update(v.id, v.fields),
+  );
 export const useSetStaffRole = () =>
   useAdminMutation((v: { id: string; role: Parameters<typeof adminUsers.setRole>[1] }) =>
     adminUsers.setRole(v.id, v.role),
@@ -114,15 +120,24 @@ export const useResendInvite = () => useAdminMutation(adminUsers.resendInvite);
 
 // ---------------------------------------------------------------- patients + pregnancies
 export const usePatients = (search: string, filter: PatientFilter) =>
-  useQuery({ queryKey: adminKeys.patients(search, filter), queryFn: () => fetchPatients(search, filter) });
+  useQuery({
+    queryKey: adminKeys.patients(search, filter),
+    queryFn: () => fetchPatients(search, filter),
+  });
 export const usePatient = (id: string) =>
   useQuery({ queryKey: adminKeys.patient(id), queryFn: () => fetchPatient(id) });
 export const usePregnancies = (patientId: string) =>
-  useQuery({ queryKey: adminKeys.pregnancies(patientId), queryFn: () => fetchPregnancies(patientId) });
+  useQuery({
+    queryKey: adminKeys.pregnancies(patientId),
+    queryFn: () => fetchPregnancies(patientId),
+  });
 export const usePregnancy = (id: string) =>
   useQuery({ queryKey: adminKeys.pregnancy(id), queryFn: () => fetchPregnancy(id) });
 export const useCareTeam = (pregnancyId: string) =>
-  useQuery({ queryKey: adminKeys.careTeam(pregnancyId), queryFn: () => fetchCareTeam(pregnancyId) });
+  useQuery({
+    queryKey: adminKeys.careTeam(pregnancyId),
+    queryFn: () => fetchCareTeam(pregnancyId),
+  });
 
 export const useCreatePatient = () => useAdminMutation(createPatient);
 export const useUpdatePatient = () =>
@@ -169,12 +184,12 @@ export const useCloseAppointment = () =>
   );
 export const useConsultation = (id: string) =>
   useQuery({ queryKey: ['admin', 'consultation', id], queryFn: () => fetchConsultation(id) });
-export const useUpdateVitals = () =>
-  useAdminMutation((v: { id: string; values: Parameters<typeof updateConsultationVitals>[1] }) =>
-    updateConsultationVitals(v.id, v.values),
+export const useUpdateConsultation = () =>
+  useAdminMutation((v: { id: string; values: Parameters<typeof updateConsultation>[1] }) =>
+    updateConsultation(v.id, v.values),
   );
-export const useLabResult = (id: string) =>
-  useQuery({ queryKey: ['admin', 'lab-result', id], queryFn: () => fetchLabResult(id) });
+export const useLabResult = (id: string, enabled = true) =>
+  useQuery({ queryKey: ['admin', 'lab-result', id], queryFn: () => fetchLabResult(id), enabled });
 export const useUpdateLabValue = () =>
   useAdminMutation((v: { id: string; value: number | null }) => updateLabValue(v.id, v.value));
 export const useReportValues = (id: string) =>
@@ -219,11 +234,24 @@ export const useAuditLog = (filters: AuditFilters) =>
     },
     getNextPageParam: (last) => (last.rows.length === AUDIT_PAGE_SIZE ? last.page + 1 : undefined),
   });
+export const usePeopleSearch = (term: string) =>
+  useQuery({
+    queryKey: ['admin', 'search-people', term],
+    queryFn: () => searchPeople(term),
+    enabled: term.trim().length >= 2,
+  });
+export const usePatientSearch = (term: string) =>
+  useQuery({
+    queryKey: ['admin', 'search-patients', term],
+    queryFn: () => searchPatients(term),
+    enabled: term.trim().length >= 2,
+  });
 export const useRequests = (filter: RequestFilter) =>
   useQuery({ queryKey: adminKeys.requests(filter), queryFn: () => fetchRequests(filter) });
 export const useResolveRequest = () =>
-  useAdminMutation((v: { id: string; status: 'in_progress' | 'done' | 'rejected'; note?: string }) =>
-    resolveRequest(v.id, v.status, v.note),
+  useAdminMutation(
+    (v: { id: string; status: 'in_progress' | 'done' | 'rejected'; note?: string }) =>
+      resolveRequest(v.id, v.status, v.note),
   );
 export const useProcessDeletion = () => useAdminMutation(adminUsers.processDeletion);
 export const useExportData = () => useMutation({ mutationFn: exportPatientData });

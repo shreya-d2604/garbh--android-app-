@@ -37,7 +37,12 @@ function Body({ doctors, excludeIds, withNote, onConfirm, ...rest }: Props) {
       onConfirm={() => selected && onConfirm(selected, note.trim() || undefined)}
     >
       <ScrollView style={styles.list}>
-        <DoctorChoice doctors={doctors} selected={selected} onSelect={setSelected} excludeIds={excludeIds} />
+        <DoctorChoice
+          doctors={doctors}
+          selected={selected}
+          onSelect={setSelected}
+          excludeIds={excludeIds}
+        />
       </ScrollView>
       {withNote ? (
         <TextInput

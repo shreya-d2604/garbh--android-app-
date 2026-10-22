@@ -46,9 +46,18 @@ async function invoke<T>(name: string, body: Record<string, unknown>): Promise<T
   return data as T;
 }
 
-function must<T>(result: { data: T | null; error: { message: string; code?: string } | null }): T {
+type Result<T> = { data: T; error: { message: string; code?: string } | null };
+
+/** Unwraps a Supabase response: throws its error, otherwise returns the (non-null) data. */
+function must<T>(result: Result<T>): NonNullable<T> {
   if (result.error) throw result.error;
-  return result.data as T;
+  return result.data as NonNullable<T>;
+}
+
+/** Same, for maybeSingle(): "no row" is null, not an error. */
+function mustMaybe<T>(result: Result<T>): NonNullable<T> | null {
+  if (result.error) throw result.error;
+  return (result.data ?? null) as NonNullable<T> | null;
 }
 
 // ---------------------------------------------------------------- dashboard + data quality
@@ -122,7 +131,9 @@ export async function fetchStaff(): Promise<StaffMember[]> {
 }
 
 export async function fetchStaffMember(id: string): Promise<StaffMember | null> {
-  const row = must(await supabase.from('profiles').select(STAFF_SELECT).eq('id', id).maybeSingle());
+  const row = mustMaybe(
+    await supabase.from('profiles').select(STAFF_SELECT).eq('id', id).maybeSingle(),
+  );
   return row ? toStaff(row as unknown as StaffQueryRow) : null;
 }
 
@@ -165,20 +176,30 @@ export async function fetchPeople(ids: readonly string[]): Promise<Record<string
   const unique = [...new Set(ids.filter(Boolean))];
   if (unique.length === 0) return {};
   const rows = must(
-    await supabase.from('profiles').select('id, full_name, email, role, is_active').in('id', unique),
+    await supabase
+      .from('profiles')
+      .select('id, full_name, email, role, is_active')
+      .in('id', unique),
   );
   return Object.fromEntries(rows.map((r) => [r.id, r]));
 }
 
 export const adminUsers = {
   create: (input: Record<string, unknown>) =>
-    invoke<{ user_id: string; invite_sent: boolean }>('admin-users', { action: 'create', ...input }),
+    invoke<{ user_id: string; invite_sent: boolean }>('admin-users', {
+      action: 'create',
+      ...input,
+    }),
   update: (userId: string, fields: Record<string, unknown>) =>
     invoke<{ ok: true }>('admin-users', { action: 'update', user_id: userId, ...fields }),
   setRole: (userId: string, role: StaffRole) =>
     invoke<{ ok: true }>('admin-users', { action: 'set_role', user_id: userId, role }),
   setActive: (userId: string, isActive: boolean) =>
-    invoke<{ ok: true }>('admin-users', { action: 'set_active', user_id: userId, is_active: isActive }),
+    invoke<{ ok: true }>('admin-users', {
+      action: 'set_active',
+      user_id: userId,
+      is_active: isActive,
+    }),
   resendInvite: (userId: string) =>
     invoke<{ invite_sent: boolean }>('admin-users', { action: 'resend_invite', user_id: userId }),
   processDeletion: (requestId: string) =>
@@ -207,7 +228,10 @@ export interface PatientListItem {
 
 export type PatientFilter = 'all' | 'unverified' | 'deleted';
 
-export async function fetchPatients(search: string, filter: PatientFilter): Promise<PatientListItem[]> {
+export async function fetchPatients(
+  search: string,
+  filter: PatientFilter,
+): Promise<PatientListItem[]> {
   let q = supabase
     .from('patients')
     .select(
@@ -224,7 +248,7 @@ export async function fetchPatients(search: string, filter: PatientFilter): Prom
 }
 
 export async function fetchPatient(id: string): Promise<PatientRow | null> {
-  return must(await supabase.from('patients').select('*').eq('id', id).maybeSingle());
+  return mustMaybe(await supabase.from('patients').select('*').eq('id', id).maybeSingle());
 }
 
 export async function fetchPregnancies(patientId: string): Promise<PregnancyRow[]> {
@@ -238,7 +262,7 @@ export async function fetchPregnancies(patientId: string): Promise<PregnancyRow[
 }
 
 export async function fetchPregnancy(id: string): Promise<PregnancyRow | null> {
-  return must(await supabase.from('pregnancies').select('*').eq('id', id).maybeSingle());
+  return mustMaybe(await supabase.from('pregnancies').select('*').eq('id', id).maybeSingle());
 }
 
 /** Admin opens a chart: audit-logged like every sensitive view (PLAN.md §0). */
@@ -274,7 +298,9 @@ export async function setPatientDeleted(id: string, deleted: boolean, reason?: s
  * Returns how many files could NOT be removed (0 = everything is gone).
  */
 export async function hardDeletePatient(id: string, reason: string): Promise<number> {
-  const paths = must(await supabase.rpc('admin_hard_delete_patient', { p_patient: id, p_reason: reason }));
+  const paths = must(
+    await supabase.rpc('admin_hard_delete_patient', { p_patient: id, p_reason: reason }),
+  );
   if (!paths || paths.length === 0) return 0;
   const { error } = await supabase.storage.from('reports').remove(paths);
   return error ? paths.length : 0;
@@ -334,7 +360,12 @@ export async function fetchCareTeam(pregnancyId: string): Promise<CareMember[]> 
 
 export const careTeam = {
   setPrimary: async (pregnancyId: string, doctorId: string) =>
-    must(await supabase.rpc('admin_set_primary_doctor', { p_pregnancy: pregnancyId, p_doctor: doctorId })),
+    must(
+      await supabase.rpc('admin_set_primary_doctor', {
+        p_pregnancy: pregnancyId,
+        p_doctor: doctorId,
+      }),
+    ),
   addBackup: async (pregnancyId: string, doctorId: string, note?: string) =>
     must(
       await supabase.rpc('admin_add_backup_doctor', {
@@ -345,13 +376,16 @@ export const careTeam = {
     ),
   remove: async (pregnancyId: string, doctorId: string) =>
     must(
-      await supabase.rpc('admin_remove_care_team_member', { p_pregnancy: pregnancyId, p_doctor: doctorId }),
+      await supabase.rpc('admin_remove_care_team_member', {
+        p_pregnancy: pregnancyId,
+        p_doctor: doctorId,
+      }),
     ),
 };
 
 // ---------------------------------------------------------------- data-quality item fixes
 export async function fetchAppointment(id: string) {
-  return must(await supabase.from('appointments').select('*').eq('id', id).maybeSingle());
+  return mustMaybe(await supabase.from('appointments').select('*').eq('id', id).maybeSingle());
 }
 
 /** Closes an appointment that was left open. Admin may set any status (appointments_admin_all). */
@@ -371,25 +405,30 @@ export async function closeAppointment(id: string, status: 'no_show' | 'complete
 }
 
 export async function fetchConsultation(id: string) {
-  return must(await supabase.from('consultations').select('*').eq('id', id).maybeSingle());
+  return mustMaybe(await supabase.from('consultations').select('*').eq('id', id).maybeSingle());
 }
 
-export async function updateConsultationVitals(id: string, values: Tables['consultations']['Update']) {
+export async function updateConsultation(id: string, values: Tables['consultations']['Update']) {
   must(await supabase.from('consultations').update(values).eq('id', id).select('id').single());
 }
 
 export async function fetchLabResult(id: string) {
-  return must(await supabase.from('lab_results').select('*').eq('id', id).maybeSingle());
+  return mustMaybe(await supabase.from('lab_results').select('*').eq('id', id).maybeSingle());
 }
 
 export async function updateLabValue(id: string, valueNum: number | null) {
   must(
-    await supabase.from('lab_results').update({ value_num: valueNum }).eq('id', id).select('id').single(),
+    await supabase
+      .from('lab_results')
+      .update({ value_num: valueNum })
+      .eq('id', id)
+      .select('id')
+      .single(),
   );
 }
 
 export async function fetchReportValues(reportId: string) {
-  const report = must(
+  const report = mustMaybe(
     await supabase
       .from('reports')
       .select('id, pregnancy_id, type, title, report_date, extraction_status')
@@ -407,7 +446,7 @@ export async function fetchReportValues(reportId: string) {
 }
 
 export async function fetchAiSummary(id: string) {
-  return must(
+  return mustMaybe(
     await supabase
       .from('ai_summaries')
       .select('id, pregnancy_id, source_type, status, generated_at, model')
@@ -417,7 +456,7 @@ export async function fetchAiSummary(id: string) {
 }
 
 export async function fetchPregnancyOwner(pregnancyId: string) {
-  return must(
+  return mustMaybe(
     await supabase.from('pregnancies').select('id, patient_id').eq('id', pregnancyId).maybeSingle(),
   );
 }
@@ -433,13 +472,28 @@ export async function fetchConfigRows(def: ConfigTable): Promise<Row[]> {
 }
 
 export async function fetchConfigRow(def: ConfigTable, id: string): Promise<Row | null> {
-  return must(await table(def.table).select('*').eq(def.pk, id).maybeSingle()) as unknown as Row | null;
+  return mustMaybe(
+    await table(def.table).select('*').eq(def.pk, id).maybeSingle(),
+  ) as unknown as Row | null;
 }
 
 export async function saveConfigRow(def: ConfigTable, id: string | null, payload: Row) {
   const t = table(def.table);
-  if (id) must(await t.update(payload as never).eq(def.pk, id).select().single());
-  else must(await t.insert(payload as never).select().single());
+  if (id)
+    must(
+      await t
+        .update(payload as never)
+        .eq(def.pk, id)
+        .select()
+        .single(),
+    );
+  else
+    must(
+      await t
+        .insert(payload as never)
+        .select()
+        .single(),
+    );
 }
 
 export async function deleteConfigRow(def: ConfigTable, id: string) {
@@ -447,7 +501,9 @@ export async function deleteConfigRow(def: ConfigTable, id: string) {
 }
 
 export async function fetchHospitalSettings(): Promise<Row> {
-  return must(await supabase.from('hospital_settings').select('*').eq('id', 1).single()) as unknown as Row;
+  return must(
+    await supabase.from('hospital_settings').select('*').eq('id', 1).single(),
+  ) as unknown as Row;
 }
 
 export async function saveHospitalSettings(payload: Row) {
@@ -479,19 +535,20 @@ export async function fetchAuditPage(filters: AuditFilters, page: number): Promi
   return must(await q) as unknown as AuditRow[];
 }
 
-/** People to pick in the audit filter: anyone who has acted, searched by name or email. */
-export async function searchStaffAndPatients(term: string) {
+/** Staff / app users to pick in the audit filter, by name or email. */
+export async function searchPeople(term: string) {
   const or = searchFilter(['full_name', 'email'], term);
-  if (!or) return { people: [], patients: [] };
-  const [people, patients] = await Promise.all([
-    supabase.from('profiles').select('id, full_name, email, role').or(or).limit(10),
-    supabase
-      .from('patients')
-      .select('id, full_name, mrn')
-      .or(searchFilter(['full_name', 'mrn'], term) ?? or)
-      .limit(10),
-  ]);
-  return { people: must(people), patients: must(patients) };
+  if (!or) return [];
+  return must(
+    await supabase.from('profiles').select('id, full_name, email, role').or(or).limit(10),
+  );
+}
+
+/** Patients to pick in the audit filter, by name or MRN. */
+export async function searchPatients(term: string) {
+  const or = searchFilter(['full_name', 'mrn'], term);
+  if (!or) return [];
+  return must(await supabase.from('patients').select('id, full_name, mrn').or(or).limit(10));
 }
 
 // ---------------------------------------------------------------- data requests (DPDP)
@@ -502,19 +559,39 @@ export interface RequestItem extends DataRequestRow {
 export type RequestFilter = 'open' | 'closed';
 
 export async function fetchRequests(filter: RequestFilter): Promise<RequestItem[]> {
-  let q = supabase.from('data_requests').select('*').order('created_at', { ascending: false }).limit(100);
-  q = filter === 'open' ? q.in('status', ['open', 'in_progress']) : q.in('status', ['done', 'rejected']);
+  let q = supabase
+    .from('data_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(100);
+  q =
+    filter === 'open'
+      ? q.in('status', ['open', 'in_progress'])
+      : q.in('status', ['done', 'rejected']);
   const rows = must(await q);
   const people = await fetchPeople(rows.map((r) => r.user_id));
   return rows.map((r) => ({ ...r, requester: people[r.user_id] ?? null }));
 }
 
-export async function resolveRequest(id: string, status: 'in_progress' | 'done' | 'rejected', note?: string) {
-  must(await supabase.rpc('admin_resolve_data_request', { p_request: id, p_status: status, p_note: note }));
+export async function resolveRequest(
+  id: string,
+  status: 'in_progress' | 'done' | 'rejected',
+  note?: string,
+) {
+  must(
+    await supabase.rpc('admin_resolve_data_request', {
+      p_request: id,
+      p_status: status,
+      p_note: note,
+    }),
+  );
 }
 
 // ---------------------------------------------------------------- own profile + own requests (every role)
-export async function updateOwnProfile(userId: string, values: { full_name: string; phone: string | null }) {
+export async function updateOwnProfile(
+  userId: string,
+  values: { full_name: string; phone: string | null },
+) {
   must(await supabase.from('profiles').update(values).eq('id', userId).select('id').single());
 }
 
@@ -530,7 +607,9 @@ export async function fetchOwnRequests(userId: string): Promise<DataRequestRow[]
 }
 
 export async function createOwnRequest(userId: string, kind: 'deletion' | 'export') {
-  must(await supabase.from('data_requests').insert({ user_id: userId, kind }).select('id').single());
+  must(
+    await supabase.from('data_requests').insert({ user_id: userId, kind }).select('id').single(),
+  );
 }
 
 /** True when an RPC error is the known "not built yet" stub (used to word the message). */

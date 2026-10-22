@@ -7,11 +7,13 @@ import { HeaderActions, palette } from '@/components';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
-const tabIcon =
-  (name: IconName) =>
-  ({ focused, size }: { focused: boolean; size: number }) => (
-    <MaterialCommunityIcons name={name} color={focused ? palette.rose : palette.inkMuted} size={size} />
-  );
+function tabIcon(name: IconName) {
+  return function TabIcon({ focused, size }: { focused: boolean; size: number }) {
+    return (
+      <MaterialCommunityIcons name={name} color={focused ? palette.rose : palette.inkMuted} size={size} />
+    );
+  };
+}
 
 /** Admin area (PLAN.md §7.6): dashboard + four tabs. Tabs with a folder host their own stack. */
 export default function AdminLayout() {

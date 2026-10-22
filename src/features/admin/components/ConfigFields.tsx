@@ -24,7 +24,8 @@ export function ConfigFields({ group, fields, control, editing }: Props) {
   const { t, i18n } = useTranslation('admin');
   const label = (key: string) => t(`config.fields.${group}.${key}`);
   const hintKey = (key: string) => `config.hints.${group}.${key}`;
-  const hint = (key: string) => (i18n.exists(`admin:${hintKey(key)}`) ? t(hintKey(key)) : undefined);
+  const hint = (key: string) =>
+    i18n.exists(`admin:${hintKey(key)}`) ? t(hintKey(key)) : undefined;
   const optionLabel = (key: string, option: string) => {
     const k = `config.options.${key}.${option}`;
     return i18n.exists(`admin:${k}`) ? t(k) : option;
@@ -39,7 +40,9 @@ export function ConfigFields({ group, fields, control, editing }: Props) {
               key={f.key}
               control={control}
               name={f.key}
-              render={({ field }) => <KeyValue label={label(f.key)} value={String(field.value ?? '')} />}
+              render={({ field }) => (
+                <KeyValue label={label(f.key)} value={String(field.value ?? '')} />
+              )}
             />
           );
         }
@@ -50,16 +53,22 @@ export function ConfigFields({ group, fields, control, editing }: Props) {
               control={control}
               name={f.key}
               render={({ field }) => (
-                <SwitchRow label={label(f.key)} value={field.value === true} onChange={field.onChange} />
+                <SwitchRow
+                  label={label(f.key)}
+                  value={field.value === true}
+                  onChange={field.onChange}
+                />
               )}
             />
           );
         }
         if (f.kind === 'select') {
-          const options = (f.allowEmpty ? ['', ...(f.options ?? [])] : (f.options ?? [])).map((o) => ({
-            value: o,
-            label: o === '' ? t('config.none') : optionLabel(f.key, o),
-          }));
+          const options = (f.allowEmpty ? ['', ...(f.options ?? [])] : (f.options ?? [])).map(
+            (o) => ({
+              value: o,
+              label: o === '' ? t('config.none') : optionLabel(f.key, o),
+            }),
+          );
           return (
             <Controller
               key={f.key}
@@ -86,7 +95,10 @@ export function ConfigFields({ group, fields, control, editing }: Props) {
             control={control}
             name={f.key}
             label={label(f.key)}
-            hint={hint(f.key) ?? (f.kind === 'list' || f.kind === 'intlist' ? t('config.listHint') : undefined)}
+            hint={
+              hint(f.key) ??
+              (f.kind === 'list' || f.kind === 'intlist' ? t('config.listHint') : undefined)
+            }
             multiline={multiline}
             numberOfLines={multiline ? (f.kind === 'json' ? 5 : 3) : 1}
             keyboardType={f.kind === 'int' || f.kind === 'decimal' ? 'numeric' : 'default'}

@@ -23,7 +23,12 @@ export function KeyValue({ label, value }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md, paddingVertical: 2 },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    paddingVertical: 2,
+  },
   label: { color: palette.inkMuted, flexShrink: 0 },
   value: { color: palette.ink, flex: 1, textAlign: 'right' },
 });

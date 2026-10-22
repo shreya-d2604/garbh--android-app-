@@ -1,5 +1,7 @@
 import {
   blankToNull,
+  formatDay,
+  formatWhen,
   gaLabel,
   joinList,
   percent,
@@ -114,5 +116,16 @@ describe('helpers', () => {
     expect(joinList(null)).toBe('');
     expect(blankToNull('  ')).toBeNull();
     expect(blankToNull(' hi ')).toBe('hi');
+  });
+});
+
+describe('date display', () => {
+  it('formats timestamps and calendar dates, tolerating bad input', () => {
+    expect(formatDay('2026-10-05')).toBe('5 Oct 2026');
+    expect(formatDay(new Date(2026, 9, 5, 16, 30).toISOString())).toBe('5 Oct 2026');
+    expect(formatWhen(new Date(2026, 9, 5, 16, 30).toISOString())).toBe('5 Oct 2026, 4:30 PM');
+    expect(formatWhen(null)).toBe('');
+    expect(formatWhen('nope')).toBe('');
+    expect(formatDay('')).toBe('');
   });
 });

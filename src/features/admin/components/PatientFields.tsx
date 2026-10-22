@@ -18,8 +18,18 @@ export function PatientFields({ control }: Props) {
   const today = todayISO();
   return (
     <>
-      <FormField control={control} name="full_name" label={t('patient.fullName')} autoComplete="name" />
-      <FormField control={control} name="mrn" label={t('patient.mrn')} autoCapitalize="characters" />
+      <FormField
+        control={control}
+        name="full_name"
+        label={t('patient.fullName')}
+        autoComplete="name"
+      />
+      <FormField
+        control={control}
+        name="mrn"
+        label={t('patient.mrn')}
+        autoCapitalize="characters"
+      />
       <DateField
         control={control}
         name="dob"
@@ -27,7 +37,12 @@ export function PatientFields({ control }: Props) {
         minimumDate={addDays(today, -70 * 365)}
         maximumDate={addDays(today, -10 * 365)}
       />
-      <FormField control={control} name="phone" label={t('patient.phone')} keyboardType="phone-pad" />
+      <FormField
+        control={control}
+        name="phone"
+        label={t('patient.phone')}
+        keyboardType="phone-pad"
+      />
       <FormField
         control={control}
         name="email"
@@ -53,7 +68,11 @@ export function PatientFields({ control }: Props) {
         control={control}
         name="rh_negative"
         render={({ field }) => (
-          <SwitchRow label={t('patient.rhNegative')} value={field.value === true} onChange={field.onChange} />
+          <SwitchRow
+            label={t('patient.rhNegative')}
+            value={field.value === true}
+            onChange={field.onChange}
+          />
         )}
       />
       <FormField

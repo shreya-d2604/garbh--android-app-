@@ -1,4 +1,6 @@
 // Pure display helpers for the admin screens (unit-tested).
+import { format } from 'date-fns';
+
 import { gestationalAge, isISODate, type ISODate } from '@/domain/pregnancy-math';
 
 /** "24w3d" for an EDD on a given day, or null when there is no EDD. */
@@ -121,4 +123,18 @@ export function joinList(values: readonly string[] | null | undefined): string {
 export function blankToNull(value: string | null | undefined): string | null {
   const t = (value ?? '').trim();
   return t === '' ? null : t;
+}
+
+/** "5 Oct 2026, 4:30 PM" in the device timezone; '' for a missing or invalid timestamp. */
+export function formatWhen(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? '' : format(d, 'd MMM yyyy, h:mm a');
+}
+
+/** "5 Oct 2026" for a timestamp or a YYYY-MM-DD date. */
+export function formatDay(value: string | null | undefined): string {
+  if (!value) return '';
+  const d = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+  return Number.isNaN(d.getTime()) ? '' : format(d, 'd MMM yyyy');
 }
