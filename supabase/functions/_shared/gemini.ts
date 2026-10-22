@@ -143,8 +143,10 @@ function allergyFilter<T extends { item: string }>(items: T[], ctx: Deidentified
 function baseSummary(ctx: DeidentifiedContext) {
   const flags: string[] = [];
   const meds = ctx.active_medications.filter((m) => NSAID.test(m.drug_name));
+  // PLAN §9.4: a conflict with a prescribed medicine is for the doctor only. The patient-facing
+  // "medicines to avoid" list is dropped in that case, so she is never told to avoid her own medicine.
   for (const m of meds) {
-    flags.push(`Patient is prescribed ${m.drug_name}; this draft lists NSAID painkillers under medicines to check with the doctor. Review before publishing.`);
+    flags.push(`Patient is prescribed ${m.drug_name}, which is on the usual medicines-to-avoid list (NSAID painkillers). It was left out of the patient-facing list. Please review.`);
   }
   return {
     foods_to_eat: allergyFilter(
@@ -155,9 +157,9 @@ function baseSummary(ctx: DeidentifiedContext) {
       ctx,
     ),
     foods_to_avoid: [{ item: 'Raw papaya and unpasteurised milk', why: 'Can be unsafe in pregnancy' }],
-    medicines_to_avoid: [
-      { item: 'Ibuprofen and other NSAID painkillers', why: 'Please check with your doctor before taking any painkiller' },
-    ],
+    medicines_to_avoid: meds.length
+      ? []
+      : [{ item: 'Ibuprofen and other NSAID painkillers', why: 'Please check with your doctor before taking any painkiller' }],
     lifestyle_tips: ['Drink plenty of water', 'Walk for about 20 minutes each day if your doctor agrees', 'Rest when you feel tired'],
     questions_for_doctor: ['Is there anything I should change in my diet?'],
     doctor_attention_flags: flags,

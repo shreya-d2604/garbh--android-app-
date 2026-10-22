@@ -57,6 +57,8 @@ Deno.test('mock follows report text, and keeps medicine conflicts doctor-only', 
   assert.ok(out.summary.doctor_attention_flags?.some((f) => /Ibuprofen/.test(f)));
   const patientFacing = JSON.stringify({ ...out.summary, doctor_attention_flags: undefined });
   assert.ok(!/stop taking|\bmg\b|\bdose\b/i.test(patientFacing), 'no dosing or stop-taking advice for the patient');
+  assert.ok(!/ibuprofen/i.test(patientFacing), 'the prescribed medicine never appears in patient-facing text');
+  assert.deepEqual(out.summary.medicines_to_avoid, []);
 });
 
 Deno.test('mock foods respect allergies', async () => {

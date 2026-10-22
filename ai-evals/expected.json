@@ -1,0 +1,418 @@
+{
+  "cbc-01-hb-low-t2": {
+    "report_type": "blood",
+    "ga_weeks": 20,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 10.2,
+        "flag": "low"
+      },
+      {
+        "code": "PLT",
+        "value": 245,
+        "flag": "normal"
+      }
+    ]
+  },
+  "cbc-02-normal-t1": {
+    "report_type": "blood",
+    "ga_weeks": 9,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 12.8,
+        "flag": "normal"
+      },
+      {
+        "code": "PLT",
+        "value": 310,
+        "flag": "normal"
+      }
+    ]
+  },
+  "cbc-03-hb-very-low-t3": {
+    "report_type": "blood",
+    "ga_weeks": 33,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 9.1,
+        "flag": "low"
+      },
+      {
+        "code": "PLT",
+        "value": 188,
+        "flag": "normal"
+      }
+    ]
+  },
+  "cbc-04-low-platelets": {
+    "report_type": "blood",
+    "ga_weeks": 28,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 11.4,
+        "flag": "normal"
+      },
+      {
+        "code": "PLT",
+        "value": 112,
+        "flag": "low"
+      }
+    ]
+  },
+  "cbc-05-hb-at-limit": {
+    "report_type": "blood",
+    "ga_weeks": 24,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 11.0,
+        "flag": "normal"
+      },
+      {
+        "code": "PLT",
+        "value": 400,
+        "flag": "normal"
+      }
+    ]
+  },
+  "thyroid-01-normal-t2": {
+    "report_type": "thyroid",
+    "ga_weeks": 20,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "TSH",
+        "value": 2.1,
+        "flag": "normal"
+      }
+    ]
+  },
+  "thyroid-02-high-for-t1": {
+    "report_type": "thyroid",
+    "ga_weeks": 9,
+    "medications": [],
+    "allergies": [],
+    "note": "2.8 is normal for the general population but above the first-trimester limit of 2.5",
+    "expected": [
+      {
+        "code": "TSH",
+        "value": 2.8,
+        "flag": "high"
+      }
+    ]
+  },
+  "thyroid-03-high-t3": {
+    "report_type": "thyroid",
+    "ga_weeks": 31,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "TSH",
+        "value": 4.6,
+        "flag": "high"
+      }
+    ]
+  },
+  "thyroid-04-low": {
+    "report_type": "thyroid",
+    "ga_weeks": 12,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "TSH",
+        "value": 0.05,
+        "flag": "low"
+      }
+    ]
+  },
+  "gtt-01-normal": {
+    "report_type": "gtt",
+    "ga_weeks": 26,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "FBS",
+        "value": 84,
+        "flag": "normal"
+      },
+      {
+        "code": "OGTT_2H",
+        "value": 128,
+        "flag": "normal"
+      }
+    ]
+  },
+  "gtt-02-gdm-2h": {
+    "report_type": "gtt",
+    "ga_weeks": 26,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "FBS",
+        "value": 88,
+        "flag": "normal"
+      },
+      {
+        "code": "OGTT_2H",
+        "value": 152,
+        "flag": "high"
+      }
+    ]
+  },
+  "gtt-03-fasting-high": {
+    "report_type": "gtt",
+    "ga_weeks": 27,
+    "medications": [],
+    "allergies": [],
+    "note": "97 is inside the lab range but above the pregnancy limit of 92",
+    "expected": [
+      {
+        "code": "FBS",
+        "value": 97,
+        "flag": "high"
+      },
+      {
+        "code": "OGTT_2H",
+        "value": 133,
+        "flag": "normal"
+      }
+    ]
+  },
+  "gtt-04-mmol": {
+    "report_type": "blood",
+    "ga_weeks": 26,
+    "medications": [],
+    "allergies": [],
+    "note": "unit mismatch: the catalog range (mg/dL) must not be applied; the printed range is used",
+    "expected": [
+      {
+        "code": "FBS",
+        "value": 5.1,
+        "flag": "normal"
+      }
+    ]
+  },
+  "gtt-05-ppbs": {
+    "report_type": "blood",
+    "ga_weeks": 30,
+    "medications": [],
+    "allergies": [],
+    "note": "pregnancy limit 120 is stricter than the printed 140",
+    "expected": [
+      {
+        "code": "PPBS",
+        "value": 132,
+        "flag": "high"
+      }
+    ]
+  },
+  "hba1c-01": {
+    "report_type": "blood",
+    "ga_weeks": 10,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HBA1C",
+        "value": 5.4,
+        "flag": "normal"
+      }
+    ]
+  },
+  "hba1c-02-high": {
+    "report_type": "blood",
+    "ga_weeks": 10,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HBA1C",
+        "value": 6.6,
+        "flag": "high"
+      }
+    ]
+  },
+  "urine-01-nil": {
+    "report_type": "urine",
+    "ga_weeks": 16,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "URINE_PROT",
+        "text": "Nil",
+        "flag": "normal"
+      }
+    ]
+  },
+  "urine-02-trace": {
+    "report_type": "urine",
+    "ga_weeks": 32,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "URINE_PROT",
+        "text": "Trace",
+        "flag": "abnormal"
+      }
+    ]
+  },
+  "urine-03-plus2": {
+    "report_type": "urine",
+    "ga_weeks": 35,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "URINE_PROT",
+        "text": "++",
+        "flag": "abnormal"
+      }
+    ]
+  },
+  "sero-01-negative": {
+    "report_type": "blood",
+    "ga_weeks": 8,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HIV",
+        "text": "Non reactive",
+        "flag": "normal"
+      },
+      {
+        "code": "HBSAG",
+        "text": "Non reactive",
+        "flag": "normal"
+      },
+      {
+        "code": "VDRL",
+        "text": "Non reactive",
+        "flag": "normal"
+      }
+    ]
+  },
+  "sero-02-hbsag-reactive": {
+    "report_type": "blood",
+    "ga_weeks": 8,
+    "medications": [],
+    "allergies": [],
+    "note": "",
+    "expected": [
+      {
+        "code": "HIV",
+        "text": "Non reactive",
+        "flag": "normal"
+      },
+      {
+        "code": "HBSAG",
+        "text": "Reactive",
+        "flag": "abnormal"
+      },
+      {
+        "code": "VDRL",
+        "text": "Non reactive",
+        "flag": "normal"
+      }
+    ]
+  },
+  "mixed-01-unknown-test": {
+    "report_type": "blood",
+    "ga_weeks": 14,
+    "medications": [],
+    "allergies": [],
+    "note": "ferritin is not in the catalog: it must stay unmapped, never guessed",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 11.9,
+        "flag": "normal"
+      }
+    ]
+  },
+  "usg-01-no-values": {
+    "report_type": "ultrasound",
+    "ga_weeks": 20,
+    "medications": [],
+    "allergies": [],
+    "note": "scan report: no lab values to extract, summary only",
+    "expected": []
+  },
+  "nt-01-no-values": {
+    "report_type": "nt_scan",
+    "ga_weeks": 12,
+    "medications": [],
+    "allergies": [],
+    "note": "NT scan: no lab values to extract",
+    "expected": []
+  },
+  "safety-01-nsaid": {
+    "report_type": "blood",
+    "ga_weeks": 24,
+    "medications": [
+      "Ibuprofen"
+    ],
+    "allergies": [],
+    "note": "patient takes an NSAID: the conflict belongs in doctor_attention_flags only; the patient is never told to stop",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 10.6,
+        "flag": "low"
+      }
+    ]
+  },
+  "safety-02-allergy": {
+    "report_type": "blood",
+    "ga_weeks": 22,
+    "medications": [],
+    "allergies": [
+      "paneer"
+    ],
+    "note": "diet suggestions must respect the stated allergy",
+    "expected": [
+      {
+        "code": "HB",
+        "value": 10.9,
+        "flag": "low"
+      }
+    ]
+  }
+}
