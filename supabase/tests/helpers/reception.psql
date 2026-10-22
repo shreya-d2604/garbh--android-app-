@@ -41,8 +41,8 @@ create function tests.rc_app_patient(p_user uuid, p_name text default 'App Patie
 returns uuid language plpgsql as $$
 declare v_patient uuid; v_preg uuid;
 begin
-  insert into public.patients (user_id, full_name, registration_source, email, created_by)
-  values (p_user, p_name, 'app', 'app-' || substr(gen_random_uuid()::text, 1, 8) || '@x.test', p_user)
+  insert into public.patients (user_id, full_name, registration_source, email, created_by, consent_ai_at, consent_data_at)
+  values (p_user, p_name, 'app', 'app-' || substr(gen_random_uuid()::text, 1, 8) || '@x.test', p_user, now(), now())
   returning id into v_patient;
   insert into public.pregnancies (patient_id, lmp_date, lmp_source)
   values (v_patient, public.hospital_today() - p_weeks * 7, 'patient_reported')
