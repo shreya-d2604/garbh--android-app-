@@ -7,6 +7,7 @@ import {
   movePage,
   overallProgress,
   progressPercent,
+  reportMetaSchema,
   resizeWidthFor,
   storagePath,
   validatePages,
@@ -69,5 +70,15 @@ describe('report upload', () => {
     expect(overallProgress([{ size: 100, sent: 100 }, { size: 300, sent: 0 }])).toBe(0.25);
     expect(progressPercent([{ size: 100, sent: 100 }, { size: 300, sent: 300 }])).toBe(100);
     expect(progressPercent([{ size: 100, sent: 500 }])).toBe(100);
+  });
+});
+
+describe('report details form', () => {
+  const ok = { type: 'blood', title: '', report_date: '2026-09-20', lab_name: '' };
+  it('needs a type and a report date that is not in the future', () => {
+    expect(reportMetaSchema('2026-09-20').safeParse(ok).success).toBe(true);
+    expect(reportMetaSchema('2026-09-19').safeParse(ok).success).toBe(false);
+    expect(reportMetaSchema('2026-09-20').safeParse({ ...ok, report_date: '' }).success).toBe(false);
+    expect(reportMetaSchema('2026-09-20').safeParse({ ...ok, type: 'xray' }).success).toBe(false);
   });
 });

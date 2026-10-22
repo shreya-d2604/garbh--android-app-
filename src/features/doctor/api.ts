@@ -14,6 +14,7 @@ import {
   type ConsultationFormValues,
 } from './consultation';
 import { compressPage, readBytes } from './files';
+import { labFields, type LabFormValues } from './lab-form';
 import { countOverdueVisits, type PatientListItem } from './patient-list';
 import { pickLastPrescription, toItemInsert, validateRow } from './prescription';
 import type { QueueRow } from './queue';
@@ -529,38 +530,18 @@ export async function updateReportComment(reportId: string, comment: string): Pr
   if (unwrapRows(res).length === 0) throw { message: 'NOT_ALLOWED' };
 }
 
-export interface ManualLabInput {
+export async function addManualLabResult(input: {
   reportId: string | null;
   pregnancyId: string;
-  testCode: string;
-  valueNum: number | null;
-  valueText: string | null;
-  unit: string | null;
-  refLow: number | null;
-  refHigh: number | null;
+  values: LabFormValues;
+  test: Pick<LabTestRow, 'unit' | 'ref_low' | 'ref_high'> | undefined;
   observedOn: string | null;
   verify: boolean;
-}
-
-/** Flag against the reference range, as the AI pipeline does (PLAN.md §9.1). */
-function flagFor(value: number | null, low: number | null, high: number | null): LabResultRow['flag'] {
-  if (value === null) return null;
-  if (low !== null && value < low) return 'low';
-  if (high !== null && value > high) return 'high';
-  return low !== null || high !== null ? 'normal' : null;
-}
-
-export async function addManualLabResult(input: ManualLabInput): Promise<void> {
+}): Promise<void> {
   const { error } = await supabase.from('lab_results').insert({
+    ...labFields(input.values, input.test),
     report_id: input.reportId,
     pregnancy_id: input.pregnancyId,
-    test_code: input.testCode,
-    value_num: input.valueNum,
-    value_text: input.valueText,
-    unit: input.unit,
-    ref_low: input.refLow,
-    ref_high: input.refHigh,
-    flag: flagFor(input.valueNum, input.refLow, input.refHigh),
     source: 'manual',
     observed_on: input.observedOn,
     verified: input.verify,

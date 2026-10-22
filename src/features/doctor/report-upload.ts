@@ -1,4 +1,8 @@
 // Report upload (PLAN.md §7.4 #5, §8.2): validation, storage paths, compression, progress. Pure.
+import { z } from 'zod';
+
+import { isISODate } from '@/domain/pregnancy-math';
+
 import type { ReportType } from './types';
 
 export const ALLOWED_MIME = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'] as const;
@@ -103,3 +107,13 @@ export function overallProgress(files: readonly FileProgress[]): number {
 export function progressPercent(files: readonly FileProgress[]): number {
   return Math.round(overallProgress(files) * 100);
 }
+
+/** Report details typed before uploading. */
+export const reportMetaSchema = (today: string) =>
+  z.object({
+    type: z.enum(['blood', 'urine', 'ultrasound', 'nt_scan', 'anomaly_scan', 'growth_scan', 'doppler', 'gtt', 'thyroid', 'ecg', 'other']),
+    title: z.string(),
+    report_date: z.string().refine((v) => isISODate(v) && v <= today, { error: 'validation.date' }),
+    lab_name: z.string(),
+  });
+export type ReportMetaValues = z.infer<ReturnType<typeof reportMetaSchema>>;
