@@ -10,18 +10,18 @@ describe('timeline', () => {
         { id: 'v3', title: 'Cancelled', status: 'cancelled', due_from: '2026-07-01', created_at: '2026-04-01T00:00:00Z' },
         { id: 'v4', title: 'Booked', status: 'scheduled', due_from: '2026-10-05', created_at: '2026-04-01T00:00:00Z' },
       ],
-      [{ id: 'c1', created_at: '2026-08-20T10:00:00Z', published_at: '2026-08-20T11:00:00Z', advice: 'Rest' }],
+      [{ id: 'c1', created_at: '2026-08-20T10:00:00Z', published_at: '2026-08-20T11:00:00Z', advice: 'Rest', appointment_id: 'a1' }],
       [
         { id: 'r1', title: 'CBC', type: 'blood', report_date: '2026-08-19', created_at: '2026-08-21T00:00:00Z', deleted_at: null },
         { id: 'r2', title: 'Gone', type: 'blood', report_date: '2026-08-30', created_at: '2026-08-30T00:00:00Z', deleted_at: '2026-09-01T00:00:00Z' },
       ],
     );
     expect(entries.map((e) => `${e.kind}:${e.id}`)).toEqual(['visit:v4', 'consultation:c1', 'report:r1', 'visit:v1']);
-    expect(entries.find((e) => e.id === 'c1')).toMatchObject({ status: 'published', published: true });
+    expect(entries.find((e) => e.id === 'c1')).toMatchObject({ status: 'published', published: true, appointmentId: 'a1' });
   });
 
   it('marks unpublished consultations as drafts', () => {
-    const [entry] = buildTimeline([], [{ id: 'c', created_at: '2026-08-20T10:00:00Z', published_at: null, advice: null }], []);
+    const [entry] = buildTimeline([], [{ id: 'c', created_at: '2026-08-20T10:00:00Z', published_at: null, advice: null, appointment_id: null }], []);
     expect(entry).toMatchObject({ status: 'draft', published: false, title: '' });
   });
 });

@@ -17,12 +17,14 @@ export interface TimelineEntry {
   title: string;
   status: string;
   published?: boolean;
+  /** For consultations: the appointment the consultation form opens with. */
+  appointmentId?: string | null;
 }
 
 /** Newest first. Planned and cancelled visits live in the Visit plan tab, not the timeline. */
 export function buildTimeline(
   visits: readonly Pick<VisitRow, 'id' | 'title' | 'status' | 'due_from' | 'created_at'>[],
-  consultations: readonly Pick<ConsultationRow, 'id' | 'created_at' | 'published_at' | 'advice'>[],
+  consultations: readonly Pick<ConsultationRow, 'id' | 'created_at' | 'published_at' | 'advice' | 'appointment_id'>[],
   reports: readonly Pick<ReportRow, 'id' | 'title' | 'type' | 'report_date' | 'created_at' | 'deleted_at'>[],
 ): TimelineEntry[] {
   const entries: TimelineEntry[] = [];
@@ -38,6 +40,7 @@ export function buildTimeline(
       title: c.advice ?? '',
       status: c.published_at ? 'published' : 'draft',
       published: c.published_at != null,
+      appointmentId: c.appointment_id,
     });
   }
   for (const r of reports) {
@@ -46,7 +49,7 @@ export function buildTimeline(
       kind: 'report',
       id: r.id,
       at: r.report_date ?? r.created_at,
-      title: r.title ?? r.type,
+      title: r.title ?? '',
       status: r.type,
     });
   }
