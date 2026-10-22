@@ -11,3 +11,6 @@ supabase/.temp/
 .DS_Store
 android/
 ios/
+expo-env.d.ts
+*.tsbuildinfo
+.metro-health-check*
