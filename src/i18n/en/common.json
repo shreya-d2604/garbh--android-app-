@@ -1,0 +1,126 @@
+{
+  "appName": "GARBH",
+  "tagline": "Caring for you and your baby",
+  "actions": {
+    "continue": "Continue",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "signOut": "Sign out",
+    "back": "Back",
+    "skip": "Skip for now"
+  },
+  "states": {
+    "loading": "Loading…",
+    "errorTitle": "Something went wrong",
+    "errorMessage": "Please check your connection and try again.",
+    "empty": "Nothing here yet"
+  },
+  "roles": {
+    "admin": "Admin",
+    "doctor": "Doctor",
+    "receptionist": "Reception",
+    "patient": "Patient",
+    "companion": "Family member"
+  },
+  "auth": {
+    "signInTitle": "Welcome",
+    "signInSubtitle": "Enter your email. We will send you a 6-digit code.",
+    "email": "Email",
+    "sendCode": "Send code",
+    "verifyTitle": "Enter your code",
+    "verifySubtitle": "We sent a 6-digit code to {{email}}.",
+    "code": "6-digit code",
+    "verify": "Verify",
+    "resend": "Send a new code",
+    "codeResent": "A new code has been sent.",
+    "changeEmail": "Use a different email",
+    "deactivated": "Your account is not active. Please contact the hospital."
+  },
+  "consent": {
+    "title": "Before we begin",
+    "intro": "GARBH keeps your pregnancy records safe and shares them only with your care team and the family members you approve.",
+    "terms": "I accept the Terms of Use and Privacy Policy.",
+    "data": "I agree that the hospital may store and process my health data to provide my care.",
+    "ai": "I understand that AI may help my doctor prepare summaries. My doctor reviews everything before I see it.",
+    "accept": "I agree"
+  },
+  "onboarding": {
+    "whoTitle": "Who are you?",
+    "whoSubtitle": "This helps us show you the right screens.",
+    "patientOption": "I'm pregnant",
+    "patientOptionHint": "Track your pregnancy, visits and reports",
+    "companionOption": "I'm a family member",
+    "companionOptionHint": "Follow a loved one's pregnancy with her permission",
+    "detailsTitle": "About you",
+    "fullName": "Full name",
+    "dob": "Date of birth",
+    "phone": "Phone number",
+    "dateKindLmp": "First day of last period",
+    "dateKindEdd": "I know my due date",
+    "lmp": "First day of your last period",
+    "edd": "Your due date",
+    "firstPregnancy": "This is my first pregnancy",
+    "allergies": "Allergies (if any)",
+    "conditions": "Health conditions (if any)",
+    "listHint": "Separate with commas",
+    "submit": "Create my account",
+    "verifyBanner": "Bring a photo ID to your first visit to verify your account."
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email address",
+    "otp": "Enter the 6-digit code",
+    "phone": "Enter a valid phone number",
+    "date": "Pick a valid date",
+    "pregnancyDate": "This date does not look right for a current pregnancy"
+  },
+  "errors": {
+    "GENERIC": "Something went wrong. Please try again.",
+    "NOT_AUTHENTICATED": "Please sign in again.",
+    "NOT_ALLOWED": "You are not allowed to do this.",
+    "NOT_IMPLEMENTED": "This feature is not ready yet.",
+    "INVALID_INPUT": "Some details are not valid. Please check and try again.",
+    "CONSENT_REQUIRED": "Please accept the consent first.",
+    "ALREADY_ONBOARDED": "Your account is already set up.",
+    "NOT_FOUND": "We could not find that.",
+    "SLOT_TAKEN": "That slot was just taken. Please pick another time.",
+    "OUTSIDE_AVAILABILITY": "The doctor is not available at that time.",
+    "DOCTOR_UNAVAILABLE": "The doctor is on leave at that time.",
+    "TOO_SOON": "This time is too soon to book. Please pick a later slot.",
+    "TOO_FAR_AHEAD": "This date is too far ahead to book.",
+    "CANCEL_CUTOFF": "It is too late to change this in the app. Please call reception.",
+    "MAX_UPCOMING": "You already have the maximum number of upcoming appointments.",
+    "NOT_ON_CARE_TEAM": "This doctor is not on the care team.",
+    "DOCTOR_NOT_ACCEPTING": "This doctor is not accepting new patients.",
+    "INVALID_STATUS_CHANGE": "This status change is not allowed.",
+    "MRN_TAKEN": "This hospital number is already in use.",
+    "NOT_VERIFIED": "Please verify your account at the hospital first.",
+    "PRIMARY_REQUIRED": "Only the primary doctor can do this.",
+    "INVALID_CODE": "That code is not valid.",
+    "CODE_EXPIRED": "That code has expired. Ask for a new one.",
+    "RATE_LIMITED": "Too many attempts. Please try again later.",
+    "ALREADY_LINKED": "You are already linked to this person."
+  },
+  "status": {
+    "booked": "Booked",
+    "confirmed": "Confirmed",
+    "checked_in": "Checked in",
+    "in_consultation": "With doctor",
+    "completed": "Done",
+    "cancelled": "Cancelled",
+    "no_show": "Missed"
+  },
+  "shell": {
+    "welcome": "Hello, {{name}}",
+    "placeholder": "This area is being built.",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "home": "Home"
+  },
+  "profile": {
+    "title": "Profile",
+    "email": "Email",
+    "role": "Role"
+  }
+}
