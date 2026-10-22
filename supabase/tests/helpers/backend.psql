@@ -167,4 +167,30 @@ begin
   grant select on w to authenticated;
 end $$;
 
+-- Runs p_sql as p_uid (null = authenticated but without a JWT). Returns 'OK' or the error
+-- message (our RPCs raise UPPER_SNAKE codes). Successful effects are kept.
+create function tests.try_as(p_uid uuid, p_sql text) returns text language plpgsql as $$
+begin
+  if p_uid is null then
+    perform set_config('request.jwt.claims', '', true);
+    perform set_config('role', 'authenticated', true);
+  else
+    perform tests.login_as(p_uid);
+  end if;
+  begin
+    execute p_sql;
+    perform tests.logout();
+    return 'OK';
+  exception when others then
+    perform tests.logout();
+    return sqlerrm;
+  end;
+end $$;
+
+-- review_ai_summary as p_uid; returns 'OK' or the error code.
+create function tests.review(p_uid uuid, p_summary uuid, p_action text, p_final jsonb default null, p_note text default null)
+returns text language sql as $$
+  select tests.try_as(p_uid, format('select public.review_ai_summary(%L::uuid, %L, %L::jsonb, %L)', p_summary, p_action, p_final, p_note))
+$$;
+
 grant execute on all functions in schema tests to authenticated, anon;

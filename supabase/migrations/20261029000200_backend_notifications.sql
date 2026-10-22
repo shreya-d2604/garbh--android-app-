@@ -151,6 +151,10 @@ begin
       v_doc_type := v_type;
       if new.rescheduled_from is not null then
         select * into v_old from public.appointments a where a.id = new.rescheduled_from;
+        -- A different doctor receives a fresh booking, not a change.
+        if v_old.doctor_id is distinct from new.doctor_id then
+          v_doc_type := 'appointment_booked';
+        end if;
         -- Drop the "cancelled" notices the cancel half of this reschedule already produced
         -- (kept for the old doctor when the doctor changed: they really lost the visit).
         delete from public.notifications n
