@@ -194,6 +194,8 @@ export function useConsultationBundle(appointmentId: string) {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: Infinity,
+    // Dropped as soon as the screen closes, so reopening always loads what was saved.
+    gcTime: 0,
   });
 }
 
