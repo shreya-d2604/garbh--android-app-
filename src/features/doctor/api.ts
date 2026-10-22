@@ -9,6 +9,7 @@ import type { TablesInsert, TablesUpdate } from '@/types/database';
 import { parseFunctionError, type SummaryFunction } from './ai-review';
 import type { DoctorOption } from './care-team';
 import {
+  diffConsultation,
   toConsultationColumns,
   toConsultationInsert,
   type ConsultationFormValues,
@@ -157,7 +158,6 @@ export type ChartPatient = Pick<
   | 'rh_negative'
   | 'allergies'
   | 'chronic_conditions'
-  | 'phone'
 >;
 
 export interface ChartData {
@@ -175,7 +175,7 @@ export async function fetchChart(pregnancyId: string): Promise<ChartData | null>
     supabase
       .from('patients')
       .select(
-        'id, full_name, dob, mrn, is_verified, blood_group, rh_negative, allergies, chronic_conditions, phone',
+        'id, full_name, dob, mrn, is_verified, blood_group, rh_negative, allergies, chronic_conditions',
       )
       .eq('id', preg.patient_id)
       .maybeSingle(),
@@ -424,6 +424,8 @@ export interface SaveConsultationArgs {
   doctorId: string;
   ga: { weeks: number; days: number } | null;
   values: ConsultationFormValues;
+  /** The values written by the previous save; only differences are written again. */
+  previous?: ConsultationFormValues | null;
   newId: () => string;
 }
 
@@ -431,6 +433,10 @@ export interface SaveConsultationArgs {
 export async function saveConsultation(args: SaveConsultationArgs): Promise<string> {
   const { values } = args;
   const id = args.consultationId ?? args.newId();
+  const changes = diffConsultation(
+    args.consultationId === null ? null : (args.previous ?? null),
+    values,
+  );
 
   if (args.consultationId === null) {
     const { error } = await supabase.from('consultations').insert(
@@ -443,7 +449,7 @@ export async function saveConsultation(args: SaveConsultationArgs): Promise<stri
       }),
     );
     if (error) throw error;
-  } else {
+  } else if (changes.columns) {
     const res = await supabase
       .from('consultations')
       .update(toConsultationColumns(values))
@@ -452,26 +458,27 @@ export async function saveConsultation(args: SaveConsultationArgs): Promise<stri
     if (unwrapRows(res).length === 0) throw { message: 'NOT_ALLOWED' };
   }
 
-  const note = textOrNull(values.private_note);
-  if (note) {
-    const { error } = await supabase
-      .from('consultation_private_notes')
-      .upsert(
-        { consultation_id: id, pregnancy_id: args.pregnancyId, note },
-        { onConflict: 'consultation_id' },
-      );
-    if (error) throw error;
-  } else {
-    const { error } = await supabase
-      .from('consultation_private_notes')
-      .delete()
-      .eq('consultation_id', id);
-    if (error) throw error;
+  if (changes.note) {
+    const note = textOrNull(values.private_note);
+    if (note) {
+      const { error } = await supabase
+        .from('consultation_private_notes')
+        .upsert(
+          { consultation_id: id, pregnancy_id: args.pregnancyId, note },
+          { onConflict: 'consultation_id' },
+        );
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from('consultation_private_notes')
+        .delete()
+        .eq('consultation_id', id);
+      if (error) throw error;
+    }
   }
 
-  // Rows with problems (e.g. no drug name yet) stay as they are in the database until fixed.
-  const keep = values.prescriptions.map((r) => r.id ?? r.key);
-  const valid = values.prescriptions.filter(
+  // Rows with problems (e.g. no drug name yet) are left as they are in the database until fixed.
+  const valid = changes.rows.filter(
     (r) => !isRowBlank(r) && Object.keys(validateRow(r)).length === 0,
   );
   if (valid.length > 0) {
@@ -481,11 +488,14 @@ export async function saveConsultation(args: SaveConsultationArgs): Promise<stri
     );
     if (error) throw error;
   }
-  const removal = supabase.from('prescription_items').delete().eq('consultation_id', id);
-  const { error: delError } = await (keep.length > 0
-    ? removal.not('id', 'in', `(${keep.join(',')})`)
-    : removal);
-  if (delError) throw delError;
+  if (changes.removedIds.length > 0) {
+    const { error } = await supabase
+      .from('prescription_items')
+      .delete()
+      .eq('consultation_id', id)
+      .in('id', changes.removedIds);
+    if (error) throw error;
+  }
   return id;
 }
 
@@ -554,37 +564,34 @@ export interface UploadReportArgs {
 
 /**
  * Compresses photos, uploads every page to the private `reports` bucket, then inserts the report
- * and its files. Progress is reported per finished page, weighted by size. If the database insert
- * fails, the uploaded objects are removed again (best effort).
+ * and its files. Progress is reported per finished page (supabase-js has no byte-level progress).
+ * If anything fails, the uploaded objects are removed again (best effort).
  */
 export async function uploadReport(args: UploadReportArgs): Promise<string> {
   const reportId = args.newId();
-  const prepared = await Promise.all(
-    args.pages.map(async (page) => {
-      const p = await compressPage(page);
-      const bytes = await readBytes(p.uri);
-      return { page: p, bytes, fileId: args.newId() };
-    }),
-  );
-  const progress: FileProgress[] = prepared.map((p) => ({ size: p.bytes.byteLength, sent: 0 }));
+  // One page at a time keeps memory low on small phones; progress counts finished pages.
+  const progress: FileProgress[] = args.pages.map(() => ({ size: 1, sent: 0 }));
   args.onProgress([...progress]);
 
-  const uploaded: string[] = [];
+  const uploaded: { id: string; path: string; mime: string; bytes: number }[] = [];
   try {
-    for (const [i, p] of prepared.entries()) {
+    for (const [i, original] of args.pages.entries()) {
+      const page = await compressPage(original);
+      const bytes = await readBytes(page.uri);
+      const id = args.newId();
       const path = storagePath({
         patientId: args.patientId,
         pregnancyId: args.pregnancyId,
         reportId,
-        fileId: p.fileId,
-        mime: p.page.mime,
+        fileId: id,
+        mime: page.mime,
       });
       const { error } = await supabase.storage
         .from('reports')
-        .upload(path, p.bytes, { contentType: p.page.mime });
+        .upload(path, bytes, { contentType: page.mime });
       if (error) throw error;
-      uploaded.push(path);
-      progress[i] = { size: progress[i]?.size ?? 0, sent: progress[i]?.size ?? 0 };
+      uploaded.push({ id, path, mime: page.mime, bytes: bytes.byteLength });
+      progress[i] = { size: 1, sent: 1 };
       args.onProgress([...progress]);
     }
     const { error: repError } = await supabase.from('reports').insert({
@@ -598,18 +605,19 @@ export async function uploadReport(args: UploadReportArgs): Promise<string> {
     });
     if (repError) throw repError;
     const { error: fileError } = await supabase.from('report_files').insert(
-      prepared.map((p, i) => ({
-        id: p.fileId,
+      uploaded.map((f, i) => ({
+        id: f.id,
         report_id: reportId,
-        storage_path: uploaded[i] as string,
-        mime_type: p.page.mime,
+        storage_path: f.path,
+        mime_type: f.mime,
         page_no: i + 1,
-        size_bytes: p.bytes.byteLength,
+        size_bytes: f.bytes,
       })),
     );
     if (fileError) throw fileError;
   } catch (e) {
-    if (uploaded.length > 0) await supabase.storage.from('reports').remove(uploaded);
+    if (uploaded.length > 0)
+      await supabase.storage.from('reports').remove(uploaded.map((f) => f.path));
     await supabase
       .from('reports')
       .update({ deleted_at: new Date().toISOString() })
@@ -846,14 +854,12 @@ export async function addTimeOff(
   endsAt: string,
   reason: string,
 ): Promise<void> {
-  const { error } = await supabase
-    .from('doctor_time_off')
-    .insert({
-      doctor_id: doctorId,
-      starts_at: startsAt,
-      ends_at: endsAt,
-      reason: textOrNull(reason),
-    });
+  const { error } = await supabase.from('doctor_time_off').insert({
+    doctor_id: doctorId,
+    starts_at: startsAt,
+    ends_at: endsAt,
+    reason: textOrNull(reason),
+  });
   if (error) throw error;
 }
 

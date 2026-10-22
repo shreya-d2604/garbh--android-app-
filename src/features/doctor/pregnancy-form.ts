@@ -70,11 +70,9 @@ export function pregnancyDefaults(
 }
 
 const count = (key: string) =>
-  z
-    .string()
-    .refine((v) => v.trim() === '' || (/^\d{1,2}$/.test(v.trim()) && Number(v) <= 20), {
-      error: key,
-    });
+  z.string().refine((v) => v.trim() === '' || (/^\d{1,2}$/.test(v.trim()) && Number(v) <= 20), {
+    error: key,
+  });
 
 export function pregnancyFormSchema(today: ISODate) {
   return z

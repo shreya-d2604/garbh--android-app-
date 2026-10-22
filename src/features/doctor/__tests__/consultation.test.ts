@@ -1,5 +1,6 @@
 import {
   consultationSchema,
+  diffConsultation,
   emptyConsultationValues,
   implausibleVitals,
   parseNumber,
@@ -207,5 +208,61 @@ describe('database mapping', () => {
       pulse: '',
     });
     expect(valuesFromConsultation(null, null, [])).toEqual(emptyConsultationValues());
+  });
+});
+
+describe('autosave diff', () => {
+  const row = (key: string, drug: string) => ({
+    ...newPrescriptionRow(key, '2026-09-20'),
+    drug_name: drug,
+  });
+
+  it('writes everything on the first save', () => {
+    const cur = base({ advice: 'Rest', prescriptions: [row('a', 'Folic acid')] });
+    expect(diffConsultation(null, cur)).toEqual({
+      columns: true,
+      note: true,
+      rows: cur.prescriptions,
+      removedIds: [],
+    });
+  });
+
+  it('writes nothing when nothing changed', () => {
+    const cur = base({ advice: 'Rest', prescriptions: [row('a', 'Folic acid')] });
+    expect(diffConsultation(cur, { ...cur })).toEqual({
+      columns: false,
+      note: false,
+      rows: [],
+      removedIds: [],
+    });
+  });
+
+  it('writes only what changed: columns, note, edited and new rows', () => {
+    const prev = base({
+      advice: 'Rest',
+      prescriptions: [row('a', 'Folic acid'), row('b', 'Iron')],
+    });
+    const cur = base({
+      advice: 'Rest more',
+      private_note: 'secret',
+      prescriptions: [row('a', 'Folic acid'), row('b', 'Iron 2'), row('c', 'Calcium')],
+    });
+    const d = diffConsultation(prev, cur);
+    expect(d.columns).toBe(true);
+    expect(d.note).toBe(true);
+    expect(d.rows.map((r) => r.key)).toEqual(['b', 'c']);
+    expect(d.removedIds).toEqual([]);
+  });
+
+  it('lists removed rows by database id or key', () => {
+    const saved = { ...row('a', 'Folic acid'), id: 'db-1' };
+    const prev = base({ prescriptions: [saved, row('b', 'Iron')] });
+    const d = diffConsultation(prev, base({ prescriptions: [] }));
+    expect(d.removedIds).toEqual(['db-1', 'b']);
+  });
+
+  it('ignores edits to fields that are not saved, such as an invalid vital', () => {
+    const prev = base({ spo2: '150' });
+    expect(diffConsultation(prev, base({ spo2: '160' })).columns).toBe(false);
   });
 });

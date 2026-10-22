@@ -330,6 +330,7 @@
     "verifiedHint": "Verified values appear in trends and for the patient."
   },
   "consult": {
+    "title": "Consultation",
     "notFoundTitle": "Appointment not found",
     "notFoundMessage": "It may have been removed, or it is not one of your patients.",
     "notStartedTitle": "This consultation has not started",

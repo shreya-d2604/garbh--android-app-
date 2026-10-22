@@ -287,3 +287,38 @@ export function valuesFromConsultation(
     prescriptions: items.map(rowFromItem),
   };
 }
+
+export interface ConsultationChanges {
+  /** The consultation columns differ from the last save (or nothing was saved yet). */
+  columns: boolean;
+  note: boolean;
+  /** Prescription rows that are new or edited since the last save. */
+  rows: PrescriptionFormRow[];
+  /** Row ids that were in the last save but are gone now. */
+  removedIds: string[];
+}
+
+const rowId = (r: PrescriptionFormRow) => r.id ?? r.key;
+
+/**
+ * What an autosave actually has to write, so unchanged rows are not rewritten (and not
+ * audit-logged) on every pause. With no previous save, everything is written.
+ */
+export function diffConsultation(
+  previous: ConsultationFormValues | null,
+  current: ConsultationFormValues,
+): ConsultationChanges {
+  if (!previous) {
+    return { columns: true, note: true, rows: current.prescriptions, removedIds: [] };
+  }
+  const before = new Map(previous.prescriptions.map((r) => [rowId(r), JSON.stringify(r)]));
+  const now = new Set(current.prescriptions.map(rowId));
+  return {
+    columns:
+      JSON.stringify(toConsultationColumns(previous)) !==
+      JSON.stringify(toConsultationColumns(current)),
+    note: textOrNull(previous.private_note) !== textOrNull(current.private_note),
+    rows: current.prescriptions.filter((r) => before.get(rowId(r)) !== JSON.stringify(r)),
+    removedIds: previous.prescriptions.map(rowId).filter((id) => !now.has(id)),
+  };
+}

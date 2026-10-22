@@ -129,7 +129,7 @@ function ConsultForm({
   const [outcome, setOutcome] = useState<PublishOutcome | null>(null);
 
   const idRef = useRef<string | null>(consultation?.id ?? null);
-  const lastSaved = useRef(JSON.stringify(initial));
+  const lastSaved = useRef(initial);
   const inflight = useRef<Promise<string | null> | null>(null);
   const [tick, setTick] = useState(0);
   const [consultationId, setConsultationId] = useState<string | null>(consultation?.id ?? null);
@@ -150,12 +150,13 @@ function ConsultForm({
         doctorId: me,
         ga: ga ? { weeks: ga.weeks, days: ga.days } : null,
         values: snapshot,
+        previous: lastSaved.current,
         newId,
       })
       .then((id) => {
         idRef.current = id;
         setConsultationId(id);
-        lastSaved.current = JSON.stringify(snapshot);
+        lastSaved.current = snapshot;
         setSaveState('saved');
         return id;
       })
@@ -178,7 +179,7 @@ function ConsultForm({
   useEffect(() => {
     if (publish.isPending || outcome || confirming) return;
     const json = JSON.stringify(values);
-    if (json === lastSaved.current) return;
+    if (json === JSON.stringify(lastSaved.current)) return;
     const timer = setTimeout(() => void persist(), AUTOSAVE_MS);
     return () => clearTimeout(timer);
   }, [values, persist, publish.isPending, outcome, confirming, tick]);
@@ -206,6 +207,7 @@ function ConsultForm({
           doctorId: me,
           ga: ga ? { weeks: ga.weeks, days: ga.days } : null,
           values: getValues(),
+          previous: lastSaved.current,
           newId,
         },
         appointmentStatus: status,
@@ -216,7 +218,7 @@ function ConsultForm({
         onSuccess: (res) => {
           idRef.current = res.consultationId;
           setConsultationId(res.consultationId);
-          lastSaved.current = JSON.stringify(getValues());
+          lastSaved.current = getValues();
           setPublished(true);
           setStatus('completed');
           setOutcome(res);
