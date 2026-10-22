@@ -58,7 +58,9 @@ export function buildDayTimeline<A extends TimedAppointment>(
       })),
   ];
   return entries.sort(
-    (x, y) => ms(x.starts_at) - ms(y.starts_at) || (x.kind === y.kind ? 0 : x.kind === 'appointment' ? -1 : 1),
+    (x, y) =>
+      ms(x.starts_at) - ms(y.starts_at) ||
+      (x.kind === y.kind ? 0 : x.kind === 'appointment' ? -1 : 1),
   );
 }
 
@@ -71,7 +73,9 @@ export function localDateOf(iso: string): ISODate {
 }
 
 /** Slots grouped by local day, days and slots in time order. */
-export function groupSlotsByDay<S extends SlotRow>(slots: readonly S[]): { date: ISODate; slots: S[] }[] {
+export function groupSlotsByDay<S extends SlotRow>(
+  slots: readonly S[],
+): { date: ISODate; slots: S[] }[] {
   const byDay = new Map<ISODate, S[]>();
   for (const s of [...slots].sort((a, b) => ms(a.starts_at) - ms(b.starts_at))) {
     const day = localDateOf(s.starts_at);

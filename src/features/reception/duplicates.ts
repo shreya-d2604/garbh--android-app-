@@ -68,7 +68,10 @@ export function matchDuplicates(
 
 /** Strips characters that would break a PostgREST `or=(...)` filter or act as wildcards. */
 export function sanitizeFilterValue(value: string): string {
-  return value.replace(/[,()*%\\"':;]/g, ' ').replace(/\s+/g, ' ').trim();
+  return value
+    .replace(/[,()*%\\"':;]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**

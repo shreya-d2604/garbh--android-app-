@@ -13,7 +13,13 @@ import {
 } from '../calendar';
 
 const slot = (start: string, end: string) => ({ starts_at: start, ends_at: end });
-const appt = (id: string, start: string, end: string, status: ApptStatus = 'booked', doctor_id = 'd1') => ({
+const appt = (
+  id: string,
+  start: string,
+  end: string,
+  status: ApptStatus = 'booked',
+  doctor_id = 'd1',
+) => ({
   id,
   starts_at: start,
   ends_at: end,
@@ -60,8 +66,12 @@ describe('buildDayTimeline', () => {
   });
 
   it('drops a free slot that overlaps a live appointment (late realtime update)', () => {
-    const timeline = buildDayTimeline(slots, [appt('a1', '2030-01-07T04:40:00Z', '2030-01-07T04:55:00Z')]);
-    expect(timeline.filter((e) => e.kind === 'free').map((e) => e.starts_at)).toEqual(['2030-01-07T05:00:00Z']);
+    const timeline = buildDayTimeline(slots, [
+      appt('a1', '2030-01-07T04:40:00Z', '2030-01-07T04:55:00Z'),
+    ]);
+    expect(timeline.filter((e) => e.kind === 'free').map((e) => e.starts_at)).toEqual([
+      '2030-01-07T05:00:00Z',
+    ]);
   });
 
   it('returns an empty day as empty', () => {
@@ -87,7 +97,13 @@ describe('weeks and days', () => {
 
   it('lists the Monday-first week around a date, across month ends', () => {
     expect(weekDates('2026-10-23')).toEqual([
-      '2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23', '2026-10-24', '2026-10-25',
+      '2026-10-19',
+      '2026-10-20',
+      '2026-10-21',
+      '2026-10-22',
+      '2026-10-23',
+      '2026-10-24',
+      '2026-10-25',
     ]);
     expect(weekDates('2026-11-01')[0]).toBe('2026-10-26');
     expect(weekDates('2026-11-01')[6]).toBe('2026-11-01');
@@ -97,11 +113,7 @@ describe('weeks and days', () => {
     const d1 = new Date(2030, 0, 7, 10, 0).toISOString();
     const d1b = new Date(2030, 0, 7, 10, 15).toISOString();
     const d2 = new Date(2030, 0, 8, 9, 0).toISOString();
-    const groups = groupSlotsByDay([
-      slot(d2, d2),
-      slot(d1b, d1b),
-      slot(d1, d1),
-    ]);
+    const groups = groupSlotsByDay([slot(d2, d2), slot(d1b, d1b), slot(d1, d1)]);
     expect(groups.map((g) => g.date)).toEqual(['2030-01-07', '2030-01-08']);
     expect(groups[0]?.slots.map((s) => s.starts_at)).toEqual([d1, d1b]);
   });
@@ -113,30 +125,67 @@ describe('weeks and days', () => {
   });
 });
 
-describe('today\'s desk', () => {
+describe("today's desk", () => {
   it('offers only the actions the server accepts', () => {
-    expect(deskActions('booked')).toEqual(['check_in', 'confirm', 'no_show', 'reschedule', 'cancel']);
+    expect(deskActions('booked')).toEqual([
+      'check_in',
+      'confirm',
+      'no_show',
+      'reschedule',
+      'cancel',
+    ]);
     expect(deskActions('confirmed')).toEqual(['check_in', 'no_show', 'reschedule', 'cancel']);
-    for (const s of ['checked_in', 'in_consultation', 'completed', 'cancelled', 'no_show'] as const) {
+    for (const s of [
+      'checked_in',
+      'in_consultation',
+      'completed',
+      'cancelled',
+      'no_show',
+    ] as const) {
       expect(deskActions(s)).toEqual([]);
     }
   });
 
   it('summarises the day', () => {
-    const statuses: ApptStatus[] = ['booked', 'confirmed', 'checked_in', 'in_consultation', 'completed', 'completed', 'no_show', 'cancelled'];
+    const statuses: ApptStatus[] = [
+      'booked',
+      'confirmed',
+      'checked_in',
+      'in_consultation',
+      'completed',
+      'completed',
+      'no_show',
+      'cancelled',
+    ];
     expect(summarizeDay(statuses.map((status) => ({ status })))).toEqual({
-      waiting: 2, checkedIn: 1, withDoctor: 1, done: 2, missed: 1,
+      waiting: 2,
+      checkedIn: 1,
+      withDoctor: 1,
+      done: 2,
+      missed: 1,
     });
   });
 });
 
 describe('appointmentsAffectedByTimeOff', () => {
   const off: TimeOffRow[] = [
-    { id: 't1', doctor_id: 'd1', starts_at: '2030-01-07T04:00:00Z', ends_at: '2030-01-07T06:00:00Z', reason: 'Conference' },
-    { id: 't2', doctor_id: 'd2', starts_at: '2030-01-08T04:00:00Z', ends_at: '2030-01-08T06:00:00Z', reason: null },
+    {
+      id: 't1',
+      doctor_id: 'd1',
+      starts_at: '2030-01-07T04:00:00Z',
+      ends_at: '2030-01-07T06:00:00Z',
+      reason: 'Conference',
+    },
+    {
+      id: 't2',
+      doctor_id: 'd2',
+      starts_at: '2030-01-08T04:00:00Z',
+      ends_at: '2030-01-08T06:00:00Z',
+      reason: null,
+    },
   ];
 
-  it('lists active appointments that overlap their own doctor\'s time off, in time order', () => {
+  it("lists active appointments that overlap their own doctor's time off, in time order", () => {
     const result = appointmentsAffectedByTimeOff(
       [
         appt('late', '2030-01-07T05:30:00Z', '2030-01-07T05:45:00Z'),
@@ -152,7 +201,13 @@ describe('appointmentsAffectedByTimeOff', () => {
   });
 
   it('ignores cancelled, no-show, checked-in and completed appointments', () => {
-    const statuses: ApptStatus[] = ['cancelled', 'no_show', 'checked_in', 'completed', 'in_consultation'];
+    const statuses: ApptStatus[] = [
+      'cancelled',
+      'no_show',
+      'checked_in',
+      'completed',
+      'in_consultation',
+    ];
     const result = appointmentsAffectedByTimeOff(
       statuses.map((s, i) => appt(`a${i}`, '2030-01-07T05:00:00Z', '2030-01-07T05:15:00Z', s)),
       off,

@@ -1,4 +1,9 @@
-import { patientDetailsEditSchema, registerPatientSchema, toRegisterDetails, type RegisterPatientForm } from '../schemas';
+import {
+  patientDetailsEditSchema,
+  registerPatientSchema,
+  toRegisterDetails,
+  type RegisterPatientForm,
+} from '../schemas';
 
 const TODAY = '2030-03-10';
 const valid: RegisterPatientForm = {
@@ -34,8 +39,10 @@ describe('registerPatientSchema', () => {
   it('requires name, phone, doctor and consent', () => {
     expect(messages({ full_name: 'A' })).toContain('full_name:validation.required');
     expect(messages({ phone: '123' })).toContain('phone:validation.phone');
-    expect(messages({ primary_doctor: '' })).toContain('primary_doctor:reception:validation.doctor');
-    expect(messages({ consent: false as unknown as true })).toContain('consent:reception:validation.consent');
+    expect(messages({ primary_doctor: '' })).toContain(
+      'primary_doctor:reception:validation.doctor',
+    );
+    expect(messages({ consent: false })).toContain('consent:reception:validation.consent');
   });
 
   it('allows an empty email, MRN and blood group but rejects malformed ones', () => {
@@ -49,7 +56,9 @@ describe('registerPatientSchema', () => {
     expect(messages({ date: '2030-03-11' })).toContain('date:validation.pregnancyDate');
     expect(messages({ date: '2029-05-01' })).toContain('date:validation.pregnancyDate');
     expect(messages({ date_kind: 'edd', date: '2030-10-01' })).toEqual([]);
-    expect(messages({ date_kind: 'edd', date: '2031-02-01' })).toContain('date:validation.pregnancyDate');
+    expect(messages({ date_kind: 'edd', date: '2031-02-01' })).toContain(
+      'date:validation.pregnancyDate',
+    );
     expect(messages({ date: 'not-a-date' })).toContain('date:validation.date');
   });
 });
@@ -76,7 +85,13 @@ describe('toRegisterDetails', () => {
   });
 
   it('sends an EDD instead of an LMP when chosen, and no obstetric counts for repeat pregnancies', () => {
-    const d = toRegisterDetails({ ...valid, date_kind: 'edd', date: '2030-10-01', first_pregnancy: false, mrn: ' GH-0042 ' });
+    const d = toRegisterDetails({
+      ...valid,
+      date_kind: 'edd',
+      date: '2030-10-01',
+      first_pregnancy: false,
+      mrn: ' GH-0042 ',
+    });
     expect(d).toMatchObject({ edd_date: '2030-10-01', mrn: 'GH-0042' });
     expect('lmp_date' in d).toBe(false);
     expect('gravida' in d).toBe(false);
@@ -85,9 +100,19 @@ describe('toRegisterDetails', () => {
 
 describe('patientDetailsEditSchema', () => {
   it('allows blank optional fields', () => {
-    expect(patientDetailsEditSchema.safeParse({ full_name: 'Asha Patil', phone: '', email: '', dob: '', address: '' }).success).toBe(true);
+    expect(
+      patientDetailsEditSchema.safeParse({
+        full_name: 'Asha Patil',
+        phone: '',
+        email: '',
+        dob: '',
+        address: '',
+      }).success,
+    ).toBe(true);
   });
   it('rejects a bad phone', () => {
-    expect(patientDetailsEditSchema.safeParse({ full_name: 'Asha Patil', phone: '12' }).success).toBe(false);
+    expect(
+      patientDetailsEditSchema.safeParse({ full_name: 'Asha Patil', phone: '12' }).success,
+    ).toBe(false);
   });
 });

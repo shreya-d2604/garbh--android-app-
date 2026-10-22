@@ -9,7 +9,10 @@ const MAX_LMP_AGE_DAYS = 300;
 
 const isoDate = z.string().refine(isISODate, { error: 'validation.date' });
 const optionalText = z.string().trim().optional();
-const phone = z.string().trim().regex(/^\+?[0-9 ]{10,15}$/, { error: 'validation.phone' });
+const phone = z
+  .string()
+  .trim()
+  .regex(/^\+?[0-9 ]{10,15}$/, { error: 'validation.phone' });
 
 export const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as const;
 
@@ -41,7 +44,7 @@ export function registerPatientSchema(today: ISODate = todayISO()) {
       date: isoDate,
       first_pregnancy: z.boolean(),
       primary_doctor: z.string().min(1, { error: 'reception:validation.doctor' }),
-      consent: z.literal(true, { error: 'reception:validation.consent' }),
+      consent: z.boolean().refine((v) => v === true, { error: 'reception:validation.consent' }),
     })
     .refine(
       (v) => {
