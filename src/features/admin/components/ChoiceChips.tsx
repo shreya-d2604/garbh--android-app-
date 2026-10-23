@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 import { Chip } from 'react-native-paper';
 
@@ -28,7 +29,12 @@ export function ChoiceChips<T extends string>({
         <Chip
           key={o.value}
           selected={value === o.value}
-          showSelectedCheck
+          showSelectedCheck={false}
+          icon={
+            value === o.value
+              ? () => <MaterialCommunityIcons name="check" size={16} color={palette.maroon} />
+              : undefined
+          }
           onPress={() => onChange(o.value)}
           accessibilityLabel={o.label}
           style={[styles.chip, value === o.value && styles.selected]}
