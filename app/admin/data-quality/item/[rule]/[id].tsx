@@ -39,7 +39,9 @@ export default function DataQualityItem() {
   }
   return (
     <Screen edges={['bottom']}>
-      <Stack.Screen options={{ title: isDqRule(rule) ? t(`dq.rules.${rule}.title`) : t('dq.title') }} />
+      <Stack.Screen
+        options={{ title: isDqRule(rule) ? t(`dq.rules.${rule}.title`) : t('dq.title') }}
+      />
       {body}
     </Screen>
   );

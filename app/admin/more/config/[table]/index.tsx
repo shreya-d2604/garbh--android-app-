@@ -52,7 +52,9 @@ function List({ def }: { def: ConfigTable }) {
                     <StatusChip label={t('config.inactive')} tone="neutral" />
                   ) : null
                 }
-                onPress={() => router.push(`${base}/${encodeURIComponent(String(item[def.pk]))}` as never)}
+                onPress={() =>
+                  router.push(`${base}/${encodeURIComponent(String(item[def.pk]))}` as never)
+                }
               />
             )}
           />

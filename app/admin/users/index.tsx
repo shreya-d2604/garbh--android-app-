@@ -46,7 +46,11 @@ export default function Users() {
         <QueryBoundary
           query={query}
           isEmpty={(rows) => filterStaff(rows, filter).length === 0}
-          empty={{ title: t('users.empty'), message: t('users.emptyHint'), icon: 'account-search-outline' }}
+          empty={{
+            title: t('users.empty'),
+            message: t('users.emptyHint'),
+            icon: 'account-search-outline',
+          }}
         >
           {(rows) => (
             <FlatList
@@ -60,7 +64,11 @@ export default function Users() {
                   title={item.full_name ?? item.email ?? '-'}
                   subtitle={[t(`roles.${item.role}`), item.email].filter(Boolean).join(' · ')}
                   onPress={() => router.push(`/admin/users/${item.id}` as never)}
-                  right={item.is_active ? null : <StatusChip label={t('users.inactive')} tone="neutral" />}
+                  right={
+                    item.is_active ? null : (
+                      <StatusChip label={t('users.inactive')} tone="neutral" />
+                    )
+                  }
                 />
               )}
             />

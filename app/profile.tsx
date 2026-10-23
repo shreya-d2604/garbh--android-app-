@@ -4,7 +4,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, FormField, InfoBanner, ListItem, Screen, SectionHeader, StatusChip } from '@/components';
+import {
+  Button,
+  Card,
+  FormField,
+  InfoBanner,
+  ListItem,
+  Screen,
+  SectionHeader,
+  StatusChip,
+} from '@/components';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { adminErrorKey } from '@/features/admin/errors';
 import { formatDay } from '@/features/admin/format';
@@ -79,14 +88,36 @@ export default function Profile() {
       {notice ? <InfoBanner tone="success" icon="check-circle-outline" message={notice} /> : null}
       {error ? <InfoBanner tone="danger" message={t(error)} /> : null}
 
-      <Card title={profile?.full_name ?? ''} subtitle={profile?.role ? t(`roles.${profile.role}`) : undefined}>
-        <ListItem icon="email-outline" title={t('profile.email')} description={profile?.email ?? ''} />
+      <Card
+        title={profile?.full_name ?? ''}
+        subtitle={profile?.role ? t(`roles.${profile.role}`) : undefined}
+      >
+        <ListItem
+          icon="email-outline"
+          title={t('profile.email')}
+          description={profile?.email ?? ''}
+        />
       </Card>
 
       <Card title={t('profile.details')}>
-        <FormField control={control} name="full_name" label={t('profile.fullName')} autoComplete="name" />
-        <FormField control={control} name="phone" label={t('profile.phone')} keyboardType="phone-pad" autoComplete="tel" />
-        <Button label={t('actions.save', { ns: 'common' })} onPress={() => void onSave()} loading={formState.isSubmitting} />
+        <FormField
+          control={control}
+          name="full_name"
+          label={t('profile.fullName')}
+          autoComplete="name"
+        />
+        <FormField
+          control={control}
+          name="phone"
+          label={t('profile.phone')}
+          keyboardType="phone-pad"
+          autoComplete="tel"
+        />
+        <Button
+          label={t('actions.save', { ns: 'common' })}
+          onPress={() => void onSave()}
+          loading={formState.isSubmitting}
+        />
       </Card>
 
       <SectionHeader title={t('profile.privacy')} />
@@ -98,14 +129,18 @@ export default function Profile() {
           disabled={hasOpenRequest(list, 'export')}
           onPress={() => setConfirm('export')}
         />
-        {hasOpenRequest(list, 'export') ? <InfoBanner message={t('profile.exportPending')} /> : null}
+        {hasOpenRequest(list, 'export') ? (
+          <InfoBanner message={t('profile.exportPending')} />
+        ) : null}
         <Button
           label={t('profile.deleteAccount')}
           variant="danger"
           disabled={hasOpenRequest(list, 'deletion')}
           onPress={() => setConfirm('deletion')}
         />
-        {hasOpenRequest(list, 'deletion') ? <InfoBanner message={t('profile.deletionPending')} /> : null}
+        {hasOpenRequest(list, 'deletion') ? (
+          <InfoBanner message={t('profile.deletionPending')} />
+        ) : null}
       </Card>
 
       {list.length > 0 ? (
@@ -121,7 +156,13 @@ export default function Profile() {
                 right={
                   <StatusChip
                     label={t(`requests.status.${r.status}`)}
-                    tone={r.status === 'done' ? 'success' : r.status === 'rejected' ? 'neutral' : 'warning'}
+                    tone={
+                      r.status === 'done'
+                        ? 'success'
+                        : r.status === 'rejected'
+                          ? 'neutral'
+                          : 'warning'
+                    }
                   />
                 }
               />
@@ -130,7 +171,11 @@ export default function Profile() {
         </>
       ) : null}
 
-      <Button label={t('actions.signOut', { ns: 'common' })} variant="secondary" onPress={() => void signOut()} />
+      <Button
+        label={t('actions.signOut', { ns: 'common' })}
+        variant="secondary"
+        onPress={() => void signOut()}
+      />
 
       <ConfirmDialog
         visible={confirm === 'deletion'}

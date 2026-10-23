@@ -47,7 +47,11 @@ export default function DataQuality() {
                         tone={c.count === 0 ? 'success' : TONE[c.severity]}
                       />
                     }
-                    onPress={c.count > 0 ? () => router.push(`/admin/data-quality/${c.rule}` as never) : undefined}
+                    onPress={
+                      c.count > 0
+                        ? () => router.push(`/admin/data-quality/${c.rule}` as never)
+                        : undefined
+                    }
                   />
                 ))}
               </Card>

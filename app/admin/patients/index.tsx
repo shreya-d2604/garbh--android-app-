@@ -32,9 +32,15 @@ export default function Patients() {
   return (
     <Screen scroll={false} edges={[]} contentStyle={styles.screen}>
       <Stack.Screen options={{ title: t('patients.title') }} />
-      {deleted === 'files' ? <InfoBanner tone="warning" message={t('patients.deletedFilesLeft')} /> : null}
+      {deleted === 'files' ? (
+        <InfoBanner tone="warning" message={t('patients.deletedFilesLeft')} />
+      ) : null}
       {deleted === '1' ? (
-        <InfoBanner tone="success" icon="check-circle-outline" message={t('patients.deletedForever')} />
+        <InfoBanner
+          tone="success"
+          icon="check-circle-outline"
+          message={t('patients.deletedForever')}
+        />
       ) : null}
       <SearchField value={search} onChangeText={setSearch} placeholder={t('patients.search')} />
       <ChoiceChips
@@ -47,7 +53,11 @@ export default function Patients() {
         <QueryBoundary
           query={query}
           isEmpty={(rows) => rows.length === 0}
-          empty={{ title: t('patients.empty'), message: t('patients.emptyHint'), icon: 'account-search-outline' }}
+          empty={{
+            title: t('patients.empty'),
+            message: t('patients.emptyHint'),
+            icon: 'account-search-outline',
+          }}
         >
           {(rows) => (
             <FlatList
@@ -85,8 +95,12 @@ function PatientCard({ item }: { item: PatientListItem }) {
           {!item.verified_at && !item.deleted_at ? (
             <StatusChip label={t('patients.unverified')} tone="warning" />
           ) : null}
-          {active?.risk_level === 'high' ? <StatusChip label={t('patients.highRisk')} tone="danger" /> : null}
-          {item.registration_source === 'app' ? <StatusChip label={t('patients.app')} tone="info" /> : null}
+          {active?.risk_level === 'high' ? (
+            <StatusChip label={t('patients.highRisk')} tone="danger" />
+          ) : null}
+          {item.registration_source === 'app' ? (
+            <StatusChip label={t('patients.app')} tone="info" />
+          ) : null}
         </View>
       }
     />

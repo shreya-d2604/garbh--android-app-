@@ -3,7 +3,15 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Card, InfoBanner, ListItem, Screen, SectionHeader, StatusChip } from '@/components';
+import {
+  Button,
+  Card,
+  InfoBanner,
+  ListItem,
+  Screen,
+  SectionHeader,
+  StatusChip,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import { logPatientView, type PatientRow } from '@/features/admin/api';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
@@ -63,7 +71,9 @@ function Body({ patient }: { patient: PatientRow }) {
 
   return (
     <>
-      {deleted ? <InfoBanner tone="warning" icon="delete-outline" message={t('patients.deletedBanner')} /> : null}
+      {deleted ? (
+        <InfoBanner tone="warning" icon="delete-outline" message={t('patients.deletedBanner')} />
+      ) : null}
       {error ? <InfoBanner tone="danger" message={t(error)} /> : null}
 
       <Card
@@ -88,13 +98,24 @@ function Body({ patient }: { patient: PatientRow }) {
         <KeyValue label={t('patient.address')} value={patient.address} />
         <KeyValue
           label={t('patient.bloodGroup')}
-          value={patient.blood_group ? `${patient.blood_group}${patient.rh_negative ? ` (${t('patient.rhShort')})` : ''}` : null}
+          value={
+            patient.blood_group
+              ? `${patient.blood_group}${patient.rh_negative ? ` (${t('patient.rhShort')})` : ''}`
+              : null
+          }
         />
         <KeyValue label={t('patient.allergies')} value={joinList(patient.allergies)} />
         <KeyValue label={t('patient.conditions')} value={joinList(patient.chronic_conditions)} />
         <KeyValue label={t('patient.emergencyContact')} value={patient.emergency_contact} />
-        <KeyValue label={t('patients.appAccount')} value={patient.user_id ? t('generic.yes') : t('generic.no')} />
-        <Button label={t('patients.edit')} variant="secondary" onPress={() => router.push(`${base}/edit` as never)} />
+        <KeyValue
+          label={t('patients.appAccount')}
+          value={patient.user_id ? t('generic.yes') : t('generic.no')}
+        />
+        <Button
+          label={t('patients.edit')}
+          variant="secondary"
+          onPress={() => router.push(`${base}/edit` as never)}
+        />
       </Card>
 
       <SectionHeader title={t('patients.pregnancies')} />
@@ -114,7 +135,9 @@ function Body({ patient }: { patient: PatientRow }) {
                   title={t(`pregnancy.status.${p.status}`)}
                   description={[
                     ga ? t('patients.ga', { ga }) : null,
-                    p.edd_final ? t('pregnancy.eddValue', { date: p.edd_final }) : t('patients.noDates'),
+                    p.edd_final
+                      ? t('pregnancy.eddValue', { date: p.edd_final })
+                      : t('patients.noDates'),
                     t(`pregnancy.risk.${p.risk_level}`),
                   ]
                     .filter(Boolean)
@@ -145,9 +168,17 @@ function Body({ patient }: { patient: PatientRow }) {
         {deleted ? (
           <Button label={t('patients.restore')} onPress={() => setDialog('restore')} />
         ) : (
-          <Button label={t('patients.softDelete')} variant="danger" onPress={() => setDialog('delete')} />
+          <Button
+            label={t('patients.softDelete')}
+            variant="danger"
+            onPress={() => setDialog('delete')}
+          />
         )}
-        <Button label={t('patients.hardDelete')} variant="text" onPress={() => setDialog('hard1')} />
+        <Button
+          label={t('patients.hardDelete')}
+          variant="text"
+          onPress={() => setDialog('hard1')}
+        />
       </Card>
 
       <ReasonDialog
@@ -162,7 +193,10 @@ function Body({ patient }: { patient: PatientRow }) {
           setError(null);
           setDeleted.mutate(
             { id: patient.id, deleted: true, reason },
-            { onSuccess: () => setDialog(null), onError: (e) => (setError(adminErrorKey(e)), setDialog(null)) },
+            {
+              onSuccess: () => setDialog(null),
+              onError: (e) => (setError(adminErrorKey(e)), setDialog(null)),
+            },
           );
         }}
       />
@@ -177,7 +211,10 @@ function Body({ patient }: { patient: PatientRow }) {
           setError(null);
           setDeleted.mutate(
             { id: patient.id, deleted: false },
-            { onSuccess: () => setDialog(null), onError: (e) => (setError(adminErrorKey(e)), setDialog(null)) },
+            {
+              onSuccess: () => setDialog(null),
+              onError: (e) => (setError(adminErrorKey(e)), setDialog(null)),
+            },
           );
         }}
       />

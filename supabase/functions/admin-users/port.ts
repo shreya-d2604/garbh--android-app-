@@ -13,13 +13,24 @@ export interface Env {
   serviceKey: string;
 }
 
-const NO_SESSION = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
+const NO_SESSION = {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+};
 
 // The SQL functions raise an UPPER_SNAKE code as the message (docs/contracts.md).
-const KNOWN = ['NOT_ALLOWED', 'NOT_FOUND', 'INVALID_INPUT', 'INVALID_STATUS_CHANGE', 'NOT_AUTHENTICATED'];
+const KNOWN = [
+  'NOT_ALLOWED',
+  'NOT_FOUND',
+  'INVALID_INPUT',
+  'INVALID_STATUS_CHANGE',
+  'NOT_AUTHENTICATED',
+];
 function toResult(error: { message?: string } | null): DbResult {
   if (!error) return { ok: true };
-  return { ok: false, code: KNOWN.includes(error.message ?? '') ? (error.message as string) : 'GENERIC' };
+  return {
+    ok: false,
+    code: KNOWN.includes(error.message ?? '') ? (error.message as string) : 'GENERIC',
+  };
 }
 
 export function createPort(createClient: CreateClient, env: Env): AdminPort {
@@ -67,14 +78,18 @@ export function createPort(createClient: CreateClient, env: Env): AdminPort {
         .select('email, role, deleted_at')
         .eq('id', userId)
         .maybeSingle();
-      if (!data || data.deleted_at || !['admin', 'doctor', 'receptionist'].includes(data.role)) return null;
+      if (!data || data.deleted_at || !['admin', 'doctor', 'receptionist'].includes(data.role))
+        return null;
       return (data.email as string | null) ?? null;
     },
 
     async sendSignInCode(email) {
       // The app signs in with an emailed 6-digit code, so the "invite" is simply that code.
       const anon = createClient(env.url, env.anonKey, NO_SESSION);
-      const { error } = await anon.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+      const { error } = await anon.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: false },
+      });
       return !error;
     },
 

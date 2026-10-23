@@ -46,7 +46,11 @@ export default function NewPregnancy() {
         minimumDate={addDays(today, -300)}
         maximumDate={today}
       />
-      <Button label={t('pregnancy.create')} onPress={() => void onSubmit()} loading={formState.isSubmitting} />
+      <Button
+        label={t('pregnancy.create')}
+        onPress={() => void onSubmit()}
+        loading={formState.isSubmitting}
+      />
     </Screen>
   );
 }

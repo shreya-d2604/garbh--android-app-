@@ -10,7 +10,11 @@ type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 function tabIcon(name: IconName) {
   return function TabIcon({ focused, size }: { focused: boolean; size: number }) {
     return (
-      <MaterialCommunityIcons name={name} color={focused ? palette.rose : palette.inkMuted} size={size} />
+      <MaterialCommunityIcons
+        name={name}
+        color={focused ? palette.rose : palette.inkMuted}
+        size={size}
+      />
     );
   };
 }
@@ -35,11 +39,19 @@ export default function AdminLayout() {
       />
       <Tabs.Screen
         name="patients"
-        options={{ title: t('tabs.patients'), headerShown: false, tabBarIcon: tabIcon('human-pregnant') }}
+        options={{
+          title: t('tabs.patients'),
+          headerShown: false,
+          tabBarIcon: tabIcon('human-pregnant'),
+        }}
       />
       <Tabs.Screen
         name="users"
-        options={{ title: t('tabs.users'), headerShown: false, tabBarIcon: tabIcon('account-group-outline') }}
+        options={{
+          title: t('tabs.users'),
+          headerShown: false,
+          tabBarIcon: tabIcon('account-group-outline'),
+        }}
       />
       <Tabs.Screen
         name="data-quality"
@@ -51,7 +63,11 @@ export default function AdminLayout() {
       />
       <Tabs.Screen
         name="more"
-        options={{ title: t('tabs.more'), headerShown: false, tabBarIcon: tabIcon('dots-horizontal') }}
+        options={{
+          title: t('tabs.more'),
+          headerShown: false,
+          tabBarIcon: tabIcon('dots-horizontal'),
+        }}
       />
     </Tabs>
   );

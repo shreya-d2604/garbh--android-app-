@@ -63,7 +63,9 @@ function Body({ member, invited }: { member: StaffMember; invited: string }) {
   const [notice, setNotice] = useState<string | null>(
     invited === 'sent' ? t('users.inviteSent') : null,
   );
-  const [error, setError] = useState<string | null>(invited === 'failed' ? 'admin:users.inviteFailed' : null);
+  const [error, setError] = useState<string | null>(
+    invited === 'failed' ? 'admin:users.inviteFailed' : null,
+  );
   const [role, setRoleValue] = useState<StaffRole>(member.role);
   const [dialog, setDialog] = useState<'role' | 'active' | null>(null);
 
@@ -95,7 +97,10 @@ function Body({ member, invited }: { member: StaffMember; invited: string }) {
   };
 
   const onSave = handleSubmit((values) =>
-    run(() => update.mutateAsync({ id: member.id, fields: toStaffPayload(values) }), t('users.saved')),
+    run(
+      () => update.mutateAsync({ id: member.id, fields: toStaffPayload(values) }),
+      t('users.saved'),
+    ),
   );
 
   return (
@@ -126,7 +131,10 @@ function Body({ member, invited }: { member: StaffMember; invited: string }) {
         />
       </Card>
 
-      <Card title={t('users.changeRole')} subtitle={isMe ? t('users.cannotChangeSelf') : t('users.changeRoleHint')}>
+      <Card
+        title={t('users.changeRole')}
+        subtitle={isMe ? t('users.cannotChangeSelf') : t('users.changeRoleHint')}
+      >
         <ChoiceChips
           value={role}
           onChange={setRoleValue}

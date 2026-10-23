@@ -6,8 +6,13 @@ export type ExportResult = { ok: true; data: unknown } | { ok: false; code: stri
 
 export interface ExportPort {
   /** Verifies the bearer token. role = public.auth_role() of the caller (null when inactive / unknown). */
-  authenticate(authorization: string | null): Promise<{ userId: string; role: string | null } | null>;
-  exportData(actor: string, subject: { patientId?: string; userId?: string }): Promise<ExportResult>;
+  authenticate(
+    authorization: string | null,
+  ): Promise<{ userId: string; role: string | null } | null>;
+  exportData(
+    actor: string,
+    subject: { patientId?: string; userId?: string },
+  ): Promise<ExportResult>;
 }
 
 const CORS = {
@@ -48,7 +53,8 @@ export function createHandler(port: ExportPort): (req: Request) => Promise<Respo
     let body: Record<string, unknown>;
     try {
       const parsed: unknown = await req.json();
-      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return fail('INVALID_INPUT');
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed))
+        return fail('INVALID_INPUT');
       body = parsed as Record<string, unknown>;
     } catch {
       return fail('INVALID_INPUT');
@@ -60,7 +66,9 @@ export function createHandler(port: ExportPort): (req: Request) => Promise<Respo
     if (hasPatient === hasUser) return fail('INVALID_INPUT');
     const value = hasPatient ? body.patient_id : body.user_id;
     if (typeof value !== 'string' || !UUID_RE.test(value)) return fail('INVALID_INPUT');
-    const subject = hasPatient ? { patientId: value.toLowerCase() } : { userId: value.toLowerCase() };
+    const subject = hasPatient
+      ? { patientId: value.toLowerCase() }
+      : { userId: value.toLowerCase() };
 
     try {
       const result = await port.exportData(caller.userId, subject);

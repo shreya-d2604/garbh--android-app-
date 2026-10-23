@@ -12,7 +12,9 @@ export interface Env {
   serviceKey: string;
 }
 
-const NO_SESSION = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
+const NO_SESSION = {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+};
 const KNOWN = ['NOT_ALLOWED', 'NOT_FOUND', 'INVALID_INPUT', 'NOT_AUTHENTICATED'];
 
 export function createPort(createClient: CreateClient, env: Env): ExportPort {
@@ -40,7 +42,10 @@ export function createPort(createClient: CreateClient, env: Env): ExportPort {
         p_user: subject.userId ?? null,
       });
       if (error) {
-        return { ok: false, code: KNOWN.includes(error.message ?? '') ? (error.message as string) : 'GENERIC' };
+        return {
+          ok: false,
+          code: KNOWN.includes(error.message ?? '') ? (error.message as string) : 'GENERIC',
+        };
       }
       return { ok: true, data };
     },

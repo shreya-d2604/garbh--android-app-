@@ -13,7 +13,11 @@ import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';
 import { gaLabel, joinList } from '@/features/admin/format';
-import { usePregnancy, useUpdatePregnancyDates, useUpdatePregnancyStatus } from '@/features/admin/hooks';
+import {
+  usePregnancy,
+  useUpdatePregnancyDates,
+  useUpdatePregnancyStatus,
+} from '@/features/admin/hooks';
 import {
   PREGNANCY_STATUSES,
   RISK_LEVELS,
@@ -57,7 +61,10 @@ function Body({ pregnancy, patientId }: { pregnancy: PregnancyRow; patientId: st
   const ga = pregnancy.status === 'active' ? gaLabel(pregnancy.edd_final, today) : null;
   return (
     <>
-      <Card title={t(`pregnancy.status.${pregnancy.status}`)} subtitle={ga ? t('patients.ga', { ga }) : undefined}>
+      <Card
+        title={t(`pregnancy.status.${pregnancy.status}`)}
+        subtitle={ga ? t('patients.ga', { ga }) : undefined}
+      >
         <KeyValue label={t('pregnancy.lmp')} value={pregnancy.lmp_date} />
         <KeyValue label={t('pregnancy.eddUsg')} value={pregnancy.edd_usg} />
         <KeyValue label={t('pregnancy.eddFinal')} value={pregnancy.edd_final} />
@@ -67,11 +74,18 @@ function Body({ pregnancy, patientId }: { pregnancy: PregnancyRow; patientId: st
         />
         <KeyValue
           label={t('pregnancy.gpal')}
-          value={[pregnancy.gravida, pregnancy.para, pregnancy.abortus, pregnancy.living].some((v) => v !== null)
-            ? `G${pregnancy.gravida ?? '-'} P${pregnancy.para ?? '-'} A${pregnancy.abortus ?? '-'} L${pregnancy.living ?? '-'}`
-            : null}
+          value={
+            [pregnancy.gravida, pregnancy.para, pregnancy.abortus, pregnancy.living].some(
+              (v) => v !== null,
+            )
+              ? `G${pregnancy.gravida ?? '-'} P${pregnancy.para ?? '-'} A${pregnancy.abortus ?? '-'} L${pregnancy.living ?? '-'}`
+              : null
+          }
         />
-        <KeyValue label={t('pregnancy.risk.label')} value={t(`pregnancy.risk.${pregnancy.risk_level}`)} />
+        <KeyValue
+          label={t('pregnancy.risk.label')}
+          value={t(`pregnancy.risk.${pregnancy.risk_level}`)}
+        />
       </Card>
 
       <Card>
@@ -99,9 +113,17 @@ function DatesForm({ pregnancy }: { pregnancy: PregnancyRow }) {
   const update = useUpdatePregnancyDates();
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { control, handleSubmit, reset, setValue, formState } = useForm<PregnancyDatesForm, unknown, PregnancyDatesForm>({
+  const { control, handleSubmit, reset, setValue, formState } = useForm<
+    PregnancyDatesForm,
+    unknown,
+    PregnancyDatesForm
+  >({
     resolver: zodResolver(schema),
-    defaultValues: { lmp_date: pregnancy.lmp_date ?? '', edd_usg: pregnancy.edd_usg ?? '', reason: '' },
+    defaultValues: {
+      lmp_date: pregnancy.lmp_date ?? '',
+      edd_usg: pregnancy.edd_usg ?? '',
+      reason: '',
+    },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -143,8 +165,17 @@ function DatesForm({ pregnancy }: { pregnancy: PregnancyRow }) {
         variant="text"
         onPress={() => setValue('edd_usg', '', { shouldDirty: true })}
       />
-      <FormField control={control} name="reason" label={t('pregnancy.reason')} hint={t('pregnancy.reasonHint')} />
-      <Button label={t('pregnancy.saveDates')} onPress={() => void onSubmit()} loading={formState.isSubmitting} />
+      <FormField
+        control={control}
+        name="reason"
+        label={t('pregnancy.reason')}
+        hint={t('pregnancy.reasonHint')}
+      />
+      <Button
+        label={t('pregnancy.saveDates')}
+        onPress={() => void onSubmit()}
+        loading={formState.isSubmitting}
+      />
     </Card>
   );
 }
@@ -154,7 +185,11 @@ function StatusForm({ pregnancy }: { pregnancy: PregnancyRow }) {
   const update = useUpdatePregnancyStatus();
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { control, handleSubmit, formState } = useForm<PregnancyStatusForm, unknown, PregnancyStatusForm>({
+  const { control, handleSubmit, formState } = useForm<
+    PregnancyStatusForm,
+    unknown,
+    PregnancyStatusForm
+  >({
     resolver: zodResolver(pregnancyStatusSchema),
     defaultValues: {
       risk_level: pregnancy.risk_level,
@@ -207,17 +242,34 @@ function StatusForm({ pregnancy }: { pregnancy: PregnancyRow }) {
             value={field.value}
             onChange={field.onChange}
             accessibilityLabel={t('pregnancy.statusLabel')}
-            options={PREGNANCY_STATUSES.map((s) => ({ value: s, label: t(`pregnancy.status.${s}`) }))}
+            options={PREGNANCY_STATUSES.map((s) => ({
+              value: s,
+              label: t(`pregnancy.status.${s}`),
+            }))}
           />
         )}
       />
       {status !== 'active' ? (
         <>
-          <DateField control={control} name="outcome_date" label={t('pregnancy.outcomeDate')} maximumDate={todayISO()} />
-          <FormField control={control} name="outcome_notes" label={t('pregnancy.outcomeNotes')} multiline />
+          <DateField
+            control={control}
+            name="outcome_date"
+            label={t('pregnancy.outcomeDate')}
+            maximumDate={todayISO()}
+          />
+          <FormField
+            control={control}
+            name="outcome_notes"
+            label={t('pregnancy.outcomeNotes')}
+            multiline
+          />
         </>
       ) : null}
-      <Button label={t('actions.save', { ns: 'common' })} onPress={() => void onSubmit()} loading={formState.isSubmitting} />
+      <Button
+        label={t('actions.save', { ns: 'common' })}
+        onPress={() => void onSubmit()}
+        loading={formState.isSubmitting}
+      />
     </Card>
   );
 }

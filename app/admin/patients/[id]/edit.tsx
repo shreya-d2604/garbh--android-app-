@@ -73,7 +73,11 @@ function EditForm({ patient }: { patient: PatientRow }) {
     <>
       {error ? <InfoBanner tone="danger" message={t(error)} /> : null}
       <PatientFields control={control} />
-      <Button label={t('actions.save', { ns: 'common' })} onPress={() => void onSubmit()} loading={formState.isSubmitting} />
+      <Button
+        label={t('actions.save', { ns: 'common' })}
+        onPress={() => void onSubmit()}
+        loading={formState.isSubmitting}
+      />
     </>
   );
 }

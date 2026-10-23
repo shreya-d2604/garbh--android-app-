@@ -16,7 +16,9 @@ export interface DeletionRequest {
 
 export interface AdminPort {
   /** Verifies the bearer token. role = public.auth_role() of the caller (null when inactive / unknown). */
-  authenticate(authorization: string | null): Promise<{ userId: string; role: string | null } | null>;
+  authenticate(
+    authorization: string | null,
+  ): Promise<{ userId: string; role: string | null } | null>;
   createAuthUser(args: {
     email: string;
     role: StaffRole;
@@ -31,7 +33,12 @@ export interface AdminPort {
   sendSignInCode(email: string): Promise<boolean>;
   /** Bans the auth user and replaces the email so the address is gone from auth. */
   scrubAuthUser(userId: string): Promise<void>;
-  staffApply(actor: string, userId: string, args: Record<string, unknown>, event: string): Promise<DbResult>;
+  staffApply(
+    actor: string,
+    userId: string,
+    args: Record<string, unknown>,
+    event: string,
+  ): Promise<DbResult>;
   deidentifyUser(actor: string, userId: string, requestId: string): Promise<DbResult>;
   getDeletionRequest(requestId: string): Promise<DeletionRequest | null>;
 }
@@ -74,7 +81,12 @@ function uuid(body: Record<string, unknown>, key: string): string {
   return v.toLowerCase();
 }
 
-function text(body: Record<string, unknown>, key: string, max: number, min = 0): string | null | undefined {
+function text(
+  body: Record<string, unknown>,
+  key: string,
+  max: number,
+  min = 0,
+): string | null | undefined {
   if (!(key in body)) return undefined;
   const v = body[key];
   if (v === null) return null;
@@ -90,7 +102,8 @@ function text(body: Record<string, unknown>, key: string, max: number, min = 0):
 
 function role(body: Record<string, unknown>): StaffRole {
   const v = body.role;
-  if (typeof v !== 'string' || !(STAFF_ROLES as readonly string[]).includes(v)) throw new InvalidInput('role');
+  if (typeof v !== 'string' || !(STAFF_ROLES as readonly string[]).includes(v))
+    throw new InvalidInput('role');
   return v as StaffRole;
 }
 
@@ -126,10 +139,19 @@ async function create({ port, actor, body }: Ctx): Promise<Response> {
   const newRole = role(body);
   const fields = staffFields(body); // validate everything before the first side effect
 
-  const created = await port.createAuthUser({ email: email.toLowerCase(), role: newRole, fullName });
+  const created = await port.createAuthUser({
+    email: email.toLowerCase(),
+    role: newRole,
+    fullName,
+  });
   if ('error' in created) return fail(created.error === 'EMAIL_TAKEN' ? 'EMAIL_TAKEN' : 'GENERIC');
 
-  const applied = await port.staffApply(actor, created.userId, { ...fields, role: newRole }, 'staff_create');
+  const applied = await port.staffApply(
+    actor,
+    created.userId,
+    { ...fields, role: newRole },
+    'staff_create',
+  );
   if (!applied.ok) {
     await port.deleteAuthUser(created.userId); // do not leave a half-created account behind
     return fail(applied.code);
@@ -204,7 +226,8 @@ export function createHandler(port: AdminPort): (req: Request) => Promise<Respon
     let body: Record<string, unknown>;
     try {
       const parsed: unknown = await req.json();
-      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw new InvalidInput('body');
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed))
+        throw new InvalidInput('body');
       body = parsed as Record<string, unknown>;
     } catch {
       return fail('INVALID_INPUT');

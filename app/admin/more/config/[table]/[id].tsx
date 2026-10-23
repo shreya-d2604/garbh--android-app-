@@ -68,7 +68,10 @@ function Form({ def, id, row }: { def: ConfigTable; id: string | null; row: Row 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const fields = editing ? def.fields.filter((f) => !f.createOnly || f.key === def.pk) : def.fields;
   const { control, handleSubmit, formState } = useForm<FormValues>({
-    resolver: configResolver(editing ? def.fields.filter((f) => !f.createOnly) : def.fields, def.validate),
+    resolver: configResolver(
+      editing ? def.fields.filter((f) => !f.createOnly) : def.fields,
+      def.validate,
+    ),
     defaultValues: valuesFromRow(def.fields, row),
   });
 

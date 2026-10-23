@@ -34,20 +34,34 @@ import { formatWhen } from '@/features/admin/format';
 import { useAuditLog, usePatientSearch, usePeopleSearch } from '@/features/admin/hooks';
 import type { PersonName } from '@/features/admin/api';
 
-const ACTION_TONE = { insert: 'success', update: 'info', delete: 'danger', view_sensitive: 'warning', export: 'primary' } as const;
+const ACTION_TONE = {
+  insert: 'success',
+  update: 'info',
+  delete: 'danger',
+  view_sensitive: 'warning',
+  export: 'primary',
+} as const;
 
 const usePeopleItems = (term: string) => {
   const q = usePeopleSearch(term);
   return {
     isFetching: q.isFetching,
-    data: q.data?.map((p): PickItem => ({ id: p.id, label: p.full_name ?? p.email ?? p.id, description: p.email ?? undefined })),
+    data: q.data?.map((p): PickItem => ({
+      id: p.id,
+      label: p.full_name ?? p.email ?? p.id,
+      description: p.email ?? undefined,
+    })),
   };
 };
 const usePatientItems = (term: string) => {
   const q = usePatientSearch(term);
   return {
     isFetching: q.isFetching,
-    data: q.data?.map((p): PickItem => ({ id: p.id, label: p.full_name, description: p.mrn ?? undefined })),
+    data: q.data?.map((p): PickItem => ({
+      id: p.id,
+      label: p.full_name,
+      description: p.mrn ?? undefined,
+    })),
   };
 };
 
@@ -59,7 +73,9 @@ export default function Audit() {
   const [table, setTable] = useState('');
   const [action, setAction] = useState('');
   const [open, setOpen] = useState(false);
-  const { control, reset } = useForm<{ from: string; to: string }>({ defaultValues: { from: '', to: '' } });
+  const { control, reset } = useForm<{ from: string; to: string }>({
+    defaultValues: { from: '', to: '' },
+  });
   const range = useWatch({ control });
 
   const filters = useMemo<AuditFilters>(
@@ -74,7 +90,8 @@ export default function Audit() {
     [actor, patient, table, action, range.from, range.to],
   );
   const query = useAuditLog(filters);
-  const rows = query.data?.pages.flatMap((p) => p.rows.map((r) => ({ row: r, people: p.people }))) ?? [];
+  const rows =
+    query.data?.pages.flatMap((p) => p.rows.map((r) => ({ row: r, people: p.people }))) ?? [];
 
   const clear = () => {
     setActor(null);
@@ -93,8 +110,18 @@ export default function Audit() {
       />
       {open ? (
         <Card>
-          <PickerSearch placeholder={t('audit.byUser')} selected={actor} onSelect={setActor} useResults={usePeopleItems} />
-          <PickerSearch placeholder={t('audit.byPatient')} selected={patient} onSelect={setPatient} useResults={usePatientItems} />
+          <PickerSearch
+            placeholder={t('audit.byUser')}
+            selected={actor}
+            onSelect={setActor}
+            useResults={usePeopleItems}
+          />
+          <PickerSearch
+            placeholder={t('audit.byPatient')}
+            selected={patient}
+            onSelect={setPatient}
+            useResults={usePatientItems}
+          />
           <ChoiceChips
             value={action}
             onChange={(v) => setAction(action === v ? '' : v)}
@@ -107,9 +134,16 @@ export default function Audit() {
             accessibilityLabel={t('audit.byTable')}
             options={AUDIT_TABLES.map((x) => ({ value: x, label: x.replace(/_/g, ' ') }))}
           />
-          <DateField control={control} name="from" label={t('audit.from')} maximumDate={todayISO()} />
+          <DateField
+            control={control}
+            name="from"
+            label={t('audit.from')}
+            maximumDate={todayISO()}
+          />
           <DateField control={control} name="to" label={t('audit.to')} maximumDate={todayISO()} />
-          {hasFilters(filters) ? <Button label={t('audit.clear')} variant="text" onPress={clear} /> : null}
+          {hasFilters(filters) ? (
+            <Button label={t('audit.clear')} variant="text" onPress={clear} />
+          ) : null}
         </Card>
       ) : null}
     </View>
@@ -133,7 +167,9 @@ export default function Audit() {
           data={rows}
           keyExtractor={(r) => String(r.row.id)}
           ListHeaderComponent={header}
-          ListEmptyComponent={<EmptyState title={t('audit.empty')} message={t('audit.emptyHint')} icon="history" />}
+          ListEmptyComponent={
+            <EmptyState title={t('audit.empty')} message={t('audit.emptyHint')} icon="history" />
+          }
           contentContainerStyle={styles.items}
           refreshing={query.isRefetching && !query.isFetchingNextPage}
           onRefresh={() => void query.refetch()}
@@ -161,7 +197,9 @@ export default function Audit() {
 function AuditCard({ row, people }: { row: AuditRow; people: Record<string, PersonName> }) {
   const { t } = useTranslation('admin');
   const [open, setOpen] = useState(false);
-  const actor = row.actor_id ? (people[row.actor_id]?.full_name ?? t('audit.unknownUser')) : t('audit.system');
+  const actor = row.actor_id
+    ? (people[row.actor_id]?.full_name ?? t('audit.unknownUser'))
+    : t('audit.system');
   const event = explicitEvent(row);
   const changes = changedFields(row);
   const tone = ACTION_TONE[row.action as keyof typeof ACTION_TONE] ?? 'neutral';
@@ -169,18 +207,28 @@ function AuditCard({ row, people }: { row: AuditRow; people: Record<string, Pers
     <Card
       title={`${actor} · ${row.table_name.replace(/_/g, ' ')}`}
       subtitle={formatWhen(row.at)}
-      right={<StatusChip label={t(`audit.actions.${row.action}`, { defaultValue: row.action })} tone={tone} />}
+      right={
+        <StatusChip
+          label={t(`audit.actions.${row.action}`, { defaultValue: row.action })}
+          tone={tone}
+        />
+      }
       onPress={() => setOpen(!open)}
       accessibilityLabel={`${actor}, ${row.action}, ${row.table_name}`}
     >
       {event ? (
-        <KeyValue label={t('audit.event')} value={t(`audit.events.${event.event}`, { defaultValue: event.event })} />
+        <KeyValue
+          label={t('audit.event')}
+          value={t(`audit.events.${event.event}`, { defaultValue: event.event })}
+        />
       ) : null}
       {event?.reason ? <KeyValue label={t('audit.reason')} value={event.reason} /> : null}
       {open ? (
         <>
           <KeyValue label={t('audit.record')} value={row.record_id} />
-          {changes.length === 0 && !event ? <KeyValue label={t('audit.changes')} value={t('audit.noChanges')} /> : null}
+          {changes.length === 0 && !event ? (
+            <KeyValue label={t('audit.changes')} value={t('audit.noChanges')} />
+          ) : null}
           {changes.slice(0, 25).map((c) => (
             <KeyValue
               key={c.key}
@@ -194,7 +242,10 @@ function AuditCard({ row, people }: { row: AuditRow; people: Record<string, Pers
           ))}
         </>
       ) : (
-        <KeyValue label={t('audit.tapForDetails')} value={changes.length ? t('audit.changeCount', { count: changes.length }) : null} />
+        <KeyValue
+          label={t('audit.tapForDetails')}
+          value={changes.length ? t('audit.changeCount', { count: changes.length }) : null}
+        />
       )}
     </Card>
   );

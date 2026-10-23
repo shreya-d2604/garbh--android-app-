@@ -13,9 +13,19 @@ import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { ReasonDialog } from '@/features/admin/components/ReasonDialog';
 import { adminErrorKey } from '@/features/admin/errors';
 import { formatWhen } from '@/features/admin/format';
-import { useExportData, useProcessDeletion, useRequests, useResolveRequest } from '@/features/admin/hooks';
+import {
+  useExportData,
+  useProcessDeletion,
+  useRequests,
+  useResolveRequest,
+} from '@/features/admin/hooks';
 
-const STATUS_TONE: Record<string, Tone> = { open: 'warning', in_progress: 'info', done: 'success', rejected: 'neutral' };
+const STATUS_TONE: Record<string, Tone> = {
+  open: 'warning',
+  in_progress: 'info',
+  done: 'success',
+  rejected: 'neutral',
+};
 
 /** DPDP requests (PLAN.md §7.6 #7): account deletion and data export. */
 export default function Requests() {
@@ -75,17 +85,29 @@ function RequestCard({ item }: { item: RequestItem }) {
   };
   const resolveWith = (status: 'in_progress' | 'done' | 'rejected', note?: string) => {
     setError(null);
-    resolve.mutate({ id: item.id, status, note }, { onSuccess: () => setDialog(null), onError: fail });
+    resolve.mutate(
+      { id: item.id, status, note },
+      { onSuccess: () => setDialog(null), onError: fail },
+    );
   };
 
   return (
     <Card
       title={name}
       subtitle={[t(`requests.kind.${item.kind}`), formatWhen(item.created_at)].join(' · ')}
-      right={<StatusChip label={t(`requests.status.${item.status}`)} tone={STATUS_TONE[item.status] ?? 'neutral'} />}
+      right={
+        <StatusChip
+          label={t(`requests.status.${item.status}`)}
+          tone={STATUS_TONE[item.status] ?? 'neutral'}
+        />
+      }
     >
-      {item.requester?.email ? <KeyValue label={t('requests.email')} value={item.requester.email} /> : null}
-      {item.requester?.role ? <KeyValue label={t('requests.role')} value={t(`roles.${item.requester.role}`)} /> : null}
+      {item.requester?.email ? (
+        <KeyValue label={t('requests.email')} value={item.requester.email} />
+      ) : null}
+      {item.requester?.role ? (
+        <KeyValue label={t('requests.role')} value={t(`roles.${item.requester.role}`)} />
+      ) : null}
       {item.note ? <KeyValue label={t('requests.note')} value={item.note} /> : null}
       {notice ? <InfoBanner tone="success" icon="check-circle-outline" message={notice} /> : null}
       {error ? <InfoBanner tone="danger" message={t(error)} /> : null}
@@ -104,19 +126,32 @@ function RequestCard({ item }: { item: RequestItem }) {
               );
             }}
           />
-          <Button label={t('requests.markDone')} variant="secondary" loading={resolve.isPending} onPress={() => resolveWith('done')} />
+          <Button
+            label={t('requests.markDone')}
+            variant="secondary"
+            loading={resolve.isPending}
+            onPress={() => resolveWith('done')}
+          />
         </>
       ) : null}
       {isOpen && item.kind === 'deletion' ? (
         <>
           <InfoBanner tone="warning" message={t('requests.deletionHint')} />
-          <Button label={t('requests.deleteAccount')} variant="danger" onPress={() => setDialog('delete')} />
+          <Button
+            label={t('requests.deleteAccount')}
+            variant="danger"
+            onPress={() => setDialog('delete')}
+          />
         </>
       ) : null}
       {isOpen ? (
         <>
           {item.status === 'open' ? (
-            <Button label={t('requests.start')} variant="text" onPress={() => resolveWith('in_progress')} />
+            <Button
+              label={t('requests.start')}
+              variant="text"
+              onPress={() => resolveWith('in_progress')}
+            />
           ) : null}
           <Button label={t('requests.reject')} variant="text" onPress={() => setDialog('reject')} />
         </>
@@ -153,7 +188,9 @@ function RequestCard({ item }: { item: RequestItem }) {
       <ConfirmDialog
         visible={exported !== null}
         title={t('requests.exportReady')}
-        message={t('requests.exportSize', { kb: Math.max(1, Math.round((exported?.length ?? 0) / 1024)) })}
+        message={t('requests.exportSize', {
+          kb: Math.max(1, Math.round((exported?.length ?? 0) / 1024)),
+        })}
         confirmLabel={t('requests.copy')}
         onDismiss={() => setExported(null)}
         onConfirm={() => {

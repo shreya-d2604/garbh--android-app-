@@ -45,7 +45,11 @@ export default function MergePatient() {
       <Stack.Screen options={{ title: t('patients.merge') }} />
       <InfoBanner message={t('patients.mergeHint', { name: source.data?.full_name ?? '' })} />
       {error ? <InfoBanner tone="danger" message={t(error)} /> : null}
-      <SearchField value={search} onChangeText={setSearch} placeholder={t('patients.mergeSearch')} />
+      <SearchField
+        value={search}
+        onChangeText={setSearch}
+        placeholder={t('patients.mergeSearch')}
+      />
       <View>
         <QueryBoundary
           query={candidates}
@@ -61,7 +65,9 @@ export default function MergePatient() {
                     key={r.id}
                     icon="account-arrow-left-outline"
                     title={r.full_name}
-                    description={[r.mrn ?? t('patients.noMrn'), r.phone].filter(Boolean).join(' · ')}
+                    description={[r.mrn ?? t('patients.noMrn'), r.phone]
+                      .filter(Boolean)
+                      .join(' · ')}
                     onPress={() => setTarget(r)}
                   />
                 ))}

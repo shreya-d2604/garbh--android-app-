@@ -100,7 +100,9 @@ export default function CareTeam() {
                     label={t('careTeam.remove')}
                     variant="text"
                     onPress={() => (reset(), setRemoving(m))}
-                    accessibilityLabel={t('careTeam.removeNamed', { name: m.doctor?.full_name ?? '' })}
+                    accessibilityLabel={t('careTeam.removeNamed', {
+                      name: m.doctor?.full_name ?? '',
+                    })}
                   />
                 </Card>
               ))}

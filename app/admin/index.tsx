@@ -44,11 +44,19 @@ function Body({ view }: { view: DashboardView }) {
       <Card title={t('dashboard.pregnancies')} subtitle={t('dashboard.pregnanciesHint')}>
         <View style={styles.row}>
           <StatTile value={view.activePregnancies} label={t('dashboard.active')} />
-          <StatTile value={view.highRisk} label={t('dashboard.highRisk')} tone={view.highRisk > 0 ? 'danger' : 'default'} />
+          <StatTile
+            value={view.highRisk}
+            label={t('dashboard.highRisk')}
+            tone={view.highRisk > 0 ? 'danger' : 'default'}
+          />
         </View>
         <View style={styles.row}>
           {view.trimesters.map((tri) => (
-            <StatTile key={tri.trimester} value={tri.count} label={t('dashboard.trimester', { n: tri.trimester })} />
+            <StatTile
+              key={tri.trimester}
+              value={tri.count}
+              label={t('dashboard.trimester', { n: tri.trimester })}
+            />
           ))}
         </View>
         {view.undated > 0 ? (
@@ -80,7 +88,9 @@ function Body({ view }: { view: DashboardView }) {
               right={
                 <StatusChip
                   label={String(item.count)}
-                  tone={item.count === 0 ? 'neutral' : item.key === 'openIssues' ? 'danger' : 'warning'}
+                  tone={
+                    item.count === 0 ? 'neutral' : item.key === 'openIssues' ? 'danger' : 'warning'
+                  }
                 />
               }
               onPress={item.route ? () => router.push(item.route as never) : undefined}

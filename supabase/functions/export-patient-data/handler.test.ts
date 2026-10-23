@@ -6,13 +6,18 @@ import { createHandler, type ExportPort, type ExportResult } from './handler.ts'
 const ADMIN = '00000000-0000-4000-a000-000000000001';
 const SUBJECT = '33333333-3333-4333-8333-333333333333';
 
-function fake(caller: { userId: string; role: string | null } | null = { userId: ADMIN, role: 'admin' }, result?: ExportResult) {
+function fake(
+  caller: { userId: string; role: string | null } | null = { userId: ADMIN, role: 'admin' },
+  result?: ExportResult,
+) {
   const exported: unknown[][] = [];
   const port: ExportPort = {
     authenticate: () => Promise.resolve(caller),
     exportData: (actor, subject) => {
       exported.push([actor, subject]);
-      return Promise.resolve(result ?? { ok: true, data: { patient: { id: SUBJECT }, pregnancies: [] } });
+      return Promise.resolve(
+        result ?? { ok: true, data: { patient: { id: SUBJECT }, pregnancies: [] } },
+      );
     },
   };
   return { exported, handler: createHandler(port) };
@@ -41,7 +46,13 @@ for (const role of ['doctor', 'receptionist', 'patient', 'companion', null]) {
 
 Deno.test('validates input: exactly one valid uuid', async () => {
   const { handler, exported } = fake();
-  for (const body of [{}, { patient_id: 'nope' }, { patient_id: SUBJECT, user_id: SUBJECT }, { user_id: 5 }, [1]]) {
+  for (const body of [
+    {},
+    { patient_id: 'nope' },
+    { patient_id: SUBJECT, user_id: SUBJECT },
+    { user_id: 5 },
+    [1],
+  ]) {
     assert.equal((await handler(post(body))).status, 400);
   }
   assert.equal(exported.length, 0);

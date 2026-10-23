@@ -44,7 +44,11 @@ function RuleList({ rule }: { rule: DqRule }) {
       <QueryBoundary
         query={query}
         isEmpty={(rows) => rows.length === 0}
-        empty={{ title: t('dq.noneLeft'), message: t('dq.noneLeftHint'), icon: 'check-circle-outline' }}
+        empty={{
+          title: t('dq.noneLeft'),
+          message: t('dq.noneLeftHint'),
+          icon: 'check-circle-outline',
+        }}
       >
         {(rows) => (
           <FlatList
@@ -56,10 +60,18 @@ function RuleList({ rule }: { rule: DqRule }) {
             renderItem={({ item }) => (
               <Card
                 title={item.patientName || t('dq.unnamed')}
-                subtitle={[t(`dq.rules.${rule}.detail`, dqDetailParams(item)), formatWhen(item.since)]
+                subtitle={[
+                  t(`dq.rules.${rule}.detail`, dqDetailParams(item)),
+                  formatWhen(item.since),
+                ]
                   .filter(Boolean)
                   .join(' · ')}
-                right={<StatusChip label={t(`dq.severity.${item.severity}`)} tone={TONE[item.severity]} />}
+                right={
+                  <StatusChip
+                    label={t(`dq.severity.${item.severity}`)}
+                    tone={TONE[item.severity]}
+                  />
+                }
                 onPress={() => router.push(dqFixRoute(item) as never)}
                 accessibilityLabel={t('dq.openToFix', { name: item.patientName })}
               />
