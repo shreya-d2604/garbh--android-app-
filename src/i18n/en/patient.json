@@ -1,1 +1,297 @@
-{}
+{
+  "tabs": {
+    "home": "Home",
+    "journey": "Journey",
+    "appointments": "Visits",
+    "reports": "Reports",
+    "more": "More"
+  },
+  "titles": {
+    "appointments": "My visits",
+    "appointment": "Visit details",
+    "book": "Book a visit",
+    "firstBooking": "Book your first visit",
+    "reports": "Reports",
+    "report": "Report",
+    "summary": "Doctor's summary",
+    "trends": "My trends",
+    "more": "More",
+    "doctors": "My doctors",
+    "careGuide": "Care guide",
+    "prescriptions": "Medicines"
+  },
+  "common": {
+    "callReception": "Call reception",
+    "callHospital": "Call the hospital now"
+  },
+  "gate": {
+    "noPregnancyTitle": "No pregnancy to show",
+    "noPregnancyMessage": "We could not find an active pregnancy with a due date. Please ask the reception desk to check your record."
+  },
+  "trimester": {
+    "1": "1st Trimester",
+    "2": "2nd Trimester",
+    "3": "3rd Trimester"
+  },
+  "timeline": {
+    "t1": "1st",
+    "t2": "2nd",
+    "t3": "3rd",
+    "delivery": "Birth"
+  },
+  "home": {
+    "nextAppointment": "Your next visit",
+    "noAppointment": "You have no visit booked.",
+    "bookVisit": "Book a visit",
+    "seeAll": "See all",
+    "latestSummary": "From your doctor",
+    "noSummary": "When your doctor has checked a report, a short summary will show up here.",
+    "todaysMedicines": "Medicines for today",
+    "noMedicines": "No medicines for today."
+  },
+  "alerts": {
+    "due": "{{title}} is due between {{from}} and {{to}}. Not booked yet.",
+    "overdue": "{{title}} was due between {{from}} and {{to}}. Please book it now.",
+    "book": "Book now"
+  },
+  "journey": {
+    "weekOnly": "Week {{weeks}}",
+    "weekDays_one": "Week {{weeks}} + {{n}} day",
+    "weekDays_other": "Week {{weeks}} + {{n}} days",
+    "weeksUnit": "weeks",
+    "progress": "{{percent}} percent of the way to your due date",
+    "babySize": "Your baby is the size of {{size}}.",
+    "daysToGo_one": "{{n}} day to go",
+    "daysToGo_other": "{{n}} days to go",
+    "dueToday": "Your due date is today",
+    "dueDatePassed": "Your due date has passed. Please talk to your doctor.",
+    "dueOn": "Due date: {{date}}",
+    "timeline": "Your pregnancy by trimester",
+    "youAreHere": "You are here",
+    "youAreHereAt": "You are here: {{label}}",
+    "thisWeek": "This week",
+    "noWeekContent": "Weekly tips will appear here soon.",
+    "weekN": "Week {{week}}",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "length": "about {{value}} cm long",
+    "weight": "about {{value}} g",
+    "babyDevelopment": "Your baby",
+    "yourBody": "Your body",
+    "tipsTitle": "Tips for this week",
+    "whatsNext": "What is next",
+    "nothingNext": "Nothing else is planned right now. Your doctor will guide you.",
+    "yourJourney": "Your journey",
+    "noPath": "Your visit plan is not ready yet.",
+    "dueWindow": "Due {{from}} to {{to}}",
+    "weekRange": "Weeks {{from}} to {{to}}",
+    "weekSingle": "Week {{week}}",
+    "tests": "Tests: {{tests}}",
+    "bookThis": "Book this visit",
+    "seeAppointment": "See my visit",
+    "state": {
+      "done": "Done",
+      "booked": "Booked",
+      "current": "Now",
+      "upcoming": "Coming up",
+      "overdue": "Overdue",
+      "missed": "Missed",
+      "skipped": "Skipped"
+    }
+  },
+  "appointments": {
+    "bookVisit": "Book a visit",
+    "upcoming": "Coming up",
+    "past": "Earlier",
+    "noUpcoming": "No visits coming up",
+    "noUpcomingHint": "Tap the button above to book your next visit.",
+    "noPast": "No earlier visits",
+    "noPastHint": "Your finished visits will be listed here.",
+    "yourDoctor": "Your doctor",
+    "notFound": "We could not find this visit.",
+    "progress": "Where things stand",
+    "details": "Details",
+    "forVisit": "For: {{title}}",
+    "reason": "Reason: {{reason}}",
+    "note": "Note from the hospital: {{note}}",
+    "wasCancelled": "This visit was cancelled.",
+    "wasMissed": "This visit was missed. Please book a new one.",
+    "cancelledOk": "Your visit has been cancelled.",
+    "reschedule": "Change the time",
+    "cancel": "Cancel this visit",
+    "cutoffHint": "You can change or cancel up to {{hours}} hours before the visit.",
+    "callToChange": "It is too close to the visit to change it in the app. Please call reception.",
+    "bookAgain": "Book again",
+    "cancelTitle": "Cancel this visit?",
+    "cancelMessage": "The time will be given to someone else.",
+    "cancelReason": "Reason (optional)",
+    "defaultCancelReason": "Cancelled by patient in the app",
+    "keep": "Keep visit",
+    "confirmCancel": "Yes, cancel"
+  },
+  "booking": {
+    "forVisit": "Booking for",
+    "firstIntro": "Choose a doctor and a time for your first visit. You can change it later.",
+    "currentVisit": "Your current visit: {{when}}",
+    "chooseDoctor": "Choose your doctor",
+    "chooseDay": "Choose a day",
+    "chooseTime": "Choose a time",
+    "loadingTimes": "Looking for free times…",
+    "dayLabel": "{{day}}, {{count}} free times",
+    "noTimesTitle": "No free times right now",
+    "noTimesMessage": "Try another doctor, or call reception and we will help you.",
+    "noDoctorsTitle": "No doctors to choose from",
+    "noDoctorsMessage": "Please call reception and we will book your visit for you.",
+    "pickTime": "Pick a time to continue.",
+    "summary": "{{when}} with {{doctor}}",
+    "confirm": "Confirm booking",
+    "confirmNew": "Confirm new time",
+    "outsideWindow": "Your doctor suggests {{from}} to {{to}} for this visit. You can still book this time.",
+    "limitUnverified": "Until your account is verified at the hospital, you can have {{max}} upcoming visit. Please verify at your first visit.",
+    "limitVerified": "You already have {{max}} upcoming visits. Cancel one to book another."
+  },
+  "doctors": {
+    "primary": "Your main doctor",
+    "backup": "Covering doctor",
+    "emptyTitle": "No doctor yet",
+    "emptyMessage": "Book your first visit and your doctor will show up here.",
+    "bookFirst": "Book first visit",
+    "bookVisit": "Book a visit"
+  },
+  "reports": {
+    "summaries": "Doctor's summaries",
+    "noSummaries": "No summaries yet. Your doctor adds one after checking a report.",
+    "yourReports": "Your reports",
+    "emptyTitle": "No reports yet",
+    "emptyMessage": "Reports from your tests will show up here once the hospital adds them.",
+    "otherReports": "Other reports",
+    "trimesterGroup": {
+      "1": "1st Trimester",
+      "2": "2nd Trimester",
+      "3": "3rd Trimester"
+    },
+    "seeTrends": "See my trends",
+    "doctorReviewed": "Doctor reviewed",
+    "notFound": "We could not find this report.",
+    "loading": "Opening your report…",
+    "doctorNote": "Note from your doctor",
+    "summaryOfReport": "Summary of this report",
+    "readSummary": "Read the summary",
+    "values": "Results",
+    "noValues": "Your doctor has not checked the results yet. They will show up here once checked.",
+    "original": "Original report",
+    "openFile": "Open the file",
+    "pageOf": "Page {{page}} of {{total}}",
+    "pageImage": "Report page {{page}}",
+    "fileHint": "If this keeps happening, ask the hospital for a copy.",
+    "flag": {
+      "low": "Low",
+      "high": "High",
+      "normal": "Normal",
+      "abnormal": "Check"
+    },
+    "range": {
+      "between": "Normal: {{low}} to {{high}}",
+      "upTo": "Normal: up to {{high}}",
+      "from": "Normal: {{low}} or more"
+    }
+  },
+  "reportTypes": {
+    "blood": "Blood test",
+    "urine": "Urine test",
+    "ultrasound": "Ultrasound",
+    "nt_scan": "NT scan",
+    "anomaly_scan": "Anomaly scan",
+    "growth_scan": "Growth scan",
+    "doppler": "Doppler scan",
+    "gtt": "Sugar test (GTT)",
+    "thyroid": "Thyroid test",
+    "ecg": "Heart tracing (ECG)",
+    "other": "Report"
+  },
+  "summary": {
+    "untitled": "Summary from your doctor",
+    "reviewedBy": "Checked by {{name}}",
+    "source": {
+      "report": "About a report",
+      "consultation": "About a visit",
+      "cumulative": "About your pregnancy so far"
+    },
+    "findings": "What we found",
+    "status": {
+      "normal": "Normal",
+      "attention": "Needs attention",
+      "urgent": "See your doctor soon"
+    },
+    "tips": "Things that help",
+    "questions": "Questions to ask your doctor",
+    "disclaimer": "This summary was prepared with the help of AI and checked by your doctor. It does not replace medical advice. If you feel unwell, call the hospital.",
+    "seeReport": "See the report",
+    "unavailableTitle": "We cannot show this summary",
+    "unavailableMessage": "Please ask your doctor about it at your next visit."
+  },
+  "trends": {
+    "verifiedOnly": "Only results checked by your doctor are shown.",
+    "emptyTitle": "No trends yet",
+    "emptyMessage": "Charts will appear after your doctor checks your results and visits.",
+    "noData": "No checked readings yet.",
+    "hb": "Haemoglobin",
+    "weight": "Weight",
+    "bp": "Blood pressure",
+    "systolic": "Top number",
+    "diastolic": "Bottom number",
+    "fastingSugar": "Sugar (fasting)",
+    "postMealSugar": "Sugar (after a meal)"
+  },
+  "careGuide": {
+    "warningTitle": "Warning signs",
+    "warningIntro": "Go to the hospital now if you have any of these:",
+    "defaultWarning": {
+      "bleeding": "Bleeding from the vagina",
+      "headache": "A very bad headache, blurred vision or swelling of the face or hands",
+      "movement": "Your baby is moving less than usual",
+      "fluid": "Water leaking from the vagina",
+      "pain": "Strong pain in the belly",
+      "fever": "High fever"
+    },
+    "food_recommend": "Eat more of",
+    "food_avoid": "Avoid eating",
+    "med_avoid": "Medicines: check with your doctor first",
+    "nothing": "Nothing listed for you right now.",
+    "advisedBy": "Advised by {{name}}",
+    "advisedByDoctor": "Advised by your doctor",
+    "general": "General guidance",
+    "disclaimer": "This guide is general advice. Always ask your doctor if you are not sure."
+  },
+  "medicines": {
+    "current": "Medicines to take now",
+    "noneToday": "No medicines for today.",
+    "history": "From your visits",
+    "emptyTitle": "No medicines yet",
+    "emptyMessage": "Medicines your doctor writes for you will be listed here.",
+    "advice": "Advice from your doctor",
+    "dietAdvice": "About food",
+    "nextVisit_one": "Next visit: after {{n}} week",
+    "nextVisit_other": "Next visit: after {{n}} weeks",
+    "until": "Until {{date}}",
+    "slot": {
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "night": "Night"
+    }
+  },
+  "more": {
+    "doctors": "My doctors",
+    "doctorsHint": "Your care team",
+    "careGuide": "Care guide",
+    "careGuideHint": "Food, medicines and warning signs",
+    "prescriptions": "Medicines",
+    "prescriptionsHint": "What to take and your doctor's advice",
+    "companions": "My family members",
+    "companionsHint": "Share your pregnancy with someone you trust",
+    "companionsLocked": "Available once your account is verified at the hospital",
+    "profile": "My profile",
+    "profileHint": "Your details and sign out"
+  }
+}
