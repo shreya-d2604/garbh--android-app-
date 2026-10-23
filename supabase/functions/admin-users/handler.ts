@@ -129,7 +129,7 @@ async function create({ port, actor, body }: Ctx): Promise<Response> {
   const created = await port.createAuthUser({ email: email.toLowerCase(), role: newRole, fullName });
   if ('error' in created) return fail(created.error === 'EMAIL_TAKEN' ? 'EMAIL_TAKEN' : 'GENERIC');
 
-  const applied = await port.staffApply(actor, created.userId, fields, 'staff_create');
+  const applied = await port.staffApply(actor, created.userId, { ...fields, role: newRole }, 'staff_create');
   if (!applied.ok) {
     await port.deleteAuthUser(created.userId); // do not leave a half-created account behind
     return fail(applied.code);

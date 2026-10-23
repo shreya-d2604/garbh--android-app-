@@ -2,7 +2,7 @@
 -- nobody but the service role can call them, and they re-check the acting admin (PLAN.md §7.6, §12).
 begin;
 \ir helpers/setup.psql
-select plan(53);
+select plan(58);
 
 create temp table u as select
   tests.create_user('admin@s.test', 'admin')        as admin,
@@ -11,7 +11,9 @@ create temp table u as select
   tests.create_user('desk@s.test', 'receptionist')  as desk,
   tests.create_user('newdoc@s.test', 'doctor')      as newdoc,
   tests.create_user('pat@s.test', 'patient')        as pat,
-  tests.create_user('comp@s.test', 'companion')     as comp;
+  tests.create_user('comp@s.test', 'companion')     as comp,
+  tests.create_user('fresh@s.test')                 as fresh,
+  tests.create_user('stale@s.test')                 as stale;
 create temp table fx as select tests.create_pregnancy((select pat from u), (select doc from u), 20) as preg;
 create temp table ids as select (select patient_id from public.pregnancies where id = (select preg from fx)) as patient;
 grant select on u, fx, ids to public;
@@ -49,6 +51,16 @@ select throws_ok(format($$ select public.admin_staff_apply(NULL, %L, '{}') $$, (
 select throws_ok(format($$ select public.admin_staff_apply(%L, gen_random_uuid(), '{}') $$, (select admin from u)), 'NOT_FOUND', 'unknown user');
 select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"full_name":"X"}') $$, (select admin from u), (select pat from u)), 'INVALID_INPUT', 'patients are not managed here');
 select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{}', 'bogus') $$, (select admin from u), (select doc from u)), 'INVALID_INPUT', 'unknown audit event');
+
+-- GoTrue writes app_metadata after the INSERT the auth trigger sees, so a just-created account has no role yet
+select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"full_name":"Fresh"}', 'staff_update') $$, (select admin from u), (select fresh from u)), 'INVALID_INPUT', 'a role-less account cannot be edited as staff');
+select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"full_name":"Fresh"}', 'staff_create') $$, (select admin from u), (select fresh from u)), 'INVALID_INPUT', 'a new account needs a role');
+select lives_ok(format($$ select public.admin_staff_apply(%L, %L, '{"role":"receptionist","full_name":"Fresh Desk"}', 'staff_create') $$, (select admin from u), (select fresh from u)), 'staff_create sets the role of a brand-new account');
+select is((select role::text from public.profiles where id = (select fresh from u)), 'receptionist', 'the new account is a receptionist');
+select set_config('role', 'postgres', true);
+update public.profiles set created_at = now() - interval '1 hour' where id = (select stale from u);
+select set_config('role', 'service_role', true);
+select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"role":"doctor"}', 'staff_create') $$, (select admin from u), (select stale from u)), 'INVALID_INPUT', 'an old role-less account cannot be turned into staff');
 
 select lives_ok(format($$ select public.admin_staff_apply(%L, %L,
   '{"full_name":"Dr. New Doctor","phone":"+919811111111","designation":"Consultant","specialization":"Obstetrics","registration_no":"MMC-1","bio":"Hello"}', 'staff_create') $$,

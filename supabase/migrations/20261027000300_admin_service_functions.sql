@@ -20,6 +20,7 @@ declare
   v_target   public.profiles%rowtype;
   v_new_role public.user_role;
   v_active   boolean;
+  v_fresh    boolean;
 begin
   perform private.require_active_admin(p_actor);
   if p_event not in ('staff_create', 'staff_update', 'staff_set_role', 'staff_set_active') then
@@ -29,8 +30,15 @@ begin
   if not found or v_target.deleted_at is not null then
     raise exception 'NOT_FOUND';
   end if;
-  if v_target.role is null or v_target.role not in ('admin', 'doctor', 'receptionist') then
+  -- GoTrue's admin API writes app_metadata AFTER the INSERT that the auth trigger (private.handle_new_user)
+  -- sees, so an account the Edge Function has just created still has no role. Only for staff_create, only
+  -- for a brand-new profile, the role is set here from p_args.role.
+  v_fresh := p_event = 'staff_create' and v_target.role is null and v_target.created_at > now() - interval '10 minutes';
+  if not v_fresh and (v_target.role is null or v_target.role not in ('admin', 'doctor', 'receptionist')) then
     raise exception 'INVALID_INPUT' using detail = 'only staff accounts can be managed here';
+  end if;
+  if v_fresh and not (p_args ? 'role') then
+    raise exception 'INVALID_INPUT' using detail = 'a new staff account needs a role';
   end if;
 
   perform private.act_as(p_actor);
@@ -44,7 +52,9 @@ begin
     if v_new_role not in ('admin', 'doctor', 'receptionist') then
       raise exception 'INVALID_INPUT' using detail = 'staff roles are admin, doctor and receptionist';
     end if;
-    if v_new_role <> v_target.role then
+    if v_fresh then
+      update public.profiles set role = v_new_role where id = p_user;
+    elsif v_new_role <> v_target.role then
       if p_user = p_actor then
         raise exception 'INVALID_INPUT' using detail = 'you cannot change your own role';
       end if;

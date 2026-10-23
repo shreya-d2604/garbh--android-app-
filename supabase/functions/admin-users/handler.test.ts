@@ -167,7 +167,7 @@ Deno.test('create: makes the auth user with the role, fills the profile as the a
   assert.deepEqual(calls.staffApply?.[0], [
     ADMIN,
     TARGET,
-    { full_name: 'Dr. New Doc', phone: '+91 98000 00000', designation: 'Consultant', specialization: null },
+    { full_name: 'Dr. New Doc', phone: '+91 98000 00000', designation: 'Consultant', specialization: null, role: 'doctor' },
     'staff_create',
   ]);
   assert.deepEqual(calls.sendSignInCode?.[0], ['new.doc@example.com']);
