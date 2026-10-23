@@ -7,8 +7,8 @@ import type { ConsultationBundle } from '../api';
 import type { PrescriptionItemRow } from '../types';
 
 jest.mock('@expo/vector-icons/MaterialCommunityIcons', () => {
-  const { createElement } = require('react');
-  const { Text } = require('react-native');
+  const { createElement } = jest.requireActual<typeof import('react')>('react');
+  const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
   return {
     __esModule: true,
     default: ({ name }: { name: string }) => createElement(Text, null, name),
