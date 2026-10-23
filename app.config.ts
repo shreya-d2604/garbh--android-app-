@@ -43,6 +43,13 @@ const config: ExpoConfig = {
   experiments: {
     typedRoutes: false,
   },
+  // Expo needs the EAS project id to mint push tokens. Set EXPO_PUBLIC_EAS_PROJECT_ID (see
+  // docs/local-dev.md); without it push registration is skipped and the in-app inbox still works.
+  extra: {
+    eas: process.env.EXPO_PUBLIC_EAS_PROJECT_ID
+      ? { projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID }
+      : {},
+  },
 };
 
 export default config;

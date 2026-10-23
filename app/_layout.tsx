@@ -10,6 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorState, paperTheme } from '@/components';
 import { gateState, resolveRedirect } from '@/features/auth/gate';
 import { refreshProfile, useSessionBootstrap } from '@/features/auth/session-bootstrap';
+import { usePushRegistration } from '@/lib/push';
 import { queryClient } from '@/lib/query-client';
 import { useSession } from '@/lib/session';
 
@@ -29,6 +30,8 @@ export default function RootLayout() {
 /** Session gate + role redirect (PLAN.md §7.1). Rules live in src/features/auth/gate.ts. */
 function RoleRouter() {
   useSessionBootstrap();
+  // Registers this device for push once a user with a role is signed in; opens tapped pushes.
+  usePushRegistration();
   const router = useRouter();
   const segments = useSegments();
   const status = useSession((s) => s.status);

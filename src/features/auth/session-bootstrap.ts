@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { unregisterPushToken } from '@/lib/push';
 import { queryClient } from '@/lib/query-client';
 import { initialSessionState, useSession } from '@/lib/session';
 import { supabase } from '@/lib/supabase';
@@ -29,6 +30,8 @@ export async function refreshProfile(): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
+  // While the session is still valid: this device must stop receiving this user's pushes.
+  await unregisterPushToken();
   await supabase.auth.signOut();
   queryClient.clear();
   useSession.setState({ ...initialSessionState, status: 'signedOut' });
