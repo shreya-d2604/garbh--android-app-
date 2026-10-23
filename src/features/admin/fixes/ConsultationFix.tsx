@@ -2,9 +2,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, QueryBoundary } from '@/components';
+import { Button, Card, ConfirmDialog, InfoBanner, QueryBoundary } from '@/components';
 
-import { ConfirmDialog } from '../components/ConfirmDialog';
 import { KeyValue } from '../components/KeyValue';
 import { PregnancyLinks } from '../components/PregnancyLinks';
 import { adminErrorKey } from '../errors';

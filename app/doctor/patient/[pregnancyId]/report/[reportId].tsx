@@ -8,16 +8,16 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
   ErrorState,
   InfoBanner,
   LoadingState,
   Screen,
-  StatusChip,
   spacing,
+  StatusChip,
 } from '@/components';
 import { functionErrorKey } from '@/features/doctor/ai-review';
-import { ConfirmDialog } from '@/features/doctor/components/ConfirmDialog';
 import { ErrorBanner } from '@/features/doctor/components/ErrorBanner';
 import { LabValuesList } from '@/features/doctor/components/labs/LabValuesList';
 import { ReportPageView } from '@/features/doctor/components/ReportPageView';

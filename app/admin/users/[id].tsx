@@ -4,9 +4,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, QueryBoundary, Screen, StatusChip } from '@/components';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  InfoBanner,
+  QueryBoundary,
+  Screen,
+  StatusChip,
+} from '@/components';
 import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
-import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { KeyValue } from '@/features/admin/components/KeyValue';
 import { StaffFields } from '@/features/admin/components/StaffFields';
 import { firstParam } from '@/features/admin/components/ui';

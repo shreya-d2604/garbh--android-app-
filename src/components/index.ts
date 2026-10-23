@@ -1,6 +1,7 @@
 // Shared UI kit. Owner: head. Usage guide: docs/ui-kit.md.
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
+export { ConfirmDialog, type ConfirmDialogProps } from './ConfirmDialog';
 export { DateField, type DateFieldProps } from './DateField';
 export { FormField, type FormFieldProps } from './FormField';
 export { HeaderActions } from './HeaderActions';

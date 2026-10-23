@@ -3,8 +3,9 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { ConfirmDialog } from './ConfirmDialog';
 import { DoctorChoice, type DoctorOption } from './DoctorChoice';
+
+import { ConfirmDialog } from '@/components';
 
 interface Props {
   visible: boolean;

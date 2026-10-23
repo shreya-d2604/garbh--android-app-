@@ -2,10 +2,17 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, LoadingState, QueryBoundary, Screen } from '@/components';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  InfoBanner,
+  LoadingState,
+  QueryBoundary,
+  Screen,
+} from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import { ClosedState } from '@/features/companion/components/ClosedState';
-import { ConfirmDialog } from '@/features/companion/components/ConfirmDialog';
 import { PermissionToggles } from '@/features/companion/components/PermissionToggles';
 import { useDecideLink, useMyPatient, usePatientLinks } from '@/features/companion/hooks';
 import { DEFAULT_PERMISSIONS, type PermissionState } from '@/features/companion/permissions';
@@ -58,6 +65,7 @@ function RequestForm({ link }: { link: PatientLinkView }) {
         accessibilityLabel={t('request.decline')}
       />
       <ConfirmDialog
+        danger
         visible={declining}
         title={t('request.declineTitle')}
         message={t('request.declineMessage')}

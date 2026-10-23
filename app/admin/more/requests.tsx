@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   InfoBanner,
   QueryBoundary,
   Screen,
@@ -16,7 +17,6 @@ import {
 } from '@/components';
 import type { RequestFilter, RequestItem } from '@/features/admin/api';
 import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
-import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { KeyValue } from '@/features/admin/components/KeyValue';
 import { ReasonDialog } from '@/features/admin/components/ReasonDialog';
 import { adminErrorKey } from '@/features/admin/errors';

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
   InfoBanner,
   ListItem,
@@ -15,7 +16,6 @@ import {
   StatusChip,
 } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
-import { ConfirmDialog } from '@/features/companion/components/ConfirmDialog';
 import { useCompanionLinks, useEndLink } from '@/features/companion/hooks';
 import { homeHref } from '@/features/companion/sections';
 import {
@@ -123,6 +123,7 @@ export default function People() {
       </QueryBoundary>
 
       <ConfirmDialog
+        danger
         visible={leaving != null}
         title={leaving?.status === 'pending' ? t('waiting.cancelTitle') : t('people.leaveTitle')}
         message={

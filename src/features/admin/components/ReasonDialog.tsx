@@ -3,7 +3,8 @@ import { TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
 import { reasonSchema } from '../schemas';
-import { ConfirmDialog, type ConfirmDialogProps } from './ConfirmDialog';
+
+import { ConfirmDialog, type ConfirmDialogProps } from '@/components';
 
 interface Props extends Omit<ConfirmDialogProps, 'onConfirm' | 'children' | 'confirmDisabled'> {
   /** Shortest accepted reason. */

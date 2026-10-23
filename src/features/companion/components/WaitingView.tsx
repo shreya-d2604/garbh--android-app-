@@ -2,12 +2,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, InfoBanner, Screen } from '@/components';
+import { Button, Card, ConfirmDialog, EmptyState, InfoBanner, Screen } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 
 import { useEndLink } from '../hooks';
 import type { CompanionLinkView } from '../types';
-import { ConfirmDialog } from './ConfirmDialog';
 
 interface Props {
   pending: CompanionLinkView[];
@@ -46,6 +45,7 @@ export function WaitingView({ pending }: Props) {
       {end.error ? <InfoBanner tone="danger" message={tc(rpcErrorKey(end.error))} /> : null}
 
       <ConfirmDialog
+        danger
         visible={confirm != null}
         title={t('waiting.cancelTitle')}
         message={t('waiting.cancelMessage')}

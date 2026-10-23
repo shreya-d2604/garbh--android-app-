@@ -4,11 +4,19 @@ import { StyleSheet, View } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, Screen, SectionHeader, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  InfoBanner,
+  palette,
+  Screen,
+  SectionHeader,
+  spacing,
+} from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import { deskActions } from '@/features/reception/calendar';
 import { AppointmentCard } from '@/features/reception/components/AppointmentCard';
-import { ConfirmDialog } from '@/features/reception/components/ConfirmDialog';
 import { DoctorChips } from '@/features/reception/components/DoctorChips';
 import { QueryState } from '@/features/reception/components/QueryState';
 import { SlotPicker } from '@/features/reception/components/SlotPicker';

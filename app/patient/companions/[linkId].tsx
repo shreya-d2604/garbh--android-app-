@@ -3,10 +3,9 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, QueryBoundary, Screen } from '@/components';
+import { Button, Card, ConfirmDialog, InfoBanner, QueryBoundary, Screen } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import { ClosedState } from '@/features/companion/components/ClosedState';
-import { ConfirmDialog } from '@/features/companion/components/ConfirmDialog';
 import { PermissionToggles } from '@/features/companion/components/PermissionToggles';
 import {
   useDecideLink,
@@ -88,6 +87,7 @@ function CompanionDetail({ link }: { link: PatientLinkView }) {
         accessibilityLabel={t('detail.stop')}
       />
       <ConfirmDialog
+        danger
         visible={confirmStop}
         title={t('detail.stopTitle')}
         message={t('detail.stopMessage', { name })}

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   FormField,
   InfoBanner,
   ListItem,
@@ -14,7 +15,6 @@ import {
   SectionHeader,
   StatusChip,
 } from '@/components';
-import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { adminErrorKey } from '@/features/admin/errors';
 import { formatDay } from '@/features/admin/format';
 import { useCreateOwnRequest, useOwnRequests, useUpdateOwnProfile } from '@/features/admin/hooks';

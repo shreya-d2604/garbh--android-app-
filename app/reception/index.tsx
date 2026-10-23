@@ -7,20 +7,20 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   InfoBanner,
   ListItem,
+  palette,
   Screen,
   SectionHeader,
-  StatusChip,
-  palette,
   spacing,
+  StatusChip,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import type { DeskAppointment } from '@/features/reception/api';
 import { deskActions, summarizeDay } from '@/features/reception/calendar';
 import { AppointmentCard } from '@/features/reception/components/AppointmentCard';
-import { ConfirmDialog } from '@/features/reception/components/ConfirmDialog';
 import { QueryState } from '@/features/reception/components/QueryState';
 import { formatISODay } from '@/features/reception/format';
 import {

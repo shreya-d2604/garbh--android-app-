@@ -8,12 +8,13 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   InfoBanner,
   ListItem,
-  StatusChip,
   palette,
   radius,
   spacing,
+  StatusChip,
 } from '@/components';
 
 import {
@@ -24,7 +25,6 @@ import {
   type DoctorOption,
 } from '../../care-team';
 import { useAddBackup, useHandOver, useRemoveMember } from '../../hooks';
-import { ConfirmDialog } from '../ConfirmDialog';
 import { ErrorBanner } from '../ErrorBanner';
 
 export interface CareTeamPanelProps {

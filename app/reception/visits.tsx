@@ -4,11 +4,19 @@ import { StyleSheet, View } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, Screen, StatusChip, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  ConfirmDialog,
+  InfoBanner,
+  palette,
+  Screen,
+  spacing,
+  StatusChip,
+} from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import type { DueVisitRow } from '@/features/reception/api';
 import { localDateOf } from '@/features/reception/calendar';
-import { ConfirmDialog } from '@/features/reception/components/ConfirmDialog';
 import { QueryState } from '@/features/reception/components/QueryState';
 import { formatISODay } from '@/features/reception/format';
 import { useMarkVisitContacted, useRefetchOnFocus, useVisitsDue } from '@/features/reception/hooks';

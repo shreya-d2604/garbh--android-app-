@@ -3,30 +3,36 @@ import { StyleSheet } from 'react-native';
 import { Dialog, Portal, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, InfoBanner, palette } from '@/components';
+import { Button } from './Button';
+import { InfoBanner } from './InfoBanner';
+import { palette } from './theme';
 
 export interface ConfirmDialogProps {
   visible: boolean;
   title: string;
   message?: string;
   confirmLabel: string;
+  /** Defaults to the common "Cancel". */
+  cancelLabel?: string;
   /** Red confirm button for destructive actions. */
   danger?: boolean;
   loading?: boolean;
-  /** Fully namespaced i18n key of an error to show (adminErrorKey). */
+  /** Fully namespaced i18n key of an error to show inside the dialog. */
   errorKey?: string | null;
   confirmDisabled?: boolean;
   onConfirm: () => void;
   onDismiss: () => void;
+  /** Extra content (e.g. a reason field) under the message. */
   children?: ReactNode;
 }
 
-/** Confirmation dialog (docs/ui-kit.md: destructive actions need one). */
+/** Confirmation dialog (docs/ui-kit.md: destructive and patient-visible actions need one). */
 export function ConfirmDialog({
   visible,
   title,
   message,
   confirmLabel,
+  cancelLabel,
   danger,
   loading,
   errorKey,
@@ -47,7 +53,7 @@ export function ConfirmDialog({
         </Dialog.Content>
         <Dialog.Actions>
           <Button
-            label={t('actions.cancel')}
+            label={cancelLabel ?? t('actions.cancel')}
             variant="text"
             onPress={onDismiss}
             disabled={loading}

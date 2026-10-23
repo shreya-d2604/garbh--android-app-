@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   InfoBanner,
   QueryBoundary,
   Screen,
@@ -12,7 +13,6 @@ import {
   StatusChip,
 } from '@/components';
 import { logPatientView, type CareMember } from '@/features/admin/api';
-import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { DoctorPickerDialog } from '@/features/admin/components/DoctorPickerDialog';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';

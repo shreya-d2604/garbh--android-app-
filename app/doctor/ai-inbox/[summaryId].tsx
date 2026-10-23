@@ -7,14 +7,15 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
   ErrorState,
   InfoBanner,
   LoadingState,
-  Screen,
-  StatusChip,
   palette,
+  Screen,
   spacing,
+  StatusChip,
 } from '@/components';
 import { aiSummaryDocumentSchema, type AiSummaryDocument } from '@/domain/schemas/ai-summary';
 import type { SummaryDetail } from '@/features/doctor/api';
@@ -28,7 +29,6 @@ import {
 } from '@/features/doctor/ai-review';
 import { SummaryEditor } from '@/features/doctor/components/ai/SummaryEditor';
 import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
-import { ConfirmDialog } from '@/features/doctor/components/ConfirmDialog';
 import { ErrorBanner } from '@/features/doctor/components/ErrorBanner';
 import { LabValuesList } from '@/features/doctor/components/labs/LabValuesList';
 import { ReportPageView } from '@/features/doctor/components/ReportPageView';

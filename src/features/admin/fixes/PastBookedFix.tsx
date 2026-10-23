@@ -6,12 +6,12 @@ import {
   APPOINTMENT_STATUS_TONE,
   Button,
   Card,
+  ConfirmDialog,
   InfoBanner,
   QueryBoundary,
   StatusChip,
 } from '@/components';
 
-import { ConfirmDialog } from '../components/ConfirmDialog';
 import { KeyValue } from '../components/KeyValue';
 import { PregnancyLinks } from '../components/PregnancyLinks';
 import { adminErrorKey } from '../errors';

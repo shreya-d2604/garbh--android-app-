@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
   FormField,
   InfoBanner,
@@ -35,7 +36,6 @@ import {
   type VisitState,
 } from '../../visit-plan';
 import type { VisitRow } from '../../types';
-import { ConfirmDialog } from '../ConfirmDialog';
 import { ErrorBanner } from '../ErrorBanner';
 
 const TONE: Record<VisitState, Tone> = {
