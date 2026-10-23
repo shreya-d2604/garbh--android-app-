@@ -25,6 +25,9 @@ export const RPC_ERROR_CODES = [
   'MRN_TAKEN',
   'NOT_VERIFIED',
   'PRIMARY_REQUIRED',
+  'SOFT_DELETE_REQUIRED',
+  // staff accounts (admin-users Edge Function)
+  'EMAIL_TAKEN',
   // companions
   'INVALID_CODE',
   'CODE_EXPIRED',

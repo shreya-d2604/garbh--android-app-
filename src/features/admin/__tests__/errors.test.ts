@@ -37,6 +37,6 @@ describe('adminErrorKey', () => {
 
   it('maps rows still in use and Edge Function codes', () => {
     expect(adminErrorKey({ code: '23503' })).toBe('admin:errors.IN_USE');
-    expect(adminErrorKey({ message: 'EMAIL_TAKEN' })).toBe('admin:errors.EMAIL_TAKEN');
+    expect(adminErrorKey({ message: 'EMAIL_TAKEN' })).toBe('common:errors.EMAIL_TAKEN');
   });
 });

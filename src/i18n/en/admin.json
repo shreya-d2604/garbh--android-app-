@@ -20,7 +20,6 @@
   "errors": {
     "DUPLICATE": "That already exists. Please check the details and try again.",
     "IN_USE": "This is still used by other records. Switch it off instead of deleting it.",
-    "EMAIL_TAKEN": "This email already has an account.",
     "ACTIVE_PREGNANCY": "This patient already has an active pregnancy. Close it first."
   },
   "validation": {
@@ -176,6 +175,7 @@
     "restoreTitle": "Restore this patient?",
     "restoreMessage": "She will appear in lists again.",
     "hardDelete": "Delete permanently…",
+    "hardDeleteNeedsSoftDelete": "To delete a patient permanently, first delete her above. A deleted patient can then be deleted permanently.",
     "hardDeleteTitle": "Permanent delete",
     "hardDeleteWarning": "This removes the patient and all her pregnancies, visits, appointments, consultations, reports and summaries for good. It cannot be undone. Medical records normally have to be kept by law.",
     "hardDeleteFinalTitle": "Are you completely sure?",

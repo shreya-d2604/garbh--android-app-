@@ -174,11 +174,16 @@ function Body({ patient }: { patient: PatientRow }) {
             onPress={() => setDialog('delete')}
           />
         )}
-        <Button
-          label={t('patients.hardDelete')}
-          variant="text"
-          onPress={() => setDialog('hard1')}
-        />
+        {/* Permanent delete only after a soft delete (decision 2026-10-23; enforced in SQL). */}
+        {deleted ? (
+          <Button
+            label={t('patients.hardDelete')}
+            variant="text"
+            onPress={() => setDialog('hard1')}
+          />
+        ) : (
+          <InfoBanner tone="info" message={t('patients.hardDeleteNeedsSoftDelete')} />
+        )}
       </Card>
 
       <ReasonDialog

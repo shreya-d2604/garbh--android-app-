@@ -97,6 +97,8 @@
     "MRN_TAKEN": "This hospital number is already in use.",
     "NOT_VERIFIED": "Please verify your account at the hospital first.",
     "PRIMARY_REQUIRED": "Only the primary doctor can do this.",
+    "SOFT_DELETE_REQUIRED": "Remove the patient first. A removed patient can then be deleted permanently.",
+    "EMAIL_TAKEN": "This email already has an account.",
     "INVALID_CODE": "That code is not valid.",
     "CODE_EXPIRED": "That code has expired. Ask for a new one.",
     "RATE_LIMITED": "Too many attempts. Please try again later.",

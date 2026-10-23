@@ -110,7 +110,10 @@
     "removeFor": "Remove {{name}} from the care team",
     "removeTitle": "Remove from care team?",
     "removeMessage": "{{name}} will lose access to this chart straight away.",
-    "readOnly": "Only {{name}} can change the care team."
+    "readOnly": "Only {{name}} can change the care team.",
+    "leave": "Leave care team",
+    "leaveTitle": "Leave this care team?",
+    "leaveMessage": "You will lose access to this chart straight away. The primary doctor is told."
   },
   "timeline": {
     "emptyTitle": "Nothing yet",

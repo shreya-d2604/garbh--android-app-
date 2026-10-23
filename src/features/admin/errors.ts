@@ -17,6 +17,5 @@ export function adminErrorKey(error: ErrorLike | null | undefined): string {
   }
   if (error.message === 'INVITE_FAILED') return 'admin:users.inviteFailed';
   if (error.code === '23503') return 'admin:errors.IN_USE';
-  if (error.message === 'EMAIL_TAKEN') return 'admin:errors.EMAIL_TAKEN';
   return `common:${rpcErrorKey(error)}`;
 }
