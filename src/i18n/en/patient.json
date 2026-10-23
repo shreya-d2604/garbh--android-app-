@@ -137,7 +137,6 @@
     "chooseDay": "Choose a day",
     "chooseTime": "Choose a time",
     "loadingTimes": "Looking for free times…",
-    "dayLabel": "{{day}}, {{count}} free times",
     "noTimesTitle": "No free times right now",
     "noTimesMessage": "Try another doctor, or call reception and we will help you.",
     "noDoctorsTitle": "No doctors to choose from",

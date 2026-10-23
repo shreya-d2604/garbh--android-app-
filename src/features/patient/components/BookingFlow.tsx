@@ -1,7 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { format, parseISO } from 'date-fns';
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +13,7 @@ import {
   LoadingState,
   Screen,
   SectionHeader,
+  SlotPicker,
   StatusChip,
   palette,
   radius,
@@ -30,7 +30,7 @@ import {
   nextPlannedVisit,
   outsideVisitWindow,
 } from '../booking';
-import { formatDate, formatDayTime, formatTime } from '../dates';
+import { formatDate, formatDayTime } from '../dates';
 import {
   useAppointments,
   useBookAppointment,
@@ -160,7 +160,6 @@ function BookingForm({
 
   const slotsQuery = useSlots(state.doctorId, ctx.settings.max_advance_days);
   const days = useMemo(() => groupSlotsByDay(slotsQuery.data ?? []), [slotsQuery.data]);
-  const selectedDay = days.find((d) => d.key === state.dayKey);
   const chosenDoctor = doctors.find((d) => d.doctor.id === state.doctorId)?.doctor ?? null;
 
   // Start on the first day with free times, and recover when the chosen day disappears.
@@ -347,47 +346,14 @@ function BookingForm({
           <CallButton phone={phone} label={t('common.callReception')} />
         </View>
       ) : (
-        <>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.days}
-          >
-            {days.map((d) => (
-              <DayChip
-                key={d.key}
-                dayKey={d.key}
-                count={d.slots.length}
-                selected={d.key === state.dayKey}
-                onPress={() => dispatch({ type: 'selectDay', dayKey: d.key })}
-              />
-            ))}
-          </ScrollView>
-
-          <SectionHeader title={t('booking.chooseTime')} />
-          <View style={styles.times}>
-            {(selectedDay?.slots ?? []).map((s) => {
-              const selected = state.slot?.starts_at === s.starts_at;
-              return (
-                <Pressable
-                  key={s.starts_at}
-                  onPress={() => dispatch({ type: 'selectSlot', slot: s })}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected }}
-                  accessibilityLabel={formatTime(s.starts_at)}
-                  style={[styles.time, selected && styles.timeSelected]}
-                >
-                  <Text
-                    variant="titleSmall"
-                    style={[styles.timeText, selected && styles.timeTextSelected]}
-                  >
-                    {formatTime(s.starts_at)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        </>
+        <SlotPicker
+          days={days.map((d) => ({ date: d.key, slots: d.slots }))}
+          selectedDay={state.dayKey}
+          onSelectDay={(dayKey) => dispatch({ type: 'selectDay', dayKey })}
+          selectedSlot={state.slot?.starts_at ?? null}
+          onSelectSlot={(slot) => dispatch({ type: 'selectSlot', slot })}
+          timesHeader={<SectionHeader title={t('booking.chooseTime')} />}
+        />
       )}
 
       {warnOutside && visit?.due_from && visit.due_to ? (
@@ -449,40 +415,6 @@ function DoctorOption({
   );
 }
 
-function DayChip({
-  dayKey,
-  count,
-  selected,
-  onPress,
-}: {
-  dayKey: string;
-  count: number;
-  selected: boolean;
-  onPress: () => void;
-}) {
-  const { t } = useTranslation('patient');
-  const date = parseISO(dayKey);
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      accessibilityLabel={t('booking.dayLabel', { day: format(date, 'EEEE d MMMM'), count })}
-      style={[styles.day, selected && styles.daySelected]}
-    >
-      <Text variant="labelMedium" style={[styles.dayText, selected && styles.dayTextSelected]}>
-        {format(date, 'EEE')}
-      </Text>
-      <Text variant="headlineSmall" style={[styles.dayText, selected && styles.dayTextSelected]}>
-        {format(date, 'd')}
-      </Text>
-      <Text variant="labelSmall" style={[styles.dayText, selected && styles.dayTextSelected]}>
-        {format(date, 'MMM')}
-      </Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   stack: { gap: spacing.sm },
   heading: { color: palette.maroon, fontWeight: '700' },
@@ -502,33 +434,4 @@ const styles = StyleSheet.create({
   },
   doctorSelected: { borderColor: palette.rose, backgroundColor: palette.roseMist },
   doctorTexts: { flex: 1, gap: 2 },
-  days: { gap: spacing.sm, paddingVertical: spacing.xs },
-  day: {
-    width: 68,
-    minHeight: 88,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: palette.outline,
-    backgroundColor: palette.white,
-  },
-  daySelected: { backgroundColor: palette.rose, borderColor: palette.rose },
-  dayText: { color: palette.maroon },
-  dayTextSelected: { color: palette.white },
-  times: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  time: {
-    minWidth: 96,
-    minHeight: 48,
-    paddingHorizontal: spacing.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: palette.rose,
-    backgroundColor: palette.white,
-  },
-  timeSelected: { backgroundColor: palette.rose },
-  timeText: { color: palette.rose, fontWeight: '600' },
-  timeTextSelected: { color: palette.white },
 });

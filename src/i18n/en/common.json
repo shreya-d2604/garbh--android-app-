@@ -10,6 +10,9 @@
     "back": "Back",
     "skip": "Skip for now"
   },
+  "slots": {
+    "dayLabel": "{{day}}, {{count}} free times"
+  },
   "states": {
     "loading": "Loading…",
     "errorTitle": "Something went wrong",

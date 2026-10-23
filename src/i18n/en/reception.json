@@ -83,7 +83,6 @@
     "lookFurther": "Show later dates",
     "none": "No free times in the next {{days}} days",
     "noneHint": "Try another doctor, or look further ahead.",
-    "dayLabel": "{{day}}, {{count}} free times",
     "count_one": "{{count}} free time",
     "count_other": "{{count}} free times"
   },

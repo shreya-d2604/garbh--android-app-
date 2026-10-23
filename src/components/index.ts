@@ -16,6 +16,7 @@ export {
 } from './QueryBoundary';
 export { Screen, type ScreenProps } from './Screen';
 export { SectionHeader, type SectionHeaderProps } from './SectionHeader';
+export { type SlotDay, SlotPicker, type SlotPickerProps } from './SlotPicker';
 export { EmptyState, type EmptyStateProps, ErrorState, LoadingState } from './States';
 export { APPOINTMENT_STATUS_TONE, StatusChip, type StatusChipProps } from './StatusChip';
 export { palette, paperTheme, radius, spacing, toneColors, type Tone } from './theme';

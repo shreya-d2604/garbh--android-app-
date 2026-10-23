@@ -1,13 +1,19 @@
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Chip, Text } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, EmptyState, ErrorState, LoadingState, palette, spacing } from '@/components';
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  palette,
+  SlotPicker as SlotGrid,
+} from '@/components';
 import { addDays, todayISO } from '@/domain/pregnancy-math';
 
 import { groupSlotsByDay } from '../calendar';
-import { formatISODay, formatTime } from '../format';
 import { useFreeSlots } from '../hooks';
 
 const FIRST_HORIZON_DAYS = 14;
@@ -66,60 +72,24 @@ export function SlotPicker({ doctorId, selected, onSelect }: SlotPickerProps) {
   }
 
   return (
-    <View style={styles.box}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.row}
-      >
-        {groups.map((g) => (
-          <Chip
-            key={g.date}
-            mode="outlined"
-            selected={g.date === current?.date}
-            onPress={() => setDay(g.date)}
-            style={[styles.chip, g.date === current?.date && styles.selected]}
-            accessibilityLabel={t('slots.dayLabel', {
-              day: formatISODay(g.date),
-              count: g.slots.length,
-            })}
-          >
-            {formatISODay(g.date)}
-          </Chip>
-        ))}
-      </ScrollView>
-      <Text variant="bodySmall" style={styles.muted}>
-        {t('slots.count', { count: current?.slots.length ?? 0 })}
-      </Text>
-      <View style={styles.times}>
-        {current?.slots.map((s) => (
-          <Chip
-            key={s.starts_at}
-            mode="outlined"
-            selected={s.starts_at === selected}
-            onPress={() => onSelect(s.starts_at)}
-            style={[styles.chip, s.starts_at === selected && styles.selected]}
-            accessibilityLabel={formatTime(s.starts_at)}
-          >
-            {formatTime(s.starts_at)}
-          </Chip>
-        ))}
-      </View>
+    <View>
+      <SlotGrid
+        days={groups}
+        selectedDay={current?.date ?? null}
+        onSelectDay={setDay}
+        selectedSlot={selected}
+        onSelectSlot={(s) => onSelect(s.starts_at)}
+        timesHeader={
+          <Text variant="bodySmall" style={styles.muted}>
+            {t('slots.count', { count: current?.slots.length ?? 0 })}
+          </Text>
+        }
+      />
       {more}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  box: { gap: spacing.sm },
-  row: { gap: spacing.sm, paddingVertical: spacing.xs },
-  times: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip: {
-    minHeight: 40,
-    justifyContent: 'center',
-    borderColor: palette.outline,
-    backgroundColor: palette.white,
-  },
-  selected: { backgroundColor: palette.roseSoft, borderColor: palette.rose },
   muted: { color: palette.inkMuted },
 });
