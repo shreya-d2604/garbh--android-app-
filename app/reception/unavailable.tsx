@@ -10,7 +10,10 @@ import { QueryState } from '@/features/reception/components/QueryState';
 import { formatDayTime } from '@/features/reception/format';
 import { useDoctors, useDoctorUnavailable, useRefetchOnFocus } from '@/features/reception/hooks';
 
-/** Doctor unavailable (PLAN.md §7.5 #6): appointments that fall inside a doctor's time off, to rebook. */
+/**
+ * Doctor unavailable (PLAN.md §7.5 #6): appointments to rebook because they fall inside the
+ * doctor's time off or the doctor is no longer on the patient's care team.
+ */
 export default function DoctorUnavailable() {
   const { t } = useTranslation('reception');
   const router = useRouter();
@@ -39,19 +42,26 @@ export default function DoctorUnavailable() {
         emptyTitle={t('unavailable.emptyTitle')}
         emptyMessage={t('unavailable.emptyMessage')}
       >
-        {(affected.data ?? []).map(({ appointment, timeOff }) => (
+        {(affected.data ?? []).map(({ appointment, offCareTeam, timeOff }) => (
           <AppointmentCard
             key={appointment.id}
             appointment={appointment}
             doctorName={names.get(appointment.doctor_id)}
           >
-            <Text variant="bodySmall" style={styles.reason}>
-              {t('unavailable.offUntil', {
-                doctor: names.get(appointment.doctor_id) ?? '',
-                until: formatDayTime(timeOff.ends_at),
-              })}
-              {timeOff.reason ? ` (${timeOff.reason})` : ''}
-            </Text>
+            {offCareTeam ? (
+              <Text variant="bodySmall" style={styles.reason}>
+                {t('unavailable.offCareTeam', { doctor: names.get(appointment.doctor_id) ?? '' })}
+              </Text>
+            ) : null}
+            {timeOff ? (
+              <Text variant="bodySmall" style={styles.reason}>
+                {t('unavailable.offUntil', {
+                  doctor: names.get(appointment.doctor_id) ?? '',
+                  until: formatDayTime(timeOff.ends_at),
+                })}
+                {timeOff.reason ? ` (${timeOff.reason})` : ''}
+              </Text>
+            ) : null}
             <Button
               label={t('unavailable.rebook')}
               variant="secondary"

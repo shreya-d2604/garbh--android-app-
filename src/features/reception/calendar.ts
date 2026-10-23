@@ -142,34 +142,57 @@ export function summarizeDay(appointments: readonly { status: ApptStatus }[]): D
 
 // ---------------------------------------------------------------- doctor unavailable
 
+/** One row of `appointments_needing_rebook()` (server-side: time-off clash and/or off care team). */
+export interface RebookRow {
+  appointment_id: string;
+  off_care_team: boolean;
+  time_off_id: string | null;
+  time_off_starts_at: string | null;
+  time_off_ends_at: string | null;
+  time_off_reason: string | null;
+}
+
 export interface TimeOffRow {
   id: string;
-  doctor_id: string;
   starts_at: string;
   ends_at: string;
   reason: string | null;
 }
 
-export interface AffectedAppointment<A extends TimedAppointment & { doctor_id: string }> {
+export interface AffectedAppointment<A extends { id: string }> {
   appointment: A;
-  timeOff: TimeOffRow;
+  /** The doctor is no longer on this pregnancy's active care team. */
+  offCareTeam: boolean;
+  /** The first time-off window of the doctor that the appointment overlaps, if any. */
+  timeOff: TimeOffRow | null;
 }
 
 /**
- * Active (booked / confirmed) appointments that overlap their doctor's time off, in time order.
- * An appointment is listed once, with the first time-off window it overlaps.
+ * Joins the server's worklist rows with the appointment rows, keeping the server's order and
+ * dropping rows whose appointment could not be loaded (e.g. changed in the meantime).
  */
-export function appointmentsAffectedByTimeOff<A extends TimedAppointment & { doctor_id: string }>(
+export function mergeRebookRows<A extends { id: string }>(
+  rows: readonly RebookRow[],
   appointments: readonly A[],
-  timeOff: readonly TimeOffRow[],
 ): AffectedAppointment<A>[] {
+  const byId = new Map(appointments.map((a) => [a.id, a]));
   const result: AffectedAppointment<A>[] = [];
-  for (const a of appointments) {
-    if (a.status !== 'booked' && a.status !== 'confirmed') continue;
-    const hit = timeOff
-      .filter((t) => t.doctor_id === a.doctor_id && overlaps(a, t))
-      .sort((x, y) => ms(x.starts_at) - ms(y.starts_at))[0];
-    if (hit) result.push({ appointment: a, timeOff: hit });
+  for (const r of rows) {
+    const appointment = byId.get(r.appointment_id);
+    if (!appointment) continue;
+    result.push({
+      appointment,
+      offCareTeam: r.off_care_team,
+      timeOff:
+        r.time_off_id && r.time_off_starts_at && r.time_off_ends_at
+          ? {
+              id: r.time_off_id,
+              starts_at: r.time_off_starts_at,
+              ends_at: r.time_off_ends_at,
+              reason: r.time_off_reason,
+            }
+          : null,
+    });
   }
-  return result.sort((x, y) => ms(x.appointment.starts_at) - ms(y.appointment.starts_at));
+  return result;
 }

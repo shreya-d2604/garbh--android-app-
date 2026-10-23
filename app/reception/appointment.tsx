@@ -64,7 +64,9 @@ export default function AppointmentScreen() {
   const teamDoctors = (doctors.data ?? []).filter((d) =>
     context.data?.careTeam.some((c) => c.doctor_id === d.id),
   );
-  const targetDoctor = newDoctor ?? a?.doctor_id;
+  // A doctor who left the care team cannot take the new slot: preselect a care-team doctor.
+  const currentOnTeam = teamDoctors.length === 0 || teamDoctors.some((d) => d.id === a?.doctor_id);
+  const targetDoctor = newDoctor ?? (currentOnTeam ? a?.doctor_id : teamDoctors[0]?.id);
   const actions = a ? deskActions(a.status) : [];
   const fail = (e: unknown) => setError(rpcErrorKey(e as { message?: string; code?: string }));
 

@@ -7,7 +7,7 @@ import { useCallback, useMemo } from 'react';
 import { todayISO, type ISODate } from '@/domain/pregnancy-math';
 
 import * as api from './api';
-import { appointmentsAffectedByTimeOff } from './calendar';
+import { mergeRebookRows } from './calendar';
 import type { DuplicateInput } from './duplicates';
 import { sortVerifyQueue } from './verify-queue';
 import { DUE_WINDOW_DAYS, selectVisitsDue } from './visits-due';
@@ -120,13 +120,10 @@ export function useVisitsDue() {
 export function useDoctorUnavailable() {
   const query = useQuery({
     queryKey: [...receptionKey, 'unavailable'],
-    queryFn: () => api.fetchTimeOffImpact(new Date().toISOString()),
+    queryFn: api.fetchRebookWorklist,
   });
   const data = useMemo(
-    () =>
-      query.data
-        ? appointmentsAffectedByTimeOff(query.data.appointments, query.data.timeOff)
-        : undefined,
+    () => (query.data ? mergeRebookRows(query.data.rows, query.data.appointments) : undefined),
     [query.data],
   );
   return { ...query, data };

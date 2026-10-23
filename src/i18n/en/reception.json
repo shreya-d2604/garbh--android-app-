@@ -200,10 +200,11 @@
   },
   "unavailable": {
     "title": "Doctor unavailable",
-    "subtitle": "Appointments during a doctor's time off",
+    "subtitle": "Appointments during a doctor's time off or with a doctor who left the care team",
     "emptyTitle": "No appointments affected",
-    "emptyMessage": "When a doctor adds time off over booked appointments, they will show up here.",
+    "emptyMessage": "When a doctor adds time off over booked appointments, or leaves a patient's care team, those appointments will show up here.",
     "offUntil": "{{doctor}} is unavailable until {{until}}",
+    "offCareTeam": "{{doctor}} is no longer on this patient's care team",
     "rebook": "Rebook"
   }
 }

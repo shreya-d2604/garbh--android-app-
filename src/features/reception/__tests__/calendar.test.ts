@@ -1,15 +1,15 @@
 import {
-  appointmentsAffectedByTimeOff,
   buildDayTimeline,
   deskActions,
   groupSlotsByDay,
   holdsSlot,
   localDayRange,
+  mergeRebookRows,
   summarizeDay,
   weekDates,
   weekdayIndex,
   type ApptStatus,
-  type TimeOffRow,
+  type RebookRow,
 } from '../calendar';
 
 const slot = (start: string, end: string) => ({ starts_at: start, ends_at: end });
@@ -167,60 +167,58 @@ describe("today's desk", () => {
   });
 });
 
-describe('appointmentsAffectedByTimeOff', () => {
-  const off: TimeOffRow[] = [
-    {
-      id: 't1',
-      doctor_id: 'd1',
-      starts_at: '2030-01-07T04:00:00Z',
-      ends_at: '2030-01-07T06:00:00Z',
-      reason: 'Conference',
-    },
-    {
-      id: 't2',
-      doctor_id: 'd2',
-      starts_at: '2030-01-08T04:00:00Z',
-      ends_at: '2030-01-08T06:00:00Z',
-      reason: null,
-    },
-  ];
+describe('mergeRebookRows', () => {
+  const row = (id: string, extra: Partial<RebookRow> = {}): RebookRow => ({
+    appointment_id: id,
+    off_care_team: false,
+    time_off_id: null,
+    time_off_starts_at: null,
+    time_off_ends_at: null,
+    time_off_reason: null,
+    ...extra,
+  });
 
-  it("lists active appointments that overlap their own doctor's time off, in time order", () => {
-    const result = appointmentsAffectedByTimeOff(
+  it("keeps the server's order and both reasons", () => {
+    const result = mergeRebookRows(
       [
-        appt('late', '2030-01-07T05:30:00Z', '2030-01-07T05:45:00Z'),
-        appt('early', '2030-01-07T03:50:00Z', '2030-01-07T04:05:00Z', 'confirmed'),
-        appt('other-doctor', '2030-01-07T05:00:00Z', '2030-01-07T05:15:00Z', 'booked', 'd2'),
-        appt('before', '2030-01-07T03:30:00Z', '2030-01-07T03:45:00Z'),
-        appt('touching', '2030-01-07T06:00:00Z', '2030-01-07T06:15:00Z'),
+        row('a', {
+          time_off_id: 't1',
+          time_off_starts_at: '2030-01-07T04:00:00Z',
+          time_off_ends_at: '2030-01-07T06:00:00Z',
+          time_off_reason: 'Conference',
+        }),
+        row('b', { off_care_team: true }),
       ],
-      off,
+      [
+        appt('b', '2030-01-08T05:00:00Z', '2030-01-08T05:15:00Z'),
+        appt('a', '2030-01-07T05:00:00Z', '2030-01-07T05:15:00Z'),
+      ],
     );
-    expect(result.map((r) => r.appointment.id)).toEqual(['early', 'late']);
-    expect(result[0]?.timeOff.reason).toBe('Conference');
+    expect(result.map((r) => r.appointment.id)).toEqual(['a', 'b']);
+    expect(result[0]).toMatchObject({
+      offCareTeam: false,
+      timeOff: { id: 't1', reason: 'Conference' },
+    });
+    expect(result[1]).toMatchObject({ offCareTeam: true, timeOff: null });
   });
 
-  it('ignores cancelled, no-show, checked-in and completed appointments', () => {
-    const statuses: ApptStatus[] = [
-      'cancelled',
-      'no_show',
-      'checked_in',
-      'completed',
-      'in_consultation',
-    ];
-    const result = appointmentsAffectedByTimeOff(
-      statuses.map((s, i) => appt(`a${i}`, '2030-01-07T05:00:00Z', '2030-01-07T05:15:00Z', s)),
-      off,
-    );
-    expect(result).toEqual([]);
-  });
-
-  it('lists an appointment once even when two time-off windows overlap it', () => {
-    const result = appointmentsAffectedByTimeOff(
+  it('lists an appointment that is both off the care team and in time off with both flags', () => {
+    const [only] = mergeRebookRows(
+      [
+        row('a', {
+          off_care_team: true,
+          time_off_id: 't1',
+          time_off_starts_at: '2030-01-07T04:00:00Z',
+          time_off_ends_at: '2030-01-07T06:00:00Z',
+        }),
+      ],
       [appt('a', '2030-01-07T05:00:00Z', '2030-01-07T05:15:00Z')],
-      [off[0]!, { ...off[0]!, id: 't3', starts_at: '2030-01-07T04:30:00Z', reason: 'Second' }],
     );
-    expect(result).toHaveLength(1);
-    expect(result[0]?.timeOff.id).toBe('t1');
+    expect(only?.offCareTeam).toBe(true);
+    expect(only?.timeOff?.id).toBe('t1');
+  });
+
+  it('drops rows whose appointment could not be loaded', () => {
+    expect(mergeRebookRows([row('gone', { off_care_team: true })], [])).toEqual([]);
   });
 });

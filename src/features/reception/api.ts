@@ -5,7 +5,7 @@ import { addDays, type ISODate } from '@/domain/pregnancy-math';
 import { supabase } from '@/lib/supabase';
 import type { Database, Json } from '@/types/database';
 
-import { localDayRange, type ApptStatus, type SlotRow, type TimeOffRow } from './calendar';
+import { localDayRange, type ApptStatus, type RebookRow, type SlotRow } from './calendar';
 import {
   buildDuplicateOrFilter,
   buildSearchOrFilter,
@@ -260,39 +260,27 @@ export async function fetchDueVisits(today: ISODate, windowDays: number): Promis
   }));
 }
 
-/** Upcoming time off of all doctors plus the active appointments that fall inside it. */
-export async function fetchTimeOffImpact(nowIso: string): Promise<{
-  timeOff: TimeOffRow[];
+/**
+ * The "Doctor unavailable" worklist: future active appointments that clash with the doctor's
+ * time off or whose doctor left the care team (server-side, receptionist/admin only), joined
+ * with the appointment rows.
+ */
+export async function fetchRebookWorklist(): Promise<{
+  rows: RebookRow[];
   appointments: DeskAppointment[];
 }> {
-  const timeOff = unwrap(
-    await supabase
-      .from('doctor_time_off')
-      .select('id, doctor_id, starts_at, ends_at, reason')
-      .gt('ends_at', nowIso)
-      .order('starts_at')
-      .limit(200),
-  );
-  if (timeOff.length === 0) return { timeOff, appointments: [] };
-
-  const doctors = [...new Set(timeOff.map((t) => t.doctor_id))];
-  const first = timeOff.reduce(
-    (m, t) => (t.starts_at < m ? t.starts_at : m),
-    timeOff[0]!.starts_at,
-  );
-  const last = timeOff.reduce((m, t) => (t.ends_at > m ? t.ends_at : m), timeOff[0]!.ends_at);
+  const rows = unwrap(await supabase.rpc('appointments_needing_rebook')) as RebookRow[];
+  if (rows.length === 0) return { rows, appointments: [] };
   const appointments = unwrap(
     await supabase
       .from('appointments')
       .select(APPT_SELECT)
-      .in('doctor_id', doctors)
-      .in('status', ['booked', 'confirmed'])
-      .lt('starts_at', last)
-      .gt('ends_at', first < nowIso ? nowIso : first)
-      .order('starts_at')
-      .limit(500),
+      .in(
+        'id',
+        rows.map((r) => r.appointment_id),
+      ),
   ) as unknown as DeskAppointment[];
-  return { timeOff, appointments };
+  return { rows, appointments };
 }
 
 /** Existing patients that look like the person being registered (phone, email, or name + date of birth). */
