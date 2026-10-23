@@ -2041,6 +2041,17 @@ export type Database = {
         Args: { p_pregnancy: string; p_schedule: string };
         Returns: undefined;
       };
+      appointments_needing_rebook: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          appointment_id: string;
+          off_care_team: boolean;
+          time_off_ends_at: string;
+          time_off_id: string;
+          time_off_reason: string;
+          time_off_starts_at: string;
+        }[];
+      };
       auth_role: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['user_role'];
