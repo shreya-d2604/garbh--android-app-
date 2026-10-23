@@ -197,7 +197,8 @@ password_requirements = ""
 
 [auth.rate_limit]
 # Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+# Local only: the role walkthrough and manual testing send many OTP emails (Inbucket).
+email_sent = 100
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
@@ -421,3 +422,26 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# Edge Functions (PLAN.md §8.2, §8.5, §7.6). The app calls these with the user's JWT; each
+# function re-checks the caller's role / care team in the database.
+[functions.admin-users]
+verify_jwt = true
+
+[functions.export-patient-data]
+verify_jwt = true
+
+[functions.process-report]
+verify_jwt = true
+
+[functions.summarize-consultation]
+verify_jwt = true
+
+[functions.summarize-pregnancy]
+verify_jwt = true
+
+# Called by Postgres (pg_net) with the Vault secret `push_service_key` as bearer. The handler
+# compares it with SUPABASE_SERVICE_ROLE_KEY in constant time, so the gateway check is off
+# (it would otherwise depend on the key format).
+[functions.send-push]
+verify_jwt = false
