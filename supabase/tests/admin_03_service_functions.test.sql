@@ -2,7 +2,7 @@
 -- nobody but the service role can call them, and they re-check the acting admin (PLAN.md §7.6, §12).
 begin;
 \ir helpers/setup.psql
-select plan(58);
+select plan(59);
 
 create temp table u as select
   tests.create_user('admin@s.test', 'admin')        as admin,
@@ -52,14 +52,15 @@ select throws_ok(format($$ select public.admin_staff_apply(%L, gen_random_uuid()
 select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"full_name":"X"}') $$, (select admin from u), (select pat from u)), 'INVALID_INPUT', 'patients are not managed here');
 select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{}', 'bogus') $$, (select admin from u), (select doc from u)), 'INVALID_INPUT', 'unknown audit event');
 
--- GoTrue writes app_metadata after the INSERT the auth trigger sees, so a just-created account has no role yet
+-- GoTrue writes app_metadata after the INSERT; the head's on_auth_user_app_role_updated trigger
+-- then sets the profile role. admin_staff_apply never assigns a role to a role-less account.
 select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"full_name":"Fresh"}', 'staff_update') $$, (select admin from u), (select fresh from u)), 'INVALID_INPUT', 'a role-less account cannot be edited as staff');
-select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"full_name":"Fresh"}', 'staff_create') $$, (select admin from u), (select fresh from u)), 'INVALID_INPUT', 'a new account needs a role');
-select lives_ok(format($$ select public.admin_staff_apply(%L, %L, '{"role":"receptionist","full_name":"Fresh Desk"}', 'staff_create') $$, (select admin from u), (select fresh from u)), 'staff_create sets the role of a brand-new account');
-select is((select role::text from public.profiles where id = (select fresh from u)), 'receptionist', 'the new account is a receptionist');
+select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"role":"receptionist","full_name":"Fresh"}', 'staff_create') $$, (select admin from u), (select fresh from u)), 'INVALID_INPUT', 'staff_create does not give a role-less account a role');
 select set_config('role', 'postgres', true);
-update public.profiles set created_at = now() - interval '1 hour' where id = (select stale from u);
+update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role":"receptionist"}' where id = (select fresh from u);
 select set_config('role', 'service_role', true);
+select lives_ok(format($$ select public.admin_staff_apply(%L, %L, '{"role":"receptionist","full_name":"Fresh Desk"}', 'staff_create') $$, (select admin from u), (select fresh from u)), 'staff_create works once app_metadata.role reached the profile');
+select is((select role::text from public.profiles where id = (select fresh from u)), 'receptionist', 'the app_metadata role was copied to the profile by the auth trigger');
 select throws_ok(format($$ select public.admin_staff_apply(%L, %L, '{"role":"doctor"}', 'staff_create') $$, (select admin from u), (select stale from u)), 'INVALID_INPUT', 'an old role-less account cannot be turned into staff');
 
 select lives_ok(format($$ select public.admin_staff_apply(%L, %L,
@@ -132,7 +133,8 @@ grant select on ex to public;
 select is((select j -> 'patient' ->> 'full_name' from ex), 'Deleted patient', 'export: the patient row');
 select is((select jsonb_array_length(j -> 'pregnancies') from ex), 1, 'export: pregnancies');
 select is((select jsonb_array_length(j -> 'consultations') from ex), 1, 'export: consultations');
-select is((select jsonb_array_length(j -> 'consultation_private_notes') from ex), 1, 'export: includes the doctor''s private notes');
+select ok(not (select j ? 'consultation_private_notes' from ex), 'export: excludes the doctor''s private notes (decision 2026-10-23)');
+select ok(position('"private"' in (select j::text from ex)) = 0, 'export: the private note text appears nowhere');
 select ok((select j ? 'access_log' from ex), 'export: includes who accessed the record');
 select is((select count(*)::int from public.audit_log where action = 'export' and actor_id = (select admin from u) and patient_id = (select patient from ids)), 1, 'export is audit-logged (action = export)');
 select is((select j -> 'patient' from public.admin_export_patient_data((select admin from u), null, (select comp from u)) as t(j)), 'null'::jsonb, 'export by user id of a companion: no patient row');

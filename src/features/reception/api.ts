@@ -236,7 +236,7 @@ export async function fetchDueVisits(today: ISODate, windowDays: number): Promis
     await supabase
       .from('visits')
       .select(
-        'id, seq, title, status, due_from, due_to, appointment_id, contacted_at, contact_note, pregnancy_id, pregnancies!inner(status, patients!inner(id, full_name, phone, mrn, deleted_at))',
+        'id, seq, title, status, due_from, due_to, appointment_id, pregnancy_id, visit_contacts(contacted_at, contact_note), pregnancies!inner(status, patients!inner(id, full_name, phone, mrn, deleted_at))',
       )
       .in('status', ['planned', 'missed'])
       .is('appointment_id', null)
@@ -245,12 +245,19 @@ export async function fetchDueVisits(today: ISODate, windowDays: number): Promis
       .is('pregnancies.patients.deleted_at', null)
       .order('due_from')
       .limit(300),
-  ) as unknown as (Omit<DueVisitRow, 'patient'> & {
+  ) as unknown as (Omit<DueVisitRow, 'patient' | 'contacted_at' | 'contact_note'> & {
+    // Staff-only table (one row per visit): the call note is never readable by patients.
+    visit_contacts: { contacted_at: string; contact_note: string | null } | null;
     pregnancies: {
       patients: { id: string; full_name: string; phone: string | null; mrn: string | null };
     };
   })[];
-  return rows.map(({ pregnancies, ...visit }) => ({ ...visit, patient: pregnancies.patients }));
+  return rows.map(({ pregnancies, visit_contacts, ...visit }) => ({
+    ...visit,
+    contacted_at: visit_contacts?.contacted_at ?? null,
+    contact_note: visit_contacts?.contact_note ?? null,
+    patient: pregnancies.patients,
+  }));
 }
 
 /** Upcoming time off of all doctors plus the active appointments that fall inside it. */

@@ -215,7 +215,7 @@ select lives_ok($$ select public.mark_visit_contacted((select v from vis), 'Call
 select throws_ok($$ select public.mark_visit_contacted(gen_random_uuid(), 'x') $$, 'NOT_FOUND', 'unknown visit');
 select throws_ok($$ select public.mark_visit_contacted((select v from vis), repeat('x', 501)) $$, 'INVALID_INPUT', 'a long note is rejected');
 select tests.logout();
-select ok((select contacted_at is not null and contact_note = 'Called, will come next week' from public.visits where id = (select v from vis)), 'contacted_at and the note are stored');
+select ok((select contacted_at is not null and contact_note = 'Called, will come next week' from public.visit_contacts where visit_id = (select v from vis)), 'contacted_at and the note are stored (staff-only visit_contacts)');
 select tests.login_as((select vp from u));
 select throws_ok($$ select public.mark_visit_contacted((select v from vis), 'x') $$, 'NOT_ALLOWED', 'patients cannot mark visits contacted');
 select throws_ok($$ select public.next_mrn() $$, 'NOT_ALLOWED', 'patients cannot ask for MRN suggestions');

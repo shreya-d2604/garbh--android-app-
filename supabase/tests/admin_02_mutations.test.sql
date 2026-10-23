@@ -2,7 +2,7 @@
 -- configuration audit (PLAN.md §7.6 #3, #5, #7).
 begin;
 \ir helpers/setup.psql
-select plan(76);
+select plan(78);
 
 create temp table u as select
   tests.create_user('admin@m.test', 'admin')        as admin,
@@ -127,6 +127,8 @@ insert into public.consultations (pregnancy_id, doctor_id, advice) values ((sele
 select tests.login_as((select admin from u));
 select throws_ok(format($$ select public.admin_hard_delete_patient(%L, 'oops') $$, (select patient_h from ids)), 'INVALID_INPUT', 'hard delete needs a reason of 5+ characters');
 select throws_ok($$ select public.admin_hard_delete_patient(gen_random_uuid(), 'a real reason') $$, 'NOT_FOUND', 'hard delete of an unknown patient');
+select throws_ok(format($$ select public.admin_hard_delete_patient(%L, 'Entered in error') $$, (select patient_h from ids)), 'SOFT_DELETE_REQUIRED', 'hard delete requires a soft delete first');
+select lives_ok(format($$ select public.admin_set_patient_deleted(%L, true, 'Duplicate chart') $$, (select patient_h from ids)), 'admin soft-deletes before the permanent delete');
 create temp table hd as select public.admin_hard_delete_patient((select patient_h from ids), 'Entered in error, duplicate chart') as paths;
 grant select on hd to authenticated;
 select is((select paths from hd), array['p/q/r/one.pdf', 'p/q/r/two.pdf'], 'hard delete returns the storage paths to remove');

@@ -12,6 +12,10 @@ begin;
 \ir helpers/backend.psql
 select no_plan();
 select tests.build_world();
+-- Reception call notes (staff only, head migration 20261030000100): one on a visit of each pregnancy.
+insert into public.visit_contacts (visit_id, contact_note)
+  select distinct on (v.pregnancy_id) v.id, 'called' from public.visits v
+  where v.pregnancy_id in ((select p1 from w), (select p2 from w)) order by v.pregnancy_id, v.seq;
 
 create temp table roles (pos int primary key, key text);
 insert into roles values
@@ -30,16 +34,18 @@ insert into matrix values
                      array[4,3,3,1,0,4, 3,1, 3,0,3,0,0,0,0, 0,0, 1, 0]),
  ('visits',          'pregnancy_id in ((select p1 from w),(select p2 from w))',
                      array[3,2,2,1,0,3, 2,1, 2,0,0,2,0,0,0, 0,0, 1, 0]),
+ ('visit_contacts',  'visit_id in (select id from public.visits where pregnancy_id in ((select p1 from w),(select p2 from w)))',
+                     array[2,1,1,1,0,2, 0,0, 0,0,0,0,0,0,0, 0,0, 0, 0]),
  ('appointments',    'pregnancy_id in ((select p1 from w),(select p2 from w))',
                      array[3,2,2,1,0,3, 2,1, 2,0,2,0,0,0,0, 0,0, 1, 0]),
  ('consultations',   'pregnancy_id in ((select p1 from w),(select p2 from w))',
                      array[3,2,2,1,0,0, 1,1, 1,0,0,0,1,0,0, 0,0, 1, 0]),
  ('consultation_private_notes', 'pregnancy_id in ((select p1 from w),(select p2 from w))',
                      array[3,2,2,1,0,0, 0,0, 0,0,0,0,0,0,0, 0,0, 0, 0]),
- -- c_rx: 0 today (see the TODO test below): the policy's subselect on consultations runs under
- -- the companion's own RLS, so `prescriptions` WITHOUT `summaries` sees nothing. Intended: 1.
+ -- c_rx: a companion with `prescriptions` but not `summaries` sees the published items
+ -- (head fix 20261030000100: consultation_is_published() is evaluated as the owner).
  ('prescription_items', 'pregnancy_id in ((select p1 from w),(select p2 from w))',
-                     array[3,2,2,1,0,0, 1,1, 1,0,0,0,0,0,0, 0,0, 1, 0]),
+                     array[3,2,2,1,0,0, 1,1, 1,0,0,0,0,0,1, 0,0, 1, 0]),
  ('reports',         'pregnancy_id in ((select p1 from w),(select p2 from w))',
                      array[3,2,2,1,0,0, 1,1, 1,0,0,0,0,1,0, 0,0, 1, 0]),
  ('report_files',    'report_id in ((select r1 from w),(select r1del from w),(select r2 from w))',
@@ -161,15 +167,11 @@ select is(tests.visible((select pat1 from w), 'select 1 from public.appointments
 update public.profiles set is_active = false where id = (select doc_a from w);
 select is(tests.visible((select doc_a from w), 'select 1 from public.consultations'), 0::bigint, 'deactivated doctor sees nothing');
 
--- KNOWN GAPS in the foundation policies (reported to the head; these flip to passing once fixed).
-select todo_start('prescription_items_published_select: its consultations subselect is subject to RLS');
+-- Former gaps in the foundation policies, fixed by head migration 20261030000100.
 select is(tests.visible((select c_rx from w), 'select 1 from public.prescription_items'), 1::bigint,
           'companion with only `prescriptions` sees the prescription items');
-select todo_end();
-select todo_start('patients_self_select / profiles_self_select do not check is_active');
 select is(tests.visible((select pat1 from w), 'select 1 from public.patients'), 0::bigint,
           'deactivated patient cannot read her patients row');
-select todo_end();
 
 select * from finish();
 rollback;
