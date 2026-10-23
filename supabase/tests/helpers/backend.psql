@@ -32,6 +32,9 @@ begin
     when others then
       if sqlerrm = 'tests_rollback' then return n; end if;
       if sqlerrm = 'NOT_ALLOWED' then return -1; end if;
+      -- Doctor guard triggers (BEFORE, run ahead of the RLS check) look up the parent row under
+      -- the caller's RLS; a doctor who cannot see it gets INVALID_INPUT. That is a refusal too.
+      if sqlerrm = 'INVALID_INPUT' then return -1; end if;
       raise;
   end;
 end $$;
