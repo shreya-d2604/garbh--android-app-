@@ -43,6 +43,10 @@ import { Button, Card, EmptyState, ErrorState, FormField, ListItem, LoadingState
 | `ErrorState` | `title?, message?, onRetry?` | failed queries (never show raw error text) |
 | `LoadingState` | `message?` | first load |
 | `HeaderActions` | - | bell + profile icons for role tab headers |
+| `QueryBoundary` | `query` (TanStack query or `{ isPending?, isLoading?, isError, refetch, data? }`), `isEmpty?, empty?` (node or EmptyState props), `loadingMessage?`, children (node or `(data) => node`) | every data screen: error (retry) -> loading -> empty -> data. `combineQueries(...q)` merges several queries' loading/error/refetch |
+| `ConfirmDialog` | `visible, title, message?, confirmLabel, cancelLabel?, danger?, loading?, errorKey?, confirmDisabled?, onConfirm, onDismiss`, children | destructive / patient-visible actions |
+| `ChoiceChips` | `options, value, onChange, allowClear=true, scroll?, accessibilityLabel?` | single choice (filters, short selects); with `allowClear` tapping the selected chip sends `''` |
+| `SlotPicker` | `days: { date, slots }[], selectedDay, onSelectDay, selectedSlot, onSelectSlot, timesHeader?` | free appointment slots (day row + time grid); the caller loads and groups the slots |
 
 ## Forms
 

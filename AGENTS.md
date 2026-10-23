@@ -33,6 +33,8 @@ cd ../garbh-<agent> && npm ci && cp .env.example .env
 | `npm run db:check` | **locks** the shared local Supabase, `db reset` from YOUR worktree, `supabase test db` |
 | `npm run db:check -- --types` | same, then regenerates `src/types/database.ts` |
 | `npm run test:functions` | Deno tests for Edge Functions, run in Docker (`denoland/deno:2.9.8`) |
+| `npm run eval:ai` | AI eval harness over `ai-evals/` (mock provider by default), in Docker |
+| `npm run e2e` | role walkthrough against the local stack (after `db:check` + `bash scripts/seed-demo-files.sh`) |
 
 All worktrees share ONE local Supabase stack (project_id `garbh`). Never run `supabase db reset`,
 `supabase test db` or `supabase stop` directly: always use `npm run db:check`, which serialises
@@ -98,7 +100,7 @@ Only the owner edits a path. "head" = the head engineer (foundation + reviews).
 | `supabase/config.toml`, `supabase/seed.sql`, `supabase/templates/**` | head |
 | `supabase/migrations/20261023*` (foundation) | head |
 | `supabase/tests/head_*.test.sql`, `supabase/tests/helpers/setup.psql` | head |
-| `src/components/**`, `src/lib/{env,secure-storage,supabase,query-client,session,realtime}.ts` + their tests | head |
+| `src/components/**` (incl. QueryBoundary, ConfirmDialog, ChoiceChips, SlotPicker), `src/lib/{env,secure-storage,supabase,query-client,session,realtime}.ts` + their tests | head |
 | `src/domain/**` (pregnancy-math, permissions, rpc-errors, schemas/{auth,onboarding,ai-summary}) | head |
 | `src/types/database.ts` | generated (see 4) |
 | `src/i18n/index.ts`, `src/i18n/en/common.json` | head |
@@ -114,9 +116,11 @@ Only the owner edits a path. "head" = the head engineer (foundation + reviews).
 | `supabase/functions/admin-users/**`, `supabase/functions/export-patient-data/**` | admin |
 | `app/notifications.tsx`, `src/features/notifications/**`, `src/lib/push.ts` (new), `src/i18n/en/backend.json` | backend |
 | `supabase/functions/_shared/**`, `process-report/**`, `summarize-consultation/**`, `summarize-pregnancy/**`, `send-push/**`, `supabase/functions/.env.example`, `supabase/functions/deno.json` | backend |
+| `ai-evals/**` (synthetic sample reports + `run.mts`, run with `npm run eval:ai`) | backend |
 | Your migrations: `supabase/migrations/<your range>_*.sql` | you |
 | Your pgTAP: `supabase/tests/<agent>_NN_<topic>.test.sql`, optional `supabase/tests/helpers/<agent>.psql` | you |
-| Your demo data: `supabase/seeds/<agent>.sql` (runs after `seed.sql`, alphabetical) | you |
+| Your demo data: `supabase/seeds/<agent>.sql` (runs after `seed.sql`, alphabetical; SQL only, no storage objects) | you |
+| Demo storage files: `scripts/seed-demo-files.sh` (run after every reset); `scripts/e2e-walkthrough.mts` | head |
 
 ### Migration timestamp ranges (filename `YYYYMMDDHHMMSS_<owner>_<topic>.sql`)
 

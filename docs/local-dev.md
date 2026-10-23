@@ -20,7 +20,23 @@ Mailpit (captured emails) `http://127.0.0.1:54324`, Postgres `postgresql://postg
 
 On a phone or emulator replace `127.0.0.1` in `.env` with the machine's LAN IP (emulator: `10.0.2.2`).
 Push notifications and some native modules need a development build (`eas build --profile development`),
-not Expo Go.
+not Expo Go. Expo mints push tokens only with an EAS project id: set `EXPO_PUBLIC_EAS_PROJECT_ID`
+in `.env` (read by `app.config.ts` into `extra.eas.projectId`). Without it the app skips push
+registration and the in-app inbox still works. Never commit a real id or key.
+
+## After every database reset
+
+`npm run db:check` (or any `db reset`) wipes Storage objects and Vault secrets. Then:
+
+```bash
+bash scripts/seed-demo-files.sh   # synthetic PDF attached to Kavya's "CBC + TSH" report (viewer demo)
+# pg_net -> send-push needs the service-role key in Vault (one statement, not stored in the repo):
+psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c \
+  "select vault.create_secret('<SERVICE_ROLE_KEY from npx supabase status>', 'push_service_key');"
+npm run e2e                       # optional: the scripted role walkthrough (also sets the Vault key)
+```
+
+Without `push_service_key`, notification rows are still created; only the push dispatch is skipped.
 
 ## Signing in locally (email OTP via Mailpit)
 
@@ -53,6 +69,10 @@ curl -s -X POST http://127.0.0.1:54321/auth/v1/verify -H "apikey: $ANON" -H 'Con
 | anjali@garbh.test | patient | 33w0d, high risk (GDM); appointment tomorrow; AI draft pending |
 | neha@garbh.test | patient | 7w1d, self-registered, **unverified**, no MRN, no care team |
 | rahul@garbh.test | companion | approved for Kavya (appointments, journey, summaries) |
+
+Agents' demo rows live in `supabase/seeds/<agent>.sql` (reception: Dr. Meera's time off over
+Anjali's appointment; doctor: queue entries and an AI draft; admin: one failing example per
+data-quality rule; companion: invite code `SUN-234` for Sunita, valid 24 h after the reset).
 | any other email | none | goes through consent -> "Who are you?" onboarding |
 
 Gestational weeks are computed from "today" at reset time, so they stay meaningful.
@@ -86,5 +106,18 @@ Remember `grant select on <temp table> to authenticated;` if a test reads a temp
 
 Deno is not installed locally; `npm run test:functions` runs `deno test` in the
 `denoland/deno:2.9.8` Docker image against `supabase/functions`. Use only `npm:` specifiers
-(npm registry) for dependencies; do not import from `jsr:`/`https:` URLs. AI is mocked
-(`AI_PROVIDER=mock`, see `supabase/functions/.env.example` once the backend agent adds it).
+(npm registry) for dependencies; do not import from `jsr:`/`https:` URLs.
+
+`npx supabase start` also serves the functions at `http://127.0.0.1:54321/functions/v1/<name>`
+(`verify_jwt` per function in `config.toml`). Providers come from env (copy
+`supabase/functions/.env.example` to `supabase/functions/.env`, never commit a filled-in copy):
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `AI_PROVIDER` | `mock` | `mock` = deterministic, no network; `gemini` is not enabled in this phase (no key anywhere) |
+| `AI_MOCK_BEHAVIOR` | `ok` | `fail_once` / `fail_always` / `invalid` to exercise retries and failures |
+| `PUSH_PROVIDER` | `mock` | `mock` never touches the network; `expo` calls the real Expo Push API |
+
+`npm run eval:ai` runs `ai-evals/run.mts` (26 synthetic reports) in Docker; with the mock provider
+it checks the pipeline (context de-identification, schema, test-code mapping, flags, safety
+filters), not a real model. Re-run it with a real provider before any prompt/model change ships.
