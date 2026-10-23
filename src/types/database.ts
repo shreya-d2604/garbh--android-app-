@@ -1950,6 +1950,7 @@ export type Database = {
       cancel_appointment: { Args: { p_appt: string; p_reason: string }; Returns: undefined };
       companion_can: { Args: { p_patient: string; p_perm: string }; Returns: boolean };
       complete_signup: { Args: { p_details: Json; p_kind: string }; Returns: undefined };
+      consume_ai_quota: { Args: { p_fn?: string }; Returns: undefined };
       create_companion_invite: { Args: Record<PropertyKey, never>; Returns: string };
       decide_companion_link: {
         Args: { p_approve: boolean; p_link: string; p_perms?: Json };
@@ -1995,10 +1996,12 @@ export type Database = {
       record_consent: { Args: Record<PropertyKey, never>; Returns: undefined };
       redeem_companion_code: { Args: { p_code: string; p_relation: string }; Returns: string };
       register_patient: { Args: { p_details: Json }; Returns: string };
+      register_push_token: { Args: { p_platform?: string; p_token: string }; Returns: undefined };
       remove_care_team_member: {
         Args: { p_doctor: string; p_pregnancy: string };
         Returns: undefined;
       };
+      report_object_pregnancy: { Args: { p_name: string }; Returns: string };
       reschedule_appointment: {
         Args: { p_appt: string; p_doctor?: string; p_new_starts_at: string };
         Returns: string;

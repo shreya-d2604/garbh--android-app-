@@ -1,0 +1,13 @@
+[
+  { "code": "HB", "name": "Haemoglobin", "unit": "g/dL", "ref_low": 11, "ref_high": 15, "trimester_ref": null },
+  { "code": "PLT", "name": "Platelet count", "unit": "10^3/uL", "ref_low": 150, "ref_high": 400, "trimester_ref": null },
+  { "code": "TSH", "name": "Thyroid stimulating hormone", "unit": "mIU/L", "ref_low": 0.1, "ref_high": 3.0, "trimester_ref": { "1": { "low": 0.1, "high": 2.5 }, "2": { "low": 0.2, "high": 3.0 }, "3": { "low": 0.3, "high": 3.0 } } },
+  { "code": "FBS", "name": "Fasting blood sugar", "unit": "mg/dL", "ref_low": 60, "ref_high": 92, "trimester_ref": null },
+  { "code": "PPBS", "name": "Post-prandial blood sugar", "unit": "mg/dL", "ref_low": null, "ref_high": 120, "trimester_ref": null },
+  { "code": "OGTT_2H", "name": "OGTT 75g (2 hour)", "unit": "mg/dL", "ref_low": null, "ref_high": 140, "trimester_ref": null },
+  { "code": "HBA1C", "name": "HbA1c", "unit": "%", "ref_low": null, "ref_high": 6.0, "trimester_ref": null },
+  { "code": "URINE_PROT", "name": "Urine protein", "unit": null, "ref_low": null, "ref_high": null, "trimester_ref": null },
+  { "code": "HIV", "name": "HIV 1 & 2", "unit": null, "ref_low": null, "ref_high": null, "trimester_ref": null },
+  { "code": "HBSAG", "name": "HBsAg", "unit": null, "ref_low": null, "ref_high": null, "trimester_ref": null },
+  { "code": "VDRL", "name": "VDRL", "unit": null, "ref_low": null, "ref_high": null, "trimester_ref": null }
+]

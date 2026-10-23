@@ -1,1 +1,10 @@
-{}
+{
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "unread": "New",
+    "emptyTitle": "You are all caught up",
+    "emptyMessage": "New updates from your care team will appear here.",
+    "markFailed": "We could not update that. Please try again."
+  }
+}

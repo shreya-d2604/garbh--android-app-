@@ -1,0 +1,2 @@
+Haemoglobin | 10.2 | g/dL | 11-15
+Platelet Count | 245 | 10^3/uL | 150-400
