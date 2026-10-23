@@ -3,8 +3,16 @@ import { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, palette, QueryBoundary, Screen, spacing, StatusChip } from '@/components';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
+import {
+  Button,
+  Card,
+  ChoiceChips,
+  palette,
+  QueryBoundary,
+  Screen,
+  spacing,
+  StatusChip,
+} from '@/components';
 import { SearchField } from '@/features/admin/components/SearchField';
 import { SwitchRow } from '@/features/admin/components/SwitchRow';
 import { useStaff } from '@/features/admin/hooks';
@@ -26,8 +34,9 @@ export default function Users() {
         placeholder={t('users.search')}
       />
       <ChoiceChips
+        allowClear={false}
         value={filter.role}
-        onChange={(role) => setFilter({ ...filter, role })}
+        onChange={(role) => role !== '' && setFilter({ ...filter, role })}
         options={[
           { value: 'all', label: t('users.all') },
           { value: 'doctor', label: t('users.doctors') },

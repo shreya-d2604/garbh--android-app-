@@ -16,7 +16,8 @@ jest.mock('../api', () => ({ logPatientView: jest.fn() }));
 jest.mock('../hooks');
 
 const h = jest.mocked(hooks);
-const ok = <T,>(data: T) => ({ data, isPending: false, isError: false, refetch: jest.fn() }) as never;
+const ok = <T,>(data: T) =>
+  ({ data, isPending: false, isError: false, refetch: jest.fn() }) as never;
 const idle = { mutate: jest.fn(), isPending: false } as never;
 
 function patient(deleted: boolean) {

@@ -1,11 +1,10 @@
 import { Controller, type Control } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { DateField, FormField } from '@/components';
+import { ChoiceChips, DateField, FormField } from '@/components';
 import { addDays, todayISO } from '@/domain/pregnancy-math';
 
 import { BLOOD_GROUPS, type NewPatientForm } from '../schemas';
-import { ChoiceChips } from './ChoiceChips';
 import { SwitchRow } from './SwitchRow';
 
 interface Props {
@@ -57,6 +56,7 @@ export function PatientFields({ control }: Props) {
         name="blood_group"
         render={({ field }) => (
           <ChoiceChips
+            allowClear={false}
             value={(field.value ?? '') as (typeof BLOOD_GROUPS)[number] | ''}
             onChange={(v) => field.onChange(field.value === v ? '' : v)}
             accessibilityLabel={t('patient.bloodGroup')}

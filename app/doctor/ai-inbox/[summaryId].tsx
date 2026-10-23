@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   ConfirmDialog,
   EmptyState,
   ErrorState,
@@ -28,7 +29,6 @@ import {
   regenerateRequest,
 } from '@/features/doctor/ai-review';
 import { SummaryEditor } from '@/features/doctor/components/ai/SummaryEditor';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { ErrorBanner } from '@/features/doctor/components/ErrorBanner';
 import { LabValuesList } from '@/features/doctor/components/labs/LabValuesList';
 import { ReportPageView } from '@/features/doctor/components/ReportPageView';

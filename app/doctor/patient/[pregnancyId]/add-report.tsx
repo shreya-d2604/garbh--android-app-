@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   DateField,
   EmptyState,
   ErrorState,
@@ -16,14 +17,13 @@ import {
   InfoBanner,
   ListItem,
   LoadingState,
-  Screen,
   palette,
   radius,
+  Screen,
   spacing,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import { functionErrorKey } from '@/features/doctor/ai-review';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { ErrorBanner } from '@/features/doctor/components/ErrorBanner';
 import { pickPdf, pickPhotos, takePhoto } from '@/features/doctor/files';
 import { useChart, useMyId, useSummaryFunction, useUploadReport } from '@/features/doctor/hooks';

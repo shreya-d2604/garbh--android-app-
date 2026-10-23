@@ -5,11 +5,10 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { Dialog, Portal, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, FormField, palette, spacing } from '@/components';
+import { Button, ChoiceChips, FormField, palette, spacing } from '@/components';
 
 import { labFormSchema, type LabFormValues } from '../../lab-form';
 import type { LabTestRow } from '../../types';
-import { ChoiceChips } from '../ChoiceChips';
 import { ErrorBanner } from '../ErrorBanner';
 import { SwitchRow } from '../SwitchRow';
 

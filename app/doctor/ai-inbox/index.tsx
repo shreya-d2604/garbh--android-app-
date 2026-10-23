@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import {
   Card,
+  ChoiceChips,
   EmptyState,
   ListItem,
   QueryBoundary,
@@ -13,7 +14,6 @@ import {
   type Tone,
 } from '@/components';
 import { filterInbox, inboxCounts, type InboxTab } from '@/features/doctor/ai-review';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { useInbox } from '@/features/doctor/hooks';
 
 const TONE: Record<string, Tone> = {

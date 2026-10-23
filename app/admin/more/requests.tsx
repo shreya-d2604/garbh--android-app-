@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   ConfirmDialog,
   InfoBanner,
   QueryBoundary,
@@ -16,7 +17,6 @@ import {
   type Tone,
 } from '@/components';
 import type { RequestFilter, RequestItem } from '@/features/admin/api';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { KeyValue } from '@/features/admin/components/KeyValue';
 import { ReasonDialog } from '@/features/admin/components/ReasonDialog';
 import { adminErrorKey } from '@/features/admin/errors';
@@ -45,8 +45,9 @@ export default function Requests() {
       <Stack.Screen options={{ title: t('requests.title') }} />
       <InfoBanner message={t('requests.hint')} />
       <ChoiceChips
+        allowClear={false}
         value={filter}
-        onChange={setFilter}
+        onChange={(v) => v !== '' && setFilter(v)}
         options={[
           { value: 'open', label: t('requests.open') },
           { value: 'closed', label: t('requests.closed') },

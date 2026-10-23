@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { EmptyState, ErrorState, LoadingState, Screen } from '@/components';
+import { ChoiceChips, EmptyState, ErrorState, LoadingState, Screen } from '@/components';
 import { CareTeamPanel } from '@/features/doctor/components/chart/CareTeamPanel';
 import { ChartHeader } from '@/features/doctor/components/chart/ChartHeader';
 import { PrescriptionsTab } from '@/features/doctor/components/chart/PrescriptionsTab';
@@ -11,7 +11,6 @@ import { SummariesTab } from '@/features/doctor/components/chart/SummariesTab';
 import { TimelineTab } from '@/features/doctor/components/chart/TimelineTab';
 import { VisitPlanTab } from '@/features/doctor/components/chart/VisitPlanTab';
 import { VitalsTab } from '@/features/doctor/components/chart/VitalsTab';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { useCareTeam, useChart, useDoctorDirectory, useMyId } from '@/features/doctor/hooks';
 import { useSecureScreen } from '@/features/doctor/use-secure-screen';
 

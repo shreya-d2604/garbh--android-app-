@@ -10,19 +10,19 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   EmptyState,
   ErrorState,
   FormField,
   InfoBanner,
   LoadingState,
-  Screen,
-  StatusChip,
   palette,
+  Screen,
   spacing,
+  StatusChip,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import type { ConsultationBundle } from '@/features/doctor/api';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { PrescriptionEditor } from '@/features/doctor/components/consult/PrescriptionEditor';
 import { ErrorBanner } from '@/features/doctor/components/ErrorBanner';
 import { SwitchRow } from '@/features/doctor/components/SwitchRow';

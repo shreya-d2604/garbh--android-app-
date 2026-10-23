@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 import {
   Button,
+  ChoiceChips,
   EmptyState,
   ErrorState,
   LoadingState,
-  Screen,
   palette,
+  Screen,
   spacing,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { PatientRow } from '@/features/doctor/components/PatientRow';
 import { usePatientList } from '@/features/doctor/hooks';
 import {

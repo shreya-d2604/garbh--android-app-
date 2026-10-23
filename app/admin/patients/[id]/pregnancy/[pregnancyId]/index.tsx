@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   DateField,
   FormField,
   InfoBanner,
@@ -16,7 +17,6 @@ import {
 } from '@/components';
 import { addDays, todayISO } from '@/domain/pregnancy-math';
 import { logPatientView, type PregnancyRow } from '@/features/admin/api';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { KeyValue } from '@/features/admin/components/KeyValue';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';
@@ -229,6 +229,7 @@ function StatusForm({ pregnancy }: { pregnancy: PregnancyRow }) {
         name="risk_level"
         render={({ field }) => (
           <ChoiceChips
+            allowClear={false}
             value={field.value}
             onChange={field.onChange}
             accessibilityLabel={t('pregnancy.risk.label')}
@@ -247,6 +248,7 @@ function StatusForm({ pregnancy }: { pregnancy: PregnancyRow }) {
         name="status"
         render={({ field }) => (
           <ChoiceChips
+            allowClear={false}
             value={field.value}
             onChange={field.onChange}
             accessibilityLabel={t('pregnancy.statusLabel')}

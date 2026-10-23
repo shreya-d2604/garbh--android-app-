@@ -7,17 +7,17 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   DateField,
   EmptyState,
   ErrorState,
   LoadingState,
-  StatusChip,
-  Screen,
   palette,
+  Screen,
   spacing,
+  StatusChip,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { KeyValue } from '@/features/admin/components/KeyValue';
 import { PickerSearch, type PickItem } from '@/features/admin/components/PickerSearch';
 import {
@@ -123,12 +123,14 @@ export default function Audit() {
             useResults={usePatientItems}
           />
           <ChoiceChips
+            allowClear={false}
             value={action}
             onChange={(v) => setAction(action === v ? '' : v)}
             accessibilityLabel={t('audit.byAction')}
             options={AUDIT_ACTIONS.map((a) => ({ value: a, label: t(`audit.actions.${a}`) }))}
           />
           <ChoiceChips
+            allowClear={false}
             value={table}
             onChange={(v) => setTable(table === v ? '' : v)}
             accessibilityLabel={t('audit.byTable')}

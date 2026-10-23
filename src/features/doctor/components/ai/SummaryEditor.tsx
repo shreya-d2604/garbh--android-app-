@@ -2,11 +2,10 @@ import { StyleSheet, View } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, palette, spacing } from '@/components';
+import { Button, Card, ChoiceChips, InfoBanner, palette, spacing } from '@/components';
 import type { AiSummary } from '@/domain/schemas/ai-summary';
 
 import { removeAt, replaceAt } from '../../ai-review';
-import { ChoiceChips } from '../ChoiceChips';
 import { PairListEditor, StringListEditor } from './ListEditors';
 
 const STATUSES = ['normal', 'attention', 'urgent'] as const;

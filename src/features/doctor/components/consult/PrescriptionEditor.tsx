@@ -10,7 +10,16 @@ import { StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, DateField, FormField, InfoBanner, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  ChoiceChips,
+  DateField,
+  FormField,
+  InfoBanner,
+  palette,
+  spacing,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 
 import { fetchLastPrescription } from '../../api';
@@ -27,7 +36,6 @@ import {
   TIMING_OPTIONS,
 } from '../../prescription';
 import type { DrugRow } from '../../types';
-import { ChoiceChips } from '../ChoiceChips';
 
 export interface PrescriptionEditorProps {
   control: Control<ConsultationFormValues, unknown, ConsultationFormValues>;

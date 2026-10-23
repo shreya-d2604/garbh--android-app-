@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   InfoBanner,
   palette,
   QueryBoundary,
@@ -15,7 +16,6 @@ import {
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import type { PatientFilter, PatientListItem } from '@/features/admin/api';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { SearchField } from '@/features/admin/components/SearchField';
 import { firstParam, useDebounced } from '@/features/admin/components/ui';
 import { gaLabel } from '@/features/admin/format';
@@ -52,8 +52,9 @@ export default function Patients() {
       ) : null}
       <SearchField value={search} onChangeText={setSearch} placeholder={t('patients.search')} />
       <ChoiceChips
+        allowClear={false}
         value={filter}
-        onChange={setFilter}
+        onChange={(v) => v !== '' && setFilter(v)}
         options={FILTERS.map((f) => ({ value: f, label: t(`patients.filter.${f}`) }))}
       />
       <Button label={t('patients.add')} onPress={() => router.push('/admin/patients/new')} />

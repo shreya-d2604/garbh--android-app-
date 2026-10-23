@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { HelperText, Text } from 'react-native-paper';
 
-import { FormField, palette } from '@/components';
+import { ChoiceChips, FormField, palette } from '@/components';
 
 import type { FieldDef, FormValues } from '../config';
-import { ChoiceChips } from './ChoiceChips';
 import { KeyValue } from './KeyValue';
 import { SwitchRow } from './SwitchRow';
 
@@ -78,6 +77,7 @@ export function ConfigFields({ group, fields, control, editing }: Props) {
                 <>
                   <FormFieldLabel text={label(f.key)} error={fieldState.error?.message} />
                   <ChoiceChips
+                    allowClear={false}
                     options={options}
                     value={String(field.value ?? '')}
                     onChange={field.onChange}

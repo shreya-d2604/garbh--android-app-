@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, FormField, InfoBanner, Screen } from '@/components';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
+import { Button, ChoiceChips, FormField, InfoBanner, Screen } from '@/components';
 import { StaffFields } from '@/features/admin/components/StaffFields';
 import { adminErrorKey } from '@/features/admin/errors';
 import { useCreateStaff } from '@/features/admin/hooks';
@@ -67,6 +66,7 @@ export default function NewStaff() {
         name="role"
         render={({ field }) => (
           <ChoiceChips
+            allowClear={false}
             value={field.value}
             onChange={field.onChange}
             accessibilityLabel={t('staff.role')}

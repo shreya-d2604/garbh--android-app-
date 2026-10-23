@@ -7,13 +7,13 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   ConfirmDialog,
   InfoBanner,
   QueryBoundary,
   Screen,
   StatusChip,
 } from '@/components';
-import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { KeyValue } from '@/features/admin/components/KeyValue';
 import { StaffFields } from '@/features/admin/components/StaffFields';
 import { firstParam } from '@/features/admin/components/ui';
@@ -142,8 +142,9 @@ function Body({ member, invited }: { member: StaffMember; invited: string }) {
         subtitle={isMe ? t('users.cannotChangeSelf') : t('users.changeRoleHint')}
       >
         <ChoiceChips
+          allowClear={false}
           value={role}
-          onChange={setRoleValue}
+          onChange={(v) => v !== '' && setRoleValue(v)}
           options={[
             { value: 'doctor', label: t('roles.doctor') },
             { value: 'receptionist', label: t('roles.receptionist') },

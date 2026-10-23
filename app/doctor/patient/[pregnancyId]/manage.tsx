@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
+  ChoiceChips,
   ConfirmDialog,
   DateField,
   EmptyState,
@@ -22,7 +23,6 @@ import {
 } from '@/components';
 import { addDays, todayISO } from '@/domain/pregnancy-math';
 import type { ChartData } from '@/features/doctor/api';
-import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
 import { ErrorBanner } from '@/features/doctor/components/ErrorBanner';
 import { SwitchRow } from '@/features/doctor/components/SwitchRow';
 import { useChart, useUpdatePregnancy } from '@/features/doctor/hooks';
