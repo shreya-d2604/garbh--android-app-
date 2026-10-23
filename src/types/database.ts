@@ -1982,12 +1982,15 @@ export type Database = {
         Args: { p_patient: string; p_record?: string; p_table: string };
         Returns: undefined;
       };
+      mark_visit_contacted: { Args: { p_note: string; p_visit: string }; Returns: undefined };
       merge_patients: { Args: { p_source: string; p_target: string }; Returns: undefined };
       my_patient_id: { Args: Record<PropertyKey, never>; Returns: string };
+      next_mrn: { Args: Record<PropertyKey, never>; Returns: string };
       on_care_team: { Args: { p_pregnancy: string }; Returns: boolean };
       on_patient_care_team: { Args: { p_patient: string }; Returns: boolean };
       record_consent: { Args: Record<PropertyKey, never>; Returns: undefined };
       redeem_companion_code: { Args: { p_code: string; p_relation: string }; Returns: string };
+      register_patient: { Args: { p_details: Json }; Returns: string };
       remove_care_team_member: {
         Args: { p_doctor: string; p_pregnancy: string };
         Returns: undefined;

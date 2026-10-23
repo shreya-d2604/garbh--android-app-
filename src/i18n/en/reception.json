@@ -1,1 +1,210 @@
-{}
+{
+  "tabs": {
+    "today": "Today",
+    "calendar": "Calendar",
+    "register": "Register",
+    "verify": "Verify",
+    "visits": "Visits due"
+  },
+  "common": {
+    "unknownPatient": "Unknown patient",
+    "mrn": "MRN {{mrn}}",
+    "noMrn": "No hospital number yet"
+  },
+  "tags": {
+    "app": "App",
+    "unverified": "Unverified"
+  },
+  "actions": {
+    "checkIn": "Check in",
+    "confirm": "Confirm",
+    "noShow": "Mark missed",
+    "reschedule": "Change time or doctor",
+    "cancelAppointment": "Cancel appointment",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "fields": {
+    "fullName": "Full name",
+    "phone": "Phone number",
+    "email": "Email",
+    "dob": "Date of birth",
+    "address": "Address",
+    "lmpKind": "Last period",
+    "eddKind": "Due date",
+    "lmp": "First day of last period",
+    "edd": "Expected due date",
+    "firstPregnancy": "This is her first pregnancy",
+    "primaryDoctor": "Primary doctor",
+    "bloodGroupOption": "Blood group {{group}}",
+    "allergies": "Allergies",
+    "conditions": "Long-term conditions",
+    "emergency": "Emergency contact (name and phone)",
+    "listHint": "Separate with commas",
+    "mrn": "Hospital number (MRN)"
+  },
+  "validation": {
+    "mrn": "Use 3 to 20 letters, numbers or dashes",
+    "doctor": "Pick a primary doctor",
+    "consent": "Consent must be recorded to register the patient"
+  },
+  "desk": {
+    "hello": "Hello, {{name}}",
+    "summary": "Today at a glance",
+    "waiting": "Waiting",
+    "checkedIn": "Checked in",
+    "withDoctor": "With doctor",
+    "done": "Done",
+    "verifyLink": "Verify queue",
+    "verifyHint": "Patients who registered in the app",
+    "visitsLink": "Visits due",
+    "visitsHint": "Patients to call or book",
+    "unavailableLink": "Doctor unavailable",
+    "unavailableHint": "Appointments to move",
+    "todayTitle": "Today's appointments",
+    "emptyTitle": "No appointments today",
+    "emptyMessage": "Appointments booked in the app or at the desk will show up here.",
+    "liveHint": "This list updates by itself when patients book or change appointments in the app.",
+    "noShowTitle": "Mark as missed?",
+    "noShowMessage": "{{name}} did not arrive. The time slot becomes free again."
+  },
+  "calendar": {
+    "title": "Appointment book",
+    "bookNew": "Book an appointment",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "backToToday": "Back to today",
+    "noHours": "This doctor has no working hours on this day.",
+    "free": "Free - tap to book",
+    "bookSlot": "Book {{time}}"
+  },
+  "slots": {
+    "pickDoctor": "Pick a doctor to see free times",
+    "lookFurther": "Show later dates",
+    "none": "No free times in the next {{days}} days",
+    "noneHint": "Try another doctor, or look further ahead.",
+    "dayLabel": "{{day}}, {{count}} free times",
+    "count_one": "{{count}} free time",
+    "count_other": "{{count}} free times"
+  },
+  "picker": {
+    "label": "Search by name, hospital number or phone",
+    "hint": "Type at least 2 letters to search",
+    "none": "No patient found",
+    "noneHint": "Check the spelling, or register a new patient."
+  },
+  "book": {
+    "title": "Book an appointment",
+    "doneTitle": "Appointment booked",
+    "doneMessage": "The patient can see it in her app right away.",
+    "backToCalendar": "Go to the calendar",
+    "another": "Book another appointment",
+    "patientNotFound": "We could not find this patient",
+    "changePatient": "Choose a different patient",
+    "noPregnancy": "No active pregnancy",
+    "noPregnancyHint": "Appointments need an active pregnancy. Ask an admin to check the record.",
+    "doctor": "Doctor",
+    "firstVisit": "She has no doctor yet. The doctor you pick becomes her primary doctor.",
+    "noDoctors": "No doctor can be booked for this patient right now.",
+    "primary": "Primary",
+    "visit": "Planned visit (optional)",
+    "noVisit": "None",
+    "time": "Date and time",
+    "reason": "Reason (optional)",
+    "summary": "Selected: {{time}}",
+    "confirm": "Book appointment"
+  },
+  "appointment": {
+    "title": "Appointment",
+    "notFound": "This appointment was not found",
+    "noActions": "This appointment is {{status}}. There is nothing more to do here.",
+    "hideReschedule": "Hide times",
+    "rescheduleTitle": "Move this appointment",
+    "rescheduleHint": "Pick a doctor on her care team and a free time. The patient is told about the change.",
+    "current": "Current",
+    "move": "Move appointment",
+    "cancelTitle": "Cancel this appointment?",
+    "cancelMessage": "{{name}} will be told it was cancelled and the time becomes free.",
+    "cancelReason": "Reason (optional)"
+  },
+  "register": {
+    "title": "Register a patient",
+    "subtitle": "For patients who walk in. They are verified straight away.",
+    "emailHint": "She signs in to the app with this email and is linked automatically",
+    "pregnancy": "Pregnancy",
+    "medical": "Health details",
+    "mrnHint": "Leave empty to assign the next number automatically",
+    "consent": "Patient has given consent to store her data and use AI summaries",
+    "save": "Register patient",
+    "doneTitle": "Patient registered",
+    "doneMrn": "Hospital number {{mrn}}",
+    "doneMessage": "The visit plan is ready. She can sign in to the app with the email you entered.",
+    "bookFirst": "Book her first visit",
+    "another": "Register another patient",
+    "duplicatesTitle": "Is she already registered?",
+    "duplicatesMessage": "These patients look like the same person. Check before creating a second record.",
+    "goBack": "Go back and check",
+    "registerAnyway": "Register as a new patient",
+    "reason": {
+      "phone": "same phone",
+      "email": "same email",
+      "name_dob": "same name and birth date"
+    }
+  },
+  "verify": {
+    "title": "Verify queue",
+    "subtitle": "Patients who registered in the app",
+    "idHint": "Check her photo ID, then assign a hospital number.",
+    "emptyTitle": "Everyone is verified",
+    "emptyMessage": "New app registrations will appear here.",
+    "arrivesToday": "Arrives today",
+    "open": "Verify {{name}}",
+    "registered": "Registered {{date}}"
+  },
+  "verifyPatient": {
+    "title": "Verify patient",
+    "gone": "This patient is no longer in the queue",
+    "goneHint": "She may already be verified or merged.",
+    "checkId": "Compare these details with her photo ID and correct anything that is different.",
+    "details": "Details",
+    "saved": "Details saved",
+    "saveDetails": "Save details",
+    "mrnTitle": "Hospital number",
+    "mergeInto": "Merge into {{name}}",
+    "mergeCancel": "Do not merge",
+    "mergeSearch": "Find the existing record",
+    "mergeHint": "Use this when she was already registered at the desk. Her app account moves to that record.",
+    "mergeSearchLabel": "Search desk records",
+    "mergeStart": "She is already registered: merge records",
+    "verifyMerge": "Verify and merge",
+    "verify": "Verify patient"
+  },
+  "visits": {
+    "title": "Visits due",
+    "subtitle": "Planned visits that need an appointment",
+    "unavailableLink": "Doctor unavailable",
+    "emptyTitle": "Nothing to follow up",
+    "emptyMessage": "Visits whose window opens in the next 14 days and have no appointment will show up here.",
+    "kind": {
+      "overdue": "Overdue",
+      "open": "Due now",
+      "soon": "Due soon"
+    },
+    "window": "Window {{from}} to {{to}}",
+    "noWindow": "No date window",
+    "called": "Called {{date}}",
+    "book": "Book",
+    "called_action": "Called patient",
+    "callTitle": "Called {{name}}?",
+    "callMessage": "Add a short note so the next person knows what was said.",
+    "callNote": "Note (optional)"
+  },
+  "unavailable": {
+    "title": "Doctor unavailable",
+    "subtitle": "Appointments during a doctor's time off",
+    "emptyTitle": "No appointments affected",
+    "emptyMessage": "When a doctor adds time off over booked appointments, they will show up here.",
+    "offUntil": "{{doctor}} is unavailable until {{until}}",
+    "rebook": "Rebook"
+  }
+}
