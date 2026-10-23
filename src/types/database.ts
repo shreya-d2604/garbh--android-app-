@@ -1918,6 +1918,87 @@ export type Database = {
         Args: { p_doctor: string; p_note?: string; p_pregnancy: string };
         Returns: undefined;
       };
+      admin_add_backup_doctor: {
+        Args: { p_doctor: string; p_note?: string; p_pregnancy: string };
+        Returns: undefined;
+      };
+      admin_create_patient: { Args: { p_details: Json }; Returns: string };
+      admin_dashboard_metrics: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          active_pregnancies: number;
+          ai_pending: number;
+          appointments_today: number;
+          appointments_week: number;
+          high_risk: number;
+          missed_visits: number;
+          no_show_rate: number;
+          no_show_sample: number;
+          open_issues: number;
+          trimester_1: number;
+          trimester_2: number;
+          trimester_3: number;
+          unverified_patients: number;
+          unverified_values: number;
+        }[];
+      };
+      admin_data_quality_counts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          issue_count: number;
+          rule: string;
+          severity: string;
+        }[];
+      };
+      admin_data_quality_issues: {
+        Args: { p_limit?: number; p_rule?: string };
+        Returns: {
+          detail: Json;
+          entity_id: string;
+          patient_id: string;
+          patient_name: string;
+          pregnancy_id: string;
+          rule: string;
+          severity: string;
+          since: string;
+        }[];
+      };
+      admin_deidentify_user: {
+        Args: { p_actor: string; p_request?: string; p_user: string };
+        Returns: undefined;
+      };
+      admin_export_patient_data: {
+        Args: { p_actor: string; p_patient?: string; p_user?: string };
+        Returns: Json;
+      };
+      admin_hard_delete_patient: {
+        Args: { p_patient: string; p_reason: string };
+        Returns: string[];
+      };
+      admin_remove_care_team_member: {
+        Args: { p_doctor: string; p_pregnancy: string };
+        Returns: undefined;
+      };
+      admin_resolve_data_request: {
+        Args: { p_note?: string; p_request: string; p_status: string };
+        Returns: undefined;
+      };
+      admin_set_patient_deleted: {
+        Args: { p_deleted: boolean; p_patient: string; p_reason?: string };
+        Returns: undefined;
+      };
+      admin_set_primary_doctor: {
+        Args: { p_doctor: string; p_pregnancy: string };
+        Returns: undefined;
+      };
+      admin_staff_apply: {
+        Args: { p_actor: string; p_args: Json; p_event?: string; p_user: string };
+        Returns: undefined;
+      };
+      admin_update_pregnancy_dates: {
+        Args: { p_edd_usg: string; p_lmp_date: string; p_pregnancy: string; p_reason: string };
+        Returns: undefined;
+      };
       apply_visit_template: {
         Args: { p_pregnancy: string; p_schedule: string };
         Returns: undefined;
