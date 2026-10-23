@@ -2,10 +2,17 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Card, InfoBanner, ListItem, Screen, SectionHeader, StatusChip } from '@/components';
+import {
+  Card,
+  InfoBanner,
+  ListItem,
+  QueryBoundary,
+  Screen,
+  SectionHeader,
+  StatusChip,
+} from '@/components';
 import { shapeMetrics, type DashboardView } from '@/features/admin/format';
 import { useDashboard } from '@/features/admin/hooks';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { StatTile } from '@/features/admin/components/StatTile';
 import { useSession } from '@/lib/session';
 

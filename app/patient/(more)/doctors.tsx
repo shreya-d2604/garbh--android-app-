@@ -3,11 +3,19 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, Screen, StatusChip, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  EmptyState,
+  palette,
+  QueryBoundary,
+  Screen,
+  spacing,
+  StatusChip,
+} from '@/components';
 import { orderedCareTeam } from '@/features/patient/booking';
 import { DoctorAvatar } from '@/features/patient/components/DoctorAvatar';
 import { PatientGate } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { useCareTeam, usePullToRefresh } from '@/features/patient/hooks';
 
 function CareTeamList() {

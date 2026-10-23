@@ -3,11 +3,19 @@ import { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, Screen, StatusChip, palette, spacing } from '@/components';
+import {
+  Button,
+  Card,
+  InfoBanner,
+  palette,
+  QueryBoundary,
+  Screen,
+  spacing,
+  StatusChip,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import type { PatientFilter, PatientListItem } from '@/features/admin/api';
 import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { SearchField } from '@/features/admin/components/SearchField';
 import { firstParam, useDebounced } from '@/features/admin/components/ui';
 import { gaLabel } from '@/features/admin/format';

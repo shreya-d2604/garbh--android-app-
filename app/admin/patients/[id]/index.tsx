@@ -8,6 +8,7 @@ import {
   Card,
   InfoBanner,
   ListItem,
+  QueryBoundary,
   Screen,
   SectionHeader,
   StatusChip,
@@ -16,7 +17,6 @@ import { todayISO } from '@/domain/pregnancy-math';
 import { logPatientView, type PatientRow } from '@/features/admin/api';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { KeyValue } from '@/features/admin/components/KeyValue';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { ReasonDialog } from '@/features/admin/components/ReasonDialog';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';

@@ -7,12 +7,12 @@ import {
   Card,
   EmptyState,
   palette,
+  QueryBoundary,
+  Screen,
   SectionHeader,
   spacing,
   StatusChip,
-  Screen,
 } from '@/components';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import { SectionGate } from '@/features/companion/components/SectionGate';
 import { formatDay } from '@/features/companion/format';
 import { findingTone, summaryPreview } from '@/features/companion/view';
@@ -27,7 +27,9 @@ function CompanionSummariesContent({ patientId }: { patientId: string }) {
 
   return (
     <Screen edges={['bottom']} refreshing={q.isRefetching} onRefresh={() => void q.refetch()}>
-      <QueryBoundary isPending={q.isPending} isError={q.isError} onRetry={() => void q.refetch()}>
+      <QueryBoundary
+        query={{ isPending: q.isPending, isError: q.isError, refetch: () => void q.refetch() }}
+      >
         {summaries.length === 0 && advice.length === 0 ? (
           <EmptyState
             icon="text-box-check-outline"

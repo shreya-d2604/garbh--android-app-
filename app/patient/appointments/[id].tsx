@@ -9,17 +9,17 @@ import {
   Button,
   Card,
   InfoBanner,
-  Screen,
-  StatusChip,
   palette,
+  QueryBoundary,
+  Screen,
   spacing,
+  StatusChip,
 } from '@/components';
 import { apiErrorKey } from '@/features/patient/api';
 import { changeAllowance } from '@/features/patient/appointments';
 import { CallButton } from '@/features/patient/components/CallButton';
 import { DoctorAvatar } from '@/features/patient/components/DoctorAvatar';
 import { PatientGate, type ReadyContext } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { StatusTimeline } from '@/features/patient/components/StatusTimeline';
 import { formatDay, formatTime } from '@/features/patient/dates';
 import {

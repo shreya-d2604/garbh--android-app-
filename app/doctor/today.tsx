@@ -2,9 +2,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, InfoBanner, Screen, SectionHeader } from '@/components';
+import { Card, EmptyState, InfoBanner, QueryBoundary, Screen, SectionHeader } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
-import { QueryBoundary } from '@/features/doctor/components/QueryBoundary';
 import { QueueCard } from '@/features/doctor/components/QueueCard';
 import { useStartConsultation, useTodayQueue } from '@/features/doctor/hooks';
 import { groupQueue, queueCounts, type QueueItem } from '@/features/doctor/queue';

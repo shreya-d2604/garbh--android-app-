@@ -4,12 +4,20 @@ import { useState } from 'react';
 import { FlatList, Share, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, Screen, StatusChip, spacing, type Tone } from '@/components';
+import {
+  Button,
+  Card,
+  InfoBanner,
+  QueryBoundary,
+  Screen,
+  spacing,
+  StatusChip,
+  type Tone,
+} from '@/components';
 import type { RequestFilter, RequestItem } from '@/features/admin/api';
 import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { KeyValue } from '@/features/admin/components/KeyValue';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { ReasonDialog } from '@/features/admin/components/ReasonDialog';
 import { adminErrorKey } from '@/features/admin/errors';
 import { formatWhen } from '@/features/admin/format';

@@ -11,13 +11,13 @@ import {
   EmptyState,
   InfoBanner,
   palette,
+  QueryBoundary,
   radius,
   Screen,
   spacing,
 } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import { countdownParts, formatCode } from '@/features/companion/code';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import {
   useActiveInvite,
   useCreateInvite,
@@ -76,9 +76,11 @@ export default function InviteCompanion() {
       onRefresh={refetch}
     >
       <QueryBoundary
-        isPending={me.isPending || (patientId != null && invite.isPending)}
-        isError={me.isError || invite.isError}
-        onRetry={refetch}
+        query={{
+          isPending: me.isPending || (patientId != null && invite.isPending),
+          isError: me.isError || invite.isError,
+          refetch: refetch,
+        }}
       >
         {!patientId ? (
           <Card variant="soft">

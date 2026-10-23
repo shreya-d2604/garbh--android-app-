@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, InfoBanner, Screen } from '@/components';
+import { Button, InfoBanner, QueryBoundary, Screen } from '@/components';
 
 import {
   SINGLE_CONFIGS,
@@ -16,7 +16,6 @@ import {
 import { adminErrorKey } from '../errors';
 import { useHospitalSettings, useSaveHospitalSettings } from '../hooks';
 import { ConfigFields } from './ConfigFields';
-import { QueryBoundary } from './QueryBoundary';
 import { configResolver } from './configResolver';
 
 /** Hospital settings (single row), edited in two groups: booking rules and hospital details. */

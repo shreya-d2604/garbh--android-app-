@@ -14,9 +14,10 @@ import {
   FormField,
   InfoBanner,
   ListItem,
-  StatusChip,
   palette,
+  QueryBoundary,
   spacing,
+  StatusChip,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 
@@ -30,7 +31,6 @@ import {
 } from '../../hooks';
 import { combineDateTime, findClashes, timeOffSchema, type TimeOffValues } from '../../schedule';
 import { ErrorBanner } from '../ErrorBanner';
-import { QueryBoundary } from '../QueryBoundary';
 import { TimeField } from '../TimeField';
 
 interface Pending {

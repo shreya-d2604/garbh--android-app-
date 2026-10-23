@@ -9,15 +9,15 @@ import {
   Card,
   EmptyState,
   InfoBanner,
+  palette,
+  QueryBoundary,
   Screen,
   SectionHeader,
-  StatusChip,
-  palette,
   spacing,
+  StatusChip,
   type Tone,
 } from '@/components';
 import { PatientGate } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { formatStamp } from '@/features/patient/dates';
 import { useDoctorMap, usePublishedSummary, usePullToRefresh } from '@/features/patient/hooks';
 import { parseSummary, type PatientSummary } from '@/features/patient/summary';

@@ -3,11 +3,17 @@ import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, ListItem, StatusChip } from '@/components';
+import {
+  Card,
+  combineQueries,
+  EmptyState,
+  ListItem,
+  QueryBoundary,
+  StatusChip,
+} from '@/components';
 
 import { buildTimeline, type TimelineEntry } from '../../chart';
 import { usePregnancyConsultations, usePregnancyReports, usePregnancyVisits } from '../../hooks';
-import { combineQueries, QueryBoundary } from '../QueryBoundary';
 
 const ICON = {
   visit: 'calendar-check-outline',

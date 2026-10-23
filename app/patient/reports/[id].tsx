@@ -8,16 +8,16 @@ import {
   Card,
   EmptyState,
   ListItem,
+  palette,
+  QueryBoundary,
   Screen,
   SectionHeader,
-  StatusChip,
-  palette,
   spacing,
+  StatusChip,
 } from '@/components';
 import { FileViewer } from '@/features/patient/components/FileViewer';
 import { InlineError, InlineLoading } from '@/features/patient/components/Inline';
 import { PatientGate } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { formatDateLong } from '@/features/patient/dates';
 import {
   useLabTests,

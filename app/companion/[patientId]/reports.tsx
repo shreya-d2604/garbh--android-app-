@@ -3,8 +3,15 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, palette, spacing, StatusChip, Screen } from '@/components';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
+import {
+  Card,
+  EmptyState,
+  palette,
+  QueryBoundary,
+  Screen,
+  spacing,
+  StatusChip,
+} from '@/components';
 import { SectionGate } from '@/features/companion/components/SectionGate';
 import { formatCalendarDate } from '@/features/companion/format';
 import { groupBy, labFlagTone, labValueText } from '@/features/companion/view';
@@ -18,7 +25,9 @@ function CompanionReportsContent({ patientId }: { patientId: string }) {
 
   return (
     <Screen edges={['bottom']} refreshing={q.isRefetching} onRefresh={() => void q.refetch()}>
-      <QueryBoundary isPending={q.isPending} isError={q.isError} onRetry={() => void q.refetch()}>
+      <QueryBoundary
+        query={{ isPending: q.isPending, isError: q.isError, refetch: () => void q.refetch() }}
+      >
         {q.data && q.data.reports.length === 0 ? (
           <EmptyState
             icon="flask-outline"

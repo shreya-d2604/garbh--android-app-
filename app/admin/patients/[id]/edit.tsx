@@ -4,11 +4,10 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, InfoBanner, Screen } from '@/components';
+import { Button, InfoBanner, QueryBoundary, Screen } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import type { PatientRow } from '@/features/admin/api';
 import { PatientFields } from '@/features/admin/components/PatientFields';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';
 import { joinList } from '@/features/admin/format';

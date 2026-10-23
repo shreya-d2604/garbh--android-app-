@@ -3,9 +3,8 @@ import { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, Screen, StatusChip, palette, spacing } from '@/components';
+import { Button, Card, palette, QueryBoundary, Screen, spacing, StatusChip } from '@/components';
 import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { SearchField } from '@/features/admin/components/SearchField';
 import { SwitchRow } from '@/features/admin/components/SwitchRow';
 import { useStaff } from '@/features/admin/hooks';

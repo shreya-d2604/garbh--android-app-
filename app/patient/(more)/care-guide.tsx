@@ -5,17 +5,17 @@ import { useTranslation } from 'react-i18next';
 import {
   Card,
   InfoBanner,
+  palette,
+  QueryBoundary,
   Screen,
   SectionHeader,
-  StatusChip,
-  palette,
   spacing,
+  StatusChip,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import type { GuideItem, GuideKind } from '@/features/patient/care-guide';
 import { CallButton } from '@/features/patient/components/CallButton';
 import { PatientGate, type ReadyContext } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { useCareGuide, usePullToRefresh } from '@/features/patient/hooks';
 import { journeySnapshot } from '@/features/patient/journey';
 

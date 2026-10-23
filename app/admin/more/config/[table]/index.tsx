@@ -2,8 +2,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { FlatList, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, Screen, StatusChip, spacing } from '@/components';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
+import { Button, Card, EmptyState, QueryBoundary, Screen, spacing, StatusChip } from '@/components';
 import { firstParam } from '@/features/admin/components/ui';
 import { CONFIG_TABLES, isConfigKey, type ConfigTable } from '@/features/admin/config';
 import { useConfigRows } from '@/features/admin/hooks';

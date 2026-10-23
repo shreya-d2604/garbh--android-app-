@@ -12,9 +12,10 @@ import {
   EmptyState,
   FormField,
   InfoBanner,
-  StatusChip,
   palette,
+  QueryBoundary,
   spacing,
+  StatusChip,
   type Tone,
 } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
@@ -36,7 +37,6 @@ import {
 import type { VisitRow } from '../../types';
 import { ConfirmDialog } from '../ConfirmDialog';
 import { ErrorBanner } from '../ErrorBanner';
-import { QueryBoundary } from '../QueryBoundary';
 
 const TONE: Record<VisitState, Tone> = {
   completed: 'success',

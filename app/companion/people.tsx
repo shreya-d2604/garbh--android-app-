@@ -9,13 +9,13 @@ import {
   EmptyState,
   InfoBanner,
   ListItem,
+  QueryBoundary,
   Screen,
   SectionHeader,
   StatusChip,
 } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import { ConfirmDialog } from '@/features/companion/components/ConfirmDialog';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import { useCompanionLinks, useEndLink } from '@/features/companion/hooks';
 import { homeHref } from '@/features/companion/sections';
 import {
@@ -49,9 +49,11 @@ export default function People() {
       onRefresh={() => void links.refetch()}
     >
       <QueryBoundary
-        isPending={links.isPending}
-        isError={links.isError}
-        onRetry={() => void links.refetch()}
+        query={{
+          isPending: links.isPending,
+          isError: links.isError,
+          refetch: () => void links.refetch(),
+        }}
       >
         {approved.length === 0 && pending.length === 0 ? (
           <EmptyState

@@ -3,10 +3,17 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, ListItem, Screen, StatusChip, type Tone } from '@/components';
+import {
+  Card,
+  EmptyState,
+  ListItem,
+  QueryBoundary,
+  Screen,
+  StatusChip,
+  type Tone,
+} from '@/components';
 import { filterInbox, inboxCounts, type InboxTab } from '@/features/doctor/ai-review';
 import { ChoiceChips } from '@/features/doctor/components/ChoiceChips';
-import { QueryBoundary } from '@/features/doctor/components/QueryBoundary';
 import { useInbox } from '@/features/doctor/hooks';
 
 const TONE: Record<string, Tone> = {

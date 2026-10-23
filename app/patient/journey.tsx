@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
 
-import { EmptyState, SectionHeader, Screen } from '@/components';
+import { EmptyState, QueryBoundary, Screen, SectionHeader } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import { InlineError, InlineLoading } from '@/features/patient/components/Inline';
 import { JourneyCard } from '@/features/patient/components/JourneyCard';
 import { MilestonePath } from '@/features/patient/components/MilestonePath';
 import { PatientGate, type ReadyContext } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { TrimesterTimeline } from '@/features/patient/components/TrimesterTimeline';
 import { WeekSwiper } from '@/features/patient/components/WeekSwiper';
 import { WhatsNext } from '@/features/patient/components/WhatsNext';

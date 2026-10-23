@@ -2,8 +2,16 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet } from 'react-native';
 
-import { Card, EmptyState, InfoBanner, Screen, StatusChip, spacing, type Tone } from '@/components';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
+import {
+  Card,
+  EmptyState,
+  InfoBanner,
+  QueryBoundary,
+  Screen,
+  spacing,
+  StatusChip,
+  type Tone,
+} from '@/components';
 import { firstParam } from '@/features/admin/components/ui';
 import {
   dqDetailParams,

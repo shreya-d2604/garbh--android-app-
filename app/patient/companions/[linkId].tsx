@@ -3,12 +3,11 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, Screen } from '@/components';
+import { Button, Card, InfoBanner, QueryBoundary, Screen } from '@/components';
 import { rpcErrorKey } from '@/domain/rpc-errors';
 import { ClosedState } from '@/features/companion/components/ClosedState';
 import { ConfirmDialog } from '@/features/companion/components/ConfirmDialog';
 import { PermissionToggles } from '@/features/companion/components/PermissionToggles';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import {
   useDecideLink,
   useEndLink,
@@ -121,11 +120,13 @@ export default function CompanionDetailScreen() {
   return (
     <Screen edges={['bottom']}>
       <QueryBoundary
-        isPending={me.isPending || (me.data != null && links.isPending)}
-        isError={me.isError || links.isError}
-        onRetry={() => {
-          void me.refetch();
-          void links.refetch();
+        query={{
+          isPending: me.isPending || (me.data != null && links.isPending),
+          isError: me.isError || links.isError,
+          refetch: () => {
+            void me.refetch();
+            void links.refetch();
+          },
         }}
       >
         {link?.status === 'approved' ? (

@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
-import { Card, InfoBanner } from '@/components';
+import { Card, InfoBanner, QueryBoundary } from '@/components';
 
 import { KeyValue } from '../components/KeyValue';
 import { PregnancyLinks } from '../components/PregnancyLinks';
-import { QueryBoundary } from '../components/QueryBoundary';
 import { formatWhen } from '../format';
 import { useAiSummary } from '../hooks';
 

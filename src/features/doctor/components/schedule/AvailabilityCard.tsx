@@ -13,6 +13,7 @@ import {
   InfoBanner,
   ListItem,
   palette,
+  QueryBoundary,
   spacing,
 } from '@/components';
 
@@ -27,7 +28,6 @@ import {
 } from '../../schedule';
 import type { AvailabilityRow } from '../../types';
 import { ErrorBanner } from '../ErrorBanner';
-import { QueryBoundary } from '../QueryBoundary';
 import { TimeField } from '../TimeField';
 
 interface Editing {

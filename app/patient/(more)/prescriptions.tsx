@@ -2,11 +2,18 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, Screen, SectionHeader, palette, spacing } from '@/components';
+import {
+  Card,
+  EmptyState,
+  palette,
+  QueryBoundary,
+  Screen,
+  SectionHeader,
+  spacing,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 import { MedicineRow } from '@/features/patient/components/MedicineRow';
 import { PatientGate } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { formatStamp } from '@/features/patient/dates';
 import { useGaLabel, usePlural } from '@/features/patient/format';
 import { useDoctorMap, usePrescriptions, usePullToRefresh } from '@/features/patient/hooks';

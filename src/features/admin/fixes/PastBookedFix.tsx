@@ -2,12 +2,18 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { APPOINTMENT_STATUS_TONE, Button, Card, InfoBanner, StatusChip } from '@/components';
+import {
+  APPOINTMENT_STATUS_TONE,
+  Button,
+  Card,
+  InfoBanner,
+  QueryBoundary,
+  StatusChip,
+} from '@/components';
 
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { KeyValue } from '../components/KeyValue';
 import { PregnancyLinks } from '../components/PregnancyLinks';
-import { QueryBoundary } from '../components/QueryBoundary';
 import { adminErrorKey } from '../errors';
 import { formatWhen } from '../format';
 import { useAppointment, useCloseAppointment } from '../hooks';

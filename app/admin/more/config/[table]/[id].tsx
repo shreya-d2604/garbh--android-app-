@@ -3,10 +3,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, EmptyState, InfoBanner, Screen } from '@/components';
+import { Button, EmptyState, InfoBanner, QueryBoundary, Screen } from '@/components';
 import { ConfigFields } from '@/features/admin/components/ConfigFields';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { configResolver } from '@/features/admin/components/configResolver';
 import { firstParam } from '@/features/admin/components/ui';
 import {

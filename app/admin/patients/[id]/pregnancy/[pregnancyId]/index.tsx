@@ -4,12 +4,20 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, DateField, FormField, InfoBanner, ListItem, Screen } from '@/components';
+import {
+  Button,
+  Card,
+  DateField,
+  FormField,
+  InfoBanner,
+  ListItem,
+  QueryBoundary,
+  Screen,
+} from '@/components';
 import { addDays, todayISO } from '@/domain/pregnancy-math';
 import { logPatientView, type PregnancyRow } from '@/features/admin/api';
 import { ChoiceChips } from '@/features/admin/components/ChoiceChips';
 import { KeyValue } from '@/features/admin/components/KeyValue';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';
 import { gaLabel, joinList } from '@/features/admin/format';

@@ -3,10 +3,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Card, InfoBanner, ListItem, Screen } from '@/components';
+import { Card, InfoBanner, ListItem, QueryBoundary, Screen } from '@/components';
 import type { PatientListItem } from '@/features/admin/api';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { SearchField } from '@/features/admin/components/SearchField';
 import { firstParam, useDebounced } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';

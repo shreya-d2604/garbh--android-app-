@@ -2,10 +2,9 @@ import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, EmptyState, ListItem, StatusChip } from '@/components';
+import { Button, Card, EmptyState, ListItem, QueryBoundary, StatusChip } from '@/components';
 
 import { usePregnancyReports } from '../../hooks';
-import { QueryBoundary } from '../QueryBoundary';
 
 const TONE = {
   pending: 'neutral',

@@ -2,9 +2,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, palette, SectionHeader, Screen } from '@/components';
+import { Card, EmptyState, palette, QueryBoundary, Screen, SectionHeader } from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import { SectionGate } from '@/features/companion/components/SectionGate';
 import { formatCalendarDate } from '@/features/companion/format';
 import { splitPrescriptions } from '@/features/companion/view';
@@ -40,7 +39,9 @@ function CompanionPrescriptionsContent({ patientId }: { patientId: string }) {
 
   return (
     <Screen edges={['bottom']} refreshing={q.isRefetching} onRefresh={() => void q.refetch()}>
-      <QueryBoundary isPending={q.isPending} isError={q.isError} onRetry={() => void q.refetch()}>
+      <QueryBoundary
+        query={{ isPending: q.isPending, isError: q.isError, refetch: () => void q.refetch() }}
+      >
         {q.data && q.data.length === 0 ? (
           <EmptyState
             icon="pill"

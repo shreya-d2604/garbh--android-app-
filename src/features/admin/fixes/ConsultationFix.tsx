@@ -2,12 +2,11 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner } from '@/components';
+import { Button, Card, InfoBanner, QueryBoundary } from '@/components';
 
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { KeyValue } from '../components/KeyValue';
 import { PregnancyLinks } from '../components/PregnancyLinks';
-import { QueryBoundary } from '../components/QueryBoundary';
 import { adminErrorKey } from '../errors';
 import { formatWhen } from '../format';
 import { useConsultation, useUpdateConsultation } from '../hooks';

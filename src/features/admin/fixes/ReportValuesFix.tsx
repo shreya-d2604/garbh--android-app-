@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { Card, InfoBanner, ListItem, StatusChip } from '@/components';
+import { Card, InfoBanner, ListItem, QueryBoundary, StatusChip } from '@/components';
 
 import { PregnancyLinks } from '../components/PregnancyLinks';
-import { QueryBoundary } from '../components/QueryBoundary';
 import { formatDay } from '../format';
 import { useReportValues } from '../hooks';
 

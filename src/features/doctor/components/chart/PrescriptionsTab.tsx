@@ -4,13 +4,21 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Card, EmptyState, ListItem, StatusChip, palette, spacing } from '@/components';
+import {
+  Card,
+  combineQueries,
+  EmptyState,
+  ListItem,
+  palette,
+  QueryBoundary,
+  spacing,
+  StatusChip,
+} from '@/components';
 import { todayISO } from '@/domain/pregnancy-math';
 
 import { groupPrescriptions } from '../../chart';
 import { usePregnancyConsultations, usePregnancyPrescriptions } from '../../hooks';
 import { isActiveToday } from '../../prescription';
-import { combineQueries, QueryBoundary } from '../QueryBoundary';
 
 export function PrescriptionsTab({ pregnancyId }: { pregnancyId: string }) {
   const { t } = useTranslation('doctor');

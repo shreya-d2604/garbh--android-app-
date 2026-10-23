@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { EmptyState } from '@/components';
+import { combineQueries, EmptyState, QueryBoundary } from '@/components';
 
 import { labSeries, vitalSeries } from '../../chart';
 import { usePregnancyConsultations, usePregnancyLabResults } from '../../hooks';
-import { combineQueries, QueryBoundary } from '../QueryBoundary';
 import { TrendChart } from '../TrendChart';
 
 /** Vitals trends (PLAN.md §7.4 #3): weight, BP, fundal height, fetal heart rate, and verified Hb. */

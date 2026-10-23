@@ -4,11 +4,10 @@ import { StyleSheet, View } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-import { Button, EmptyState, Screen, spacing } from '@/components';
+import { Button, EmptyState, QueryBoundary, Screen, spacing } from '@/components';
 import { splitAppointments } from '@/features/patient/appointments';
 import { AppointmentCard } from '@/features/patient/components/AppointmentCard';
 import { PatientGate } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { useAppointments, useDoctorMap, usePullToRefresh } from '@/features/patient/hooks';
 
 type Tab = 'upcoming' | 'past';

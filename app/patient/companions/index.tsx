@@ -7,11 +7,11 @@ import {
   EmptyState,
   InfoBanner,
   ListItem,
+  QueryBoundary,
   Screen,
   SectionHeader,
   StatusChip,
 } from '@/components';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import { useMyPatient, usePatientLinks } from '@/features/companion/hooks';
 import { enabledPermissions, permissionsFromLink } from '@/features/companion/permissions';
 
@@ -37,9 +37,11 @@ export default function MyCompanions() {
       onRefresh={refetch}
     >
       <QueryBoundary
-        isPending={me.isPending || loadingLinks}
-        isError={me.isError || links.isError}
-        onRetry={refetch}
+        query={{
+          isPending: me.isPending || loadingLinks,
+          isError: me.isError || links.isError,
+          refetch: refetch,
+        }}
       >
         {!me.data?.verified ? (
           <Card variant="soft">

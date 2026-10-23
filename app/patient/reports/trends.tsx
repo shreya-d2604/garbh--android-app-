@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
-import { EmptyState, InfoBanner, Screen, palette } from '@/components';
+import { EmptyState, InfoBanner, palette, QueryBoundary, Screen } from '@/components';
 import { PatientGate, type ReadyContext } from '@/features/patient/components/PatientGate';
-import { QueryBoundary } from '@/features/patient/components/QueryBoundary';
 import { TrendChart } from '@/features/patient/components/TrendChart';
 import { usePullToRefresh, useTrends } from '@/features/patient/hooks';
 import { hasAnyTrend } from '@/features/patient/reports';

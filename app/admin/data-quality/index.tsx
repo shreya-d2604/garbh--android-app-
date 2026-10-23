@@ -1,8 +1,15 @@
 import { Stack, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { Card, InfoBanner, ListItem, Screen, StatusChip, type Tone } from '@/components';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
+import {
+  Card,
+  InfoBanner,
+  ListItem,
+  QueryBoundary,
+  Screen,
+  StatusChip,
+  type Tone,
+} from '@/components';
 import { DQ_ICON, mergeCounts, type DqSeverity } from '@/features/admin/data-quality';
 import { useDqCounts } from '@/features/admin/hooks';
 

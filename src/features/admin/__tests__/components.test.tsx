@@ -2,11 +2,10 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { useForm } from 'react-hook-form';
 import { Text } from 'react-native';
 
-import { Button } from '@/components';
+import { Button, QueryBoundary } from '@/components';
 import { renderWithProviders } from '@/test-utils/render';
 
 import { ConfigFields } from '../components/ConfigFields';
-import { QueryBoundary } from '../components/QueryBoundary';
 import { ReasonDialog } from '../components/ReasonDialog';
 import { configResolver } from '../components/configResolver';
 import { CONFIG_TABLES, buildTablePayload, valuesFromRow, type FormValues } from '../config';

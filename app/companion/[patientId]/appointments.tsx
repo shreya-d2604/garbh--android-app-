@@ -7,11 +7,11 @@ import {
   Card,
   EmptyState,
   palette,
+  QueryBoundary,
+  Screen,
   SectionHeader,
   StatusChip,
-  Screen,
 } from '@/components';
-import { QueryBoundary } from '@/features/companion/components/QueryBoundary';
 import { SectionGate } from '@/features/companion/components/SectionGate';
 import { formatDateTime } from '@/features/companion/format';
 import { splitAppointments } from '@/features/companion/view';
@@ -43,7 +43,9 @@ function CompanionAppointmentsContent({ patientId }: { patientId: string }) {
 
   return (
     <Screen edges={['bottom']} refreshing={q.isRefetching} onRefresh={() => void q.refetch()}>
-      <QueryBoundary isPending={q.isPending} isError={q.isError} onRetry={() => void q.refetch()}>
+      <QueryBoundary
+        query={{ isPending: q.isPending, isError: q.isError, refetch: () => void q.refetch() }}
+      >
         {q.data && q.data.length === 0 ? (
           <EmptyState
             icon="calendar-blank-outline"

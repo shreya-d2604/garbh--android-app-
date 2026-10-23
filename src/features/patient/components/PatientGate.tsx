@@ -1,12 +1,11 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { EmptyState } from '@/components';
+import { EmptyState, QueryBoundary } from '@/components';
 import type { ISODate } from '@/domain/pregnancy-math';
 
 import { usePatientContext } from '../hooks';
 import type { HospitalSettings, PatientBasics, PregnancyBasics } from '../types';
-import { QueryBoundary } from './QueryBoundary';
 
 export interface ReadyContext {
   patient: PatientBasics;

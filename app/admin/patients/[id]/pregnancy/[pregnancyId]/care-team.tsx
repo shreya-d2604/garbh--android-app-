@@ -2,11 +2,18 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Card, InfoBanner, Screen, SectionHeader, StatusChip } from '@/components';
+import {
+  Button,
+  Card,
+  InfoBanner,
+  QueryBoundary,
+  Screen,
+  SectionHeader,
+  StatusChip,
+} from '@/components';
 import { logPatientView, type CareMember } from '@/features/admin/api';
 import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog';
 import { DoctorPickerDialog } from '@/features/admin/components/DoctorPickerDialog';
-import { QueryBoundary } from '@/features/admin/components/QueryBoundary';
 import { firstParam } from '@/features/admin/components/ui';
 import { adminErrorKey } from '@/features/admin/errors';
 import {

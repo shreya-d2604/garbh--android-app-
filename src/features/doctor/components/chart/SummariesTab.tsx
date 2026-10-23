@@ -9,13 +9,13 @@ import {
   EmptyState,
   InfoBanner,
   ListItem,
+  QueryBoundary,
   StatusChip,
   type Tone,
 } from '@/components';
 
 import { documentFromRow, functionErrorKey } from '../../ai-review';
 import { useSummaryFunction, usePregnancySummaries } from '../../hooks';
-import { QueryBoundary } from '../QueryBoundary';
 
 const TONE: Record<string, Tone> = {
   generating: 'info',
