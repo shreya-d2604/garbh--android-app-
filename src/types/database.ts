@@ -2030,6 +2030,7 @@ export type Database = {
       };
       cancel_appointment: { Args: { p_appt: string; p_reason: string }; Returns: undefined };
       companion_can: { Args: { p_patient: string; p_perm: string }; Returns: boolean };
+      companion_pregnancy_ids: { Args: { p_patient: string }; Returns: string[] };
       complete_signup: { Args: { p_details: Json; p_kind: string }; Returns: undefined };
       consume_ai_quota: { Args: { p_fn?: string }; Returns: undefined };
       create_companion_invite: { Args: Record<PropertyKey, never>; Returns: string };
