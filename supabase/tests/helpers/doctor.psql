@@ -1,0 +1,13 @@
+-- Doctor-agent pgTAP helpers. Include AFTER helpers/setup.psql:
+--   \ir helpers/doctor.psql
+
+-- Run a DML statement as the current role and return how many rows it touched. Used to assert
+-- "changes zero rows" for UPDATE/DELETE that RLS filters out (no error is raised for those).
+create function tests.affected(p_sql text) returns int language plpgsql as $$
+declare n int;
+begin
+  execute p_sql;
+  get diagnostics n = row_count;
+  return n;
+end $$;
+grant execute on function tests.affected(text) to authenticated, anon;

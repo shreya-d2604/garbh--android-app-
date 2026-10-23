@@ -1918,6 +1918,10 @@ export type Database = {
         Args: { p_doctor: string; p_note?: string; p_pregnancy: string };
         Returns: undefined;
       };
+      apply_visit_template: {
+        Args: { p_pregnancy: string; p_schedule: string };
+        Returns: undefined;
+      };
       auth_role: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['user_role'];
