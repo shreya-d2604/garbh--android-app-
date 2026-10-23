@@ -15,6 +15,8 @@ const mockRemove = jest.fn();
 let responseListener: ((r: unknown) => void) | undefined;
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+// The native push module is present (a development or release build).
+jest.mock('expo', () => ({ requireOptionalNativeModule: () => ({}) }));
 jest.mock('expo-constants', () => ({
   __esModule: true,
   default: { expoConfig: { extra: { eas: { projectId: 'proj-1' } } }, easConfig: null },
@@ -181,5 +183,23 @@ describe('unregisterPushToken', () => {
     expect(mockDeleteEq).toHaveBeenCalledWith('expo_push_token', 'ExponentPushToken[abc]');
     mockDeleteEq.mockRejectedValueOnce(new Error('offline'));
     await expect(unregisterPushToken()).resolves.toBeUndefined();
+  });
+});
+
+describe('without the native push module (Expo Go)', () => {
+  it('never loads expo-notifications, so the app can still start', async () => {
+    const loaded = jest.fn();
+    let isolated: typeof import('../push') | undefined;
+    jest.isolateModules(() => {
+      jest.doMock('expo', () => ({ requireOptionalNativeModule: () => null }));
+      jest.doMock('expo-notifications', () => {
+        loaded();
+        throw new Error("Cannot find native module 'ExpoTopicSubscriptionModule'");
+      });
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      isolated = require('../push') as typeof import('../push');
+    });
+    await expect(isolated?.unregisterPushToken()).resolves.toBeUndefined();
+    expect(loaded).not.toHaveBeenCalled();
   });
 });

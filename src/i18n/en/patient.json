@@ -108,6 +108,8 @@
     "noPast": "No earlier visits",
     "noPastHint": "Your finished visits will be listed here.",
     "yourDoctor": "Your doctor",
+    "rebookCareTeam": "Please rebook with a doctor on your care team",
+    "rebookCareTeamDetail": "This doctor is no longer on your care team. Please rebook this visit with a doctor on your care team, or call reception and we will help you.",
     "notFound": "We could not find this visit.",
     "progress": "Where things stand",
     "details": "Details",

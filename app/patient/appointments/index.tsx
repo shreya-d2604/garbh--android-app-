@@ -5,10 +5,15 @@ import { SegmentedButtons } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
 import { Button, EmptyState, QueryBoundary, Screen, spacing } from '@/components';
-import { splitAppointments } from '@/features/patient/appointments';
+import { needsRebook, splitAppointments } from '@/features/patient/appointments';
 import { AppointmentCard } from '@/features/patient/components/AppointmentCard';
 import { PatientGate } from '@/features/patient/components/PatientGate';
-import { useAppointments, useDoctorMap, usePullToRefresh } from '@/features/patient/hooks';
+import {
+  useAppointments,
+  useCareTeamDoctorIds,
+  useDoctorMap,
+  usePullToRefresh,
+} from '@/features/patient/hooks';
 
 type Tab = 'upcoming' | 'past';
 
@@ -18,6 +23,7 @@ function AppointmentsList() {
   const [tab, setTab] = useState<Tab>('upcoming');
   const appointments = useAppointments();
   const doctors = useDoctorMap();
+  const teamIds = useCareTeamDoctorIds();
   return (
     <>
       <Button
@@ -34,7 +40,8 @@ function AppointmentsList() {
       />
       <QueryBoundary query={appointments}>
         {(rows) => {
-          const list = splitAppointments(rows, new Date())[tab];
+          const now = new Date();
+          const list = splitAppointments(rows, now)[tab];
           if (list.length === 0) {
             return (
               <EmptyState
@@ -54,6 +61,7 @@ function AppointmentsList() {
                   appointment={a}
                   doctorName={doctors.get(a.doctor_id)?.full_name ?? null}
                   variant={tab === 'upcoming' ? 'soft' : 'plain'}
+                  needsRebook={needsRebook(a, teamIds, now)}
                   onPress={() => router.push(`/patient/appointments/${a.id}`)}
                 />
               ))}

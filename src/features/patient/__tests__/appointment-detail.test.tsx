@@ -43,6 +43,7 @@ function mockLoaded(over: Parameters<typeof appointment>[0] = {}) {
   );
   h.useDoctorMap.mockReturnValue(new Map([['doc-asha', doctor()]]));
   h.useVisits.mockReturnValue(queryOf([visit({ id: 'v6', title: 'Visit 6' })]));
+  h.useCareTeamDoctorIds.mockReturnValue(['doc-asha']);
   h.useCancelAppointment.mockReturnValue({ mutateAsync: cancel, isPending: false } as never);
 }
 
@@ -61,6 +62,21 @@ describe('appointment detail', () => {
     await fireEvent.press(screen.getByText('Change the time'));
     expect(mockPush).toHaveBeenCalledWith('/patient/appointments/book?reschedule=a1');
     expect(screen.queryByText('Call reception')).toBeNull();
+  });
+
+  it('doctor left her care team: calm rebook banner, and she can change the time', async () => {
+    mockLoaded();
+    h.useCareTeamDoctorIds.mockReturnValue(['doc-meera']);
+    await renderWithProviders(<AppointmentScreen />);
+    expect(screen.getByText(/no longer on your care team/)).toBeTruthy();
+    await fireEvent.press(screen.getByText('Change the time'));
+    expect(mockPush).toHaveBeenCalledWith('/patient/appointments/book?reschedule=a1');
+  });
+
+  it('doctor on her care team: no rebook banner', async () => {
+    mockLoaded();
+    await renderWithProviders(<AppointmentScreen />);
+    expect(screen.queryByText(/no longer on your care team/)).toBeNull();
   });
 
   it('inside the cutoff: no change buttons, only "call reception"', async () => {

@@ -1,6 +1,7 @@
 import {
   changeAllowance,
   isActive,
+  needsRebook,
   splitAppointments,
   statusTimeline,
   upcomingLimit,
@@ -141,5 +142,32 @@ describe('upcomingLimit (unverified limit messaging)', () => {
   it('allows verified patients three', () => {
     expect(upcomingLimit(true, 2, settings).reached).toBe(false);
     expect(upcomingLimit(true, 3, settings)).toEqual({ max: 3, reached: true, kind: 'verified' });
+  });
+});
+
+describe('needsRebook (doctor left the care team)', () => {
+  const future = appointment({
+    doctor_id: 'doc-meera',
+    starts_at: '2026-10-25T05:30:00.000Z',
+    ends_at: '2026-10-25T05:45:00.000Z',
+  });
+
+  it('flags a future booked visit whose doctor is not on her care team', () => {
+    expect(needsRebook(future, ['doc-asha'], now)).toBe(true);
+    expect(needsRebook({ ...future, status: 'confirmed' }, ['doc-asha'], now)).toBe(true);
+  });
+
+  it('does not flag a visit with a care-team doctor', () => {
+    expect(needsRebook(future, ['doc-asha', 'doc-meera'], now)).toBe(false);
+  });
+
+  it('never flags while the care team is loading', () => {
+    expect(needsRebook(future, undefined, now)).toBe(false);
+  });
+
+  it('ignores past, cancelled and in-progress visits', () => {
+    expect(needsRebook({ ...future, ends_at: '2026-10-21T05:45:00.000Z' }, [], now)).toBe(false);
+    expect(needsRebook({ ...future, status: 'cancelled' }, [], now)).toBe(false);
+    expect(needsRebook({ ...future, status: 'checked_in' }, [], now)).toBe(false);
   });
 });

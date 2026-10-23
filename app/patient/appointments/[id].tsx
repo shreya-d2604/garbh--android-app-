@@ -16,7 +16,7 @@ import {
   StatusChip,
 } from '@/components';
 import { apiErrorKey } from '@/features/patient/api';
-import { changeAllowance } from '@/features/patient/appointments';
+import { changeAllowance, needsRebook } from '@/features/patient/appointments';
 import { CallButton } from '@/features/patient/components/CallButton';
 import { DoctorAvatar } from '@/features/patient/components/DoctorAvatar';
 import { PatientGate, type ReadyContext } from '@/features/patient/components/PatientGate';
@@ -25,6 +25,7 @@ import { formatDay, formatTime } from '@/features/patient/dates';
 import {
   useAppointment,
   useCancelAppointment,
+  useCareTeamDoctorIds,
   useDoctorMap,
   usePullToRefresh,
   useVisits,
@@ -37,6 +38,7 @@ function AppointmentDetail({ id, ctx }: { id: string; ctx: ReadyContext }) {
   const appointment = useAppointment(id);
   const doctors = useDoctorMap();
   const visits = useVisits();
+  const teamIds = useCareTeamDoctorIds();
   const cancel = useCancelAppointment();
   const [dialog, setDialog] = useState(false);
   const [reason, setReason] = useState('');
@@ -63,7 +65,9 @@ function AppointmentDetail({ id, ctx }: { id: string; ctx: ReadyContext }) {
       {(a) => {
         const doctor = doctors.get(a.doctor_id);
         const visit = visits.data?.find((v) => v.id === a.visit_id);
-        const allowance = changeAllowance(a, new Date(), ctx.settings.patient_cancel_cutoff_hours);
+        const now = new Date();
+        const allowance = changeAllowance(a, now, ctx.settings.patient_cancel_cutoff_hours);
+        const rebook = needsRebook(a, teamIds, now);
         const active = a.status === 'booked' || a.status === 'confirmed';
         return (
           <>
@@ -92,6 +96,10 @@ function AppointmentDetail({ id, ctx }: { id: string; ctx: ReadyContext }) {
                 </View>
               </View>
             </Card>
+
+            {rebook ? (
+              <InfoBanner tone="info" message={t('appointments.rebookCareTeamDetail')} />
+            ) : null}
 
             {a.status === 'cancelled' || a.status === 'no_show' ? (
               <InfoBanner

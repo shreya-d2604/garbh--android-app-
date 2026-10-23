@@ -33,6 +33,22 @@ export function splitAppointments(list: Appointment[], now: Date): SplitAppointm
   return { upcoming, past };
 }
 
+/**
+ * A booked / confirmed appointment that is not over yet, whose doctor is no longer on her
+ * active care team (the doctor left the team; the hospital does not cancel it automatically).
+ * `teamDoctorIds` undefined = care team still loading: never flag.
+ */
+export function needsRebook(
+  appt: Pick<Appointment, 'status' | 'ends_at' | 'doctor_id'>,
+  teamDoctorIds: readonly string[] | undefined,
+  now: Date,
+): boolean {
+  if (!teamDoctorIds) return false;
+  if (appt.status !== 'booked' && appt.status !== 'confirmed') return false;
+  if (new Date(appt.ends_at) < now) return false;
+  return !teamDoctorIds.includes(appt.doctor_id);
+}
+
 export type ChangeBlock = 'status' | 'cutoff';
 export interface ChangeAllowance {
   canChange: boolean;

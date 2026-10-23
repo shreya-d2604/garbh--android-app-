@@ -121,6 +121,17 @@ export function useCareTeam(): QueryState<CareTeamMember[]> {
   };
 }
 
+/** Doctor ids of her active care team; undefined while loading or on error. */
+export function useCareTeamDoctorIds(): string[] | undefined {
+  const pregnancyId = usePregnancyId();
+  const team = useQuery({
+    queryKey: ['patient', 'care-team', pregnancyId],
+    queryFn: () => api.fetchCareTeam(pregnancyId as string),
+    enabled: !!pregnancyId,
+  });
+  return useMemo(() => team.data?.map((m) => m.doctor_id), [team.data]);
+}
+
 // ------------------------------------------------------------------ appointments
 
 export function useAppointments() {
