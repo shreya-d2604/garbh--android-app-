@@ -44,8 +44,10 @@ describe('care team panel rules', () => {
       onTeam: true,
       isBackup: true,
       canManage: false,
+      canLeave: true,
     });
-    expect(teamPermissions(team, 'x')).toMatchObject({ onTeam: false, canManage: false });
+    expect(teamPermissions(team, 'x')).toMatchObject({ onTeam: false, canManage: false, canLeave: false });
+    expect(teamPermissions(team, 'a').canLeave).toBe(false);
     expect(teamPermissions(team, null).canManage).toBe(false);
     expect(teamPermissions([], 'a').primaryName).toBeNull();
   });

@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -47,6 +48,8 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
   const [picked, setPicked] = useState<string | null>(null);
   const [note, setNote] = useState('');
   const [toRemove, setToRemove] = useState<CareTeamMember | null>(null);
+  const [leaving, setLeaving] = useState(false);
+  const router = useRouter();
 
   const close = () => {
     setDialog(null);
@@ -98,6 +101,9 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
           icon="lock-outline"
           message={t('team.readOnly', { name: perms.primaryName ?? t('team.primaryDoctor') })}
         />
+      ) : null}
+      {perms.canLeave ? (
+        <Button label={t('team.leave')} variant="text" onPress={() => setLeaving(true)} />
       ) : null}
       {remove.isError ? <ErrorBanner error={remove.error} /> : null}
 
@@ -166,6 +172,24 @@ export function CareTeamPanel({ pregnancyId, members, directory, me }: CareTeamP
         onDismiss={() => setToRemove(null)}
         onConfirm={() =>
           toRemove && remove.mutate(toRemove.doctorId, { onSettled: () => setToRemove(null) })
+        }
+      />
+
+      <ConfirmDialog
+        visible={leaving}
+        title={t('team.leaveTitle')}
+        message={t('team.leaveMessage')}
+        confirmLabel={t('team.leave')}
+        danger
+        loading={remove.isPending}
+        onDismiss={() => setLeaving(false)}
+        onConfirm={() =>
+          me &&
+          remove.mutate(me, {
+            onSettled: () => setLeaving(false),
+            // The chart is no longer readable once she has left.
+            onSuccess: () => router.replace('/doctor/patients' as never),
+          })
         }
       />
     </Card>

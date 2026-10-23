@@ -32,6 +32,8 @@ export function teamPermissions(members: readonly CareTeamMember[], me: string |
     isBackup: mine?.role === 'backup',
     /** Only the primary (or an admin, elsewhere) can add, remove or hand over. */
     canManage: mine?.role === 'primary',
+    /** A backup may leave the team herself; the primary must hand over first. */
+    canLeave: mine?.role === 'backup',
     primaryName: members.find((m) => m.role === 'primary')?.name ?? null,
   };
 }

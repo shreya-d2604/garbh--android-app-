@@ -330,4 +330,24 @@ describe('Care team panel', () => {
     expect(screen.queryByText('Hand over as primary')).toBeNull();
     expect(screen.queryByText('Remove')).toBeNull();
   });
+
+  it('lets a backup leave the care team herself after a confirmation', async () => {
+    const mutate = jest.fn();
+    mockHooks.useRemoveMember.mockReturnValue(mutation({ mutate }));
+    await renderWithProviders(
+      <CareTeamPanel pregnancyId="p1" members={members} directory={directory} me="meera" />,
+    );
+    await fireEvent.press(screen.getByText('Leave care team'));
+    expect(screen.getByText('Leave this care team?')).toBeTruthy();
+    const buttons = screen.getAllByText('Leave care team');
+    await fireEvent.press(buttons[buttons.length - 1]!);
+    expect(mutate).toHaveBeenCalledWith('meera', expect.any(Object));
+  });
+
+  it('does not offer the primary a way to leave', async () => {
+    await renderWithProviders(
+      <CareTeamPanel pregnancyId="p1" members={members} directory={directory} me="asha" />,
+    );
+    expect(screen.queryByText('Leave care team')).toBeNull();
+  });
 });
