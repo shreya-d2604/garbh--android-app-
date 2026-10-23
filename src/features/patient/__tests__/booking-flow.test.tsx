@@ -21,10 +21,6 @@ import {
 // @/components pulls in HeaderActions, which imports expo-router.
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: jest.fn() }) }));
 jest.mock('@/lib/supabase', () => ({ supabase: {} }));
-// Paper's Button `icon` loads the real icon font; render the glyph name instead.
-jest.mock('@expo/vector-icons/MaterialCommunityIcons', () =>
-  jest.requireActual('../test-icon-mock'),
-);
 jest.mock('../hooks');
 
 const h = jest.mocked(hooks);

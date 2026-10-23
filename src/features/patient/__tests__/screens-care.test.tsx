@@ -32,9 +32,6 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
 }));
 jest.mock('@/lib/supabase', () => ({ supabase: {} }));
-jest.mock('@expo/vector-icons/MaterialCommunityIcons', () =>
-  jest.requireActual('../test-icon-mock'),
-);
 jest.mock('../hooks');
 
 const h = jest.mocked(hooks);

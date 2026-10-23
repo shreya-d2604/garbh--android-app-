@@ -21,9 +21,6 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: 'a1' }),
 }));
 jest.mock('@/lib/supabase', () => ({ supabase: {} }));
-jest.mock('@expo/vector-icons/MaterialCommunityIcons', () =>
-  jest.requireActual('../test-icon-mock'),
-);
 jest.mock('../hooks');
 
 const h = jest.mocked(hooks);

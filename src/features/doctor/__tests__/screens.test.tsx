@@ -9,16 +9,6 @@ import { CareTeamPanel } from '../components/chart/CareTeamPanel';
 import type { CareTeamMember, DoctorOption } from '../care-team';
 import type { QueueItem } from '../queue';
 
-// Paper loads its icons from the subpath module, whose font loading does not work under Jest.
-jest.mock('@expo/vector-icons/MaterialCommunityIcons', () => {
-  const { createElement } = jest.requireActual<typeof import('react')>('react');
-  const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
-  return {
-    __esModule: true,
-    default: ({ name }: { name: string }) => createElement(Text, null, name),
-  };
-});
-
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
