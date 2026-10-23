@@ -1677,6 +1677,50 @@ export type Database = {
           },
         ];
       };
+      visit_contacts: {
+        Row: {
+          contact_note: string | null;
+          contacted_at: string;
+          contacted_by: string | null;
+          visit_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          contact_note?: string | null;
+          contacted_at?: string;
+          contacted_by?: string | null;
+          visit_id: string;
+        };
+        Update: {
+          contact_note?: string | null;
+          contacted_at?: string;
+          contacted_by?: string | null;
+          visit_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'visit_contacts_contacted_by_fkey';
+            columns: ['contacted_by'];
+            isOneToOne: false;
+            referencedRelation: 'doctor_directory';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'visit_contacts_contacted_by_fkey';
+            columns: ['contacted_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'visit_contacts_visit_id_fkey';
+            columns: ['visit_id'];
+            isOneToOne: true;
+            referencedRelation: 'visits';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       visit_templates: {
         Row: {
           id: string;
@@ -1721,8 +1765,6 @@ export type Database = {
         Row: {
           added_by: string | null;
           appointment_id: string | null;
-          contact_note: string | null;
-          contacted_at: string | null;
           created_at: string;
           due_from: string | null;
           due_to: string | null;
@@ -1742,8 +1784,6 @@ export type Database = {
         Insert: {
           added_by?: string | null;
           appointment_id?: string | null;
-          contact_note?: string | null;
-          contacted_at?: string | null;
           created_at?: string;
           due_from?: string | null;
           due_to?: string | null;
@@ -1762,8 +1802,6 @@ export type Database = {
         Update: {
           added_by?: string | null;
           appointment_id?: string | null;
-          contact_note?: string | null;
-          contacted_at?: string | null;
           created_at?: string;
           due_from?: string | null;
           due_to?: string | null;
@@ -2032,6 +2070,7 @@ export type Database = {
       companion_can: { Args: { p_patient: string; p_perm: string }; Returns: boolean };
       companion_pregnancy_ids: { Args: { p_patient: string }; Returns: string[] };
       complete_signup: { Args: { p_details: Json; p_kind: string }; Returns: undefined };
+      consultation_is_published: { Args: { p_consultation: string }; Returns: boolean };
       consume_ai_quota: { Args: { p_fn?: string }; Returns: undefined };
       create_companion_invite: { Args: Record<PropertyKey, never>; Returns: string };
       decide_companion_link: {
